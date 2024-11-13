@@ -1,0 +1,22 @@
+# Folders to ignore
+Experimentations/
+StunExperimentation/
+SignalingServer/
+
+UDPReceiver/UDPReceiver/
+UDPSender/UDPSender/
+
+UDPClient/x64
+UDPServer/x64
+UDPLibrary/x64
+
+# Files to ignore
+vcpkg.bat
+
+# Extensions to ignore
+*vcxproj*
+*sln
+
+# Folder names to ignore
+.vs/
+**/x64/Debug/
