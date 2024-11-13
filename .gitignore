@@ -6,9 +6,9 @@ SignalingServer/
 UDPReceiver/UDPReceiver/
 UDPSender/UDPSender/
 
-UDPClient/x64
-UDPServer/x64
-UDPLibrary/x64
+UDPClient/x64/
+UDPServer/x64/
+UDPLibrary/x64/
 
 # Files to ignore
 vcpkg.bat
