@@ -15,7 +15,7 @@ StateArray
 	CurrentState(StateArray[0]),
 	SendBytePack(200, 10),
 	RecvBytePack(200, 10),
-	Server(80, 61, 175, 45, 7000, "Server", false)
+	Server(80, 61, 175, 45, 8000, "Server", false)
 { }
 
 SessionStateMachine::~SessionStateMachine() {
