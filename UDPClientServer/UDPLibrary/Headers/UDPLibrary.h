@@ -44,6 +44,7 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 	inline WSADATA     WSAData;
 	inline SOCKET    UDPSocket;
 
+
 	inline void WelcomeMessage() {
 		std::cout << "Please enter your name: ";
 		getline(std::cin, MyName);
@@ -76,7 +77,32 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 		}
 
 	}
-	inline void InitConnect() { WelcomeMessage(); InitWinsock(); OpenUDPSocket();}
+
+	inline void BindSocket(uint16_t port = 0)
+	{
+		sockaddr_in localAddress;
+		localAddress.sin_family = AF_INET;
+		if (port > 0) {
+			localAddress.sin_port = htons(port);
+		}
+		localAddress.sin_addr.s_addr = INADDR_ANY; // Accept messages from any IP
+		//localAddress.sin_addr.s_addr = htonl(address);
+
+		if (bind(UDPSocket, (sockaddr*)&localAddress, sizeof(localAddress)) == SOCKET_ERROR) {
+			std::cerr << "Failed to bind socket." << std::endl;
+			closesocket(UDPSocket);
+			WSACleanup();
+			exit(0);
+		}
+		else{
+			std::cout << " - The UDP Socket was succesfully bound to the local-adress\n";
+		}
+
+	}
+
+
+
+	inline void InitConnect(uint16_t port = 0) { WelcomeMessage(); InitWinsock(); OpenUDPSocket(); BindSocket(port); }
 }
 
 struct AdressCtr
