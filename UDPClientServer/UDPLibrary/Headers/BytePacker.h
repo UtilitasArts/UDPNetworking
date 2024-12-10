@@ -250,9 +250,10 @@ private:
 			IndexBytes(bPrint);
 		}
  	 }
-	 inline const char* GetByteArrayAsChar() { ByteArray.shrink_to_fit(); return reinterpret_cast<const char*>(ByteArray.data()); }
-	 inline void SetByteArrayFromChar(const char* OtherByteArrayAsChar, const size_t Size, bool bPrint) {
+	 inline void SetByteArray(const char* OtherByteArrayAsChar, const size_t Size, bool bPrint) {
 		SetByteArray(reinterpret_cast<const uint8_t*>(ByteArray.data()), Size, bPrint);	 }
+
+	 inline const char* GetByteArrayAsChar() { ByteArray.shrink_to_fit(); return reinterpret_cast<const char*>(ByteArray.data()); }
 
 	 inline bool CRCValid(const uint8_t* ArrayToCheck, const size_t Size, bool bPrint) {
  		 uint32_t crc = 0;

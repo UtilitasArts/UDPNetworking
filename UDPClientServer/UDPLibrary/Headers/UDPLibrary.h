@@ -16,6 +16,8 @@ enum class MessageType : uint8_t {
 	None,
 	ConnectRequest,
 	ConnectApproval,
+	CreateSession,
+	JoinSession,
 	ProfilePackage,
 };
 
@@ -46,7 +48,7 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 		std::cout << "Please enter your name: ";
 		getline(std::cin, MyName);
 		system("cls");
-		std::cout << " - Thank you " << MyName << " we will connect you to the server...\n";
+		std::cout << " - Thank you " << MyName << "\n";
 	}
 	inline void InitWinsock() {
 		if (WSAStartup(MAKEWORD(2, 2), &WSAData) != NO_ERROR) {
@@ -74,7 +76,7 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 		}
 
 	}
-	inline void Init() { WelcomeMessage(); InitWinsock(); OpenUDPSocket();}
+	inline void InitConnect() { WelcomeMessage(); InitWinsock(); OpenUDPSocket();}
 }
 
 struct AdressCtr
