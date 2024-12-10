@@ -23,11 +23,14 @@ int main(){
 
 		int bytesReceived = recvfrom(UDPSetup::UDPSocket, (char*)buffer, sizeof(buffer), 0, ReceiveAdress.GetSockAddr(), ReceiveAdress.GetAddrSize()); // halts the loop because the socket is prolly set to blocking
 		if (bytesReceived != SOCKET_ERROR) {
-			std::cout << "Received";
-
 			ReceiveAdress.FillFromSockAddr();
 			RecvBytePack.SetByteArray(buffer, bytesReceived, true);
 
+
+			MessageType RecvMT;
+			std::string Name;
+			RecvBytePack.ReturnBytes(RecvMT,0);	std::cout << MessageTypeToString(RecvMT);
+			RecvBytePack.ReturnBytes(Name,  1, true);
 		}
 	}
 
