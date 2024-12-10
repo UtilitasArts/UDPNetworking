@@ -100,8 +100,6 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 
 	}
 
-
-
 	inline void InitConnect(uint16_t port = 0) { WelcomeMessage(); InitWinsock(); OpenUDPSocket(); BindSocket(port); }
 }
 

@@ -247,7 +247,8 @@ private:
 			ByteArray.resize(Size);
 			std::memcpy(ByteArray.data(), OtherByteArray, Size);
 			MaxIndex = Size;
-			IndexBytes(bPrint);
+			IndexBytes(false);
+			if(bPrint){	PrintBytes(); }
 		}
  	 }
 	 inline void SetByteArray(const char* OtherByteArrayAsChar, const size_t Size, bool bPrint) {
