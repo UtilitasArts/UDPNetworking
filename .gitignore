@@ -3,9 +3,11 @@ Experimentations/
 StunExperimentation/
 SignalingServer/
 
-UDPReceiver/UDPReceiver/
-UDPSender/UDPSender/
+UDPReceiver/
+UDPSender/
 TaskBarHide/TaskBarHide/
+
+
 
 **/UDPClient/x64/
 **/UDPServer/x64/
