@@ -29,6 +29,10 @@ int main(){
 			RecvBytePack.SetByteArray(buffer, bytesReceived, true);
 
 		}
+		else
+		{
+			std::cout << ".";
+		}
 	}
 
 
