@@ -40,9 +40,9 @@ BytePack  RecvBytePack;
 
  
  
- int main(int argc, char* argv[])
+ int main()
  {
- 	char* portchar = argv[1];
+     const char* portchar = "8000";
  
  	unsigned short port;
  
