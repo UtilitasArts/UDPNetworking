@@ -26,7 +26,11 @@ int main(){
 
 			ReceiveAdress.FillFromSockAddr();
 			RecvBytePack.SetByteArray(buffer, bytesReceived, true);
-		}		
+		}
+		else
+		{
+			std::cout << ".";
+		}
 	}
 
 
