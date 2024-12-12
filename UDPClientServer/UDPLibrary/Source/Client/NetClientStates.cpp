@@ -54,10 +54,10 @@ void Unconnected_NetClientState::OnEnter() {
 				bool     bConnectionApproved;
 				uint8_t  AmountOfSessions;
 
-				UDPPacks::RecvBytePack.ReturnBytes(MyNetIp,1,true);
-				UDPPacks::RecvBytePack.ReturnBytes(MyNetPort, 2, true);
-				UDPPacks::RecvBytePack.ReturnBytes(bConnectionApproved, 3, true);
-				UDPPacks::RecvBytePack.ReturnBytes(AmountOfSessions, 4, true);
+				UDPPacks::RecvBytePack.ReturnBytes(MyNetIp,1);
+				UDPPacks::RecvBytePack.ReturnBytes(MyNetPort, 2);
+				UDPPacks::RecvBytePack.ReturnBytes(bConnectionApproved, 3);
+				UDPPacks::RecvBytePack.ReturnBytes(AmountOfSessions, 4);
 		
 				std::cout <<"- Connection Approved \n";
 				UDPPacks::PublicAdress.SetAdress(MyNetIp,MyNetPort,UDPSetup::MyName, true);
@@ -87,7 +87,7 @@ void Unconnected_NetClientState::OnEnter() {
 					std::regex CreatePattern{ R"(^-C)", std::regex::icase };
 
 					if (std::regex_search(Response, CreatePattern))	{
-						std::regex RoomIDPattern{ R"(\d{1,6})" };
+						std::regex RoomIDPattern{ R"(.{1,6})" };
 
 						std::smatch Match;
 						if (std::regex_search(Response, Match, RoomIDPattern))
@@ -122,7 +122,7 @@ void Unconnected_NetClientState::OnEnter() {
 			// Creating Room Approved |
 			// -----------------------|
 			if (UDPPacks::RecvMT == MessageType::CreateApproval){
-				std::cout << "- creation of room was approved";
+				std::cout << "- Creation of room was approved";
 			}
 
 			// ----------------------|

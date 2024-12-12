@@ -8,8 +8,8 @@ void ConnectRequest(){
 	UDPPacks::RecvBytePack.ReturnBytes(Name, 1, true);
 	UDPPacks::SendBytePack.Clear(20,3);
 
-	uint32_t RecvNetIp   = UDPPacks::ReceiveAdress.NetIP();
-	uint16_t RecvNetPort = UDPPacks::ReceiveAdress.NetPort();
+	uint32_t RecvNetIp   = UDPPacks::ReceiveAdress.HostIP();
+	uint16_t RecvNetPort = UDPPacks::ReceiveAdress.HostPort();
 	bool     bConnectionApproved = true;
 	uint8_t  AmountOfSessions = static_cast<uint8_t>(Sessions.size());
 
@@ -39,7 +39,7 @@ void CreateSession() {
 	std::cout << "- Created a room with ID:" << RoomID;
 
  	UDPPacks::SendBytePack.Clear(20, 3);  
- 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectApproval);
+ 	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
 
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 
