@@ -26,17 +26,28 @@ enum class MessageType : uint8_t {
 inline std::string MessageTypeToString(MessageType& MesType) {
 	switch (MesType) {
 		case MessageType::ConnectRequest:
-		return "ConnectRequest";
-		break;
+			return "ConnectRequest";
+			break;
 		case MessageType::ConnectApproval:
-		return "ConnectApproval";
-		break;
+			return "ConnectApproval";
+			break;
+		case MessageType::CreateRequest:
+			return "CreateRequest";
+			break;
+		case MessageType::CreateApproval:
+			return "CreateApproval";
+			break;
+		case MessageType::JoinRequest:
+			return "ConnectRequest";
+			break;
+		case MessageType::JoinApproval:
+			return "JoinApproval";
+			break;
 		case MessageType::ProfilePackage:
-		return "ProfilePackage";
-		break;
+			return "ProfilePackage";
+			break;
 		default:
-		case MessageType::None:
-		return "None";
+			return "None";
 	}
 }
 

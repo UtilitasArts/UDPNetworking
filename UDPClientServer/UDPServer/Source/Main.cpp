@@ -30,7 +30,6 @@ void ConnectRequest(){
 			UDPPacks::SendBytePack.AddBytes(SessionName);
 		}
 	}
-
 	std::cout << "Sending: \n";
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 }

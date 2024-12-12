@@ -87,7 +87,9 @@ void Unconnected_NetClientState::OnEnter() {
 					std::regex CreatePattern{ R"(^-C)", std::regex::icase };
 
 					if (std::regex_search(Response, CreatePattern))	{
-						std::regex RoomIDPattern{ R"(\w{1,6})" };
+
+						Response = std::regex_replace(Response, CreatePattern, "");
+						std::regex RoomIDPattern{ R"([a-zA-Z0-9]{1,6})" };
 
 						std::smatch Match;
 						if (std::regex_search(Response, Match, RoomIDPattern))
@@ -103,6 +105,7 @@ void Unconnected_NetClientState::OnEnter() {
 					}
 
 					if (std::regex_search(Response, JoinPattern) && (AmountOfSessions > 0))	{
+						Response = std::regex_replace(Response, JoinPattern, "");
 						std::regex RoomNumber{ R"(\d{1,2})" };
 						std::smatch Match;
 						if (std::regex_search(Response, Match, RoomNumber))
