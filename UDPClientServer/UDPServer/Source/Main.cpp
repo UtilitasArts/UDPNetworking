@@ -4,6 +4,9 @@
 std::vector<SessionStateMachine*> Sessions;
 
 void ConnectRequest(){
+
+	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
+
 	std::string Name;
 	UDPPacks::RecvBytePack.ReturnBytes(Name, 1, true);
 	UDPPacks::SendBytePack.Clear(20,3);
@@ -14,9 +17,9 @@ void ConnectRequest(){
 	uint8_t  AmountOfSessions = static_cast<uint8_t>(Sessions.size());
 
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectApproval);
-	UDPPacks::SendBytePack.AddBytes(bConnectionApproved);
 	UDPPacks::SendBytePack.AddBytes(RecvNetIp);
 	UDPPacks::SendBytePack.AddBytes(RecvNetPort);
+	UDPPacks::SendBytePack.AddBytes(bConnectionApproved);
 	UDPPacks::SendBytePack.AddBytes(AmountOfSessions);
 
 	if (AmountOfSessions > 0)
@@ -28,19 +31,22 @@ void ConnectRequest(){
 		}
 	}
 
+	std::cout << "Sending: \n";
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 }
 
 void CreateSession() {
 
+	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
+
  	std::string RoomID;
  	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 1, true);
-	UDPPacks::ReceiveAdress.PrintAdress();
 	std::cout << "- Created a room with ID:" << RoomID;
 
  	UDPPacks::SendBytePack.Clear(20, 3);  
  	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
 
+	std::cout << "Sending: \n";
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 
 }

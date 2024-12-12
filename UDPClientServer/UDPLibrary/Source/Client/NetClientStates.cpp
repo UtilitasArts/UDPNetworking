@@ -87,7 +87,7 @@ void Unconnected_NetClientState::OnEnter() {
 					std::regex CreatePattern{ R"(^-C)", std::regex::icase };
 
 					if (std::regex_search(Response, CreatePattern))	{
-						std::regex RoomIDPattern{ R"(.{1,6})" };
+						std::regex RoomIDPattern{ R"(\w{1,6})" };
 
 						std::smatch Match;
 						if (std::regex_search(Response, Match, RoomIDPattern))
