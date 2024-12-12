@@ -219,7 +219,7 @@ namespace UDPPacks {
 			RecvBytePack.SetByteArray(RecvBuffer, BytesReceived, bPrint);
 
 			if (RecvBytePack.GetCRCValid())	{
-				RecvBytePack.ReturnBytes(RecvMT, 0);	std::cout << MessageTypeToString(RecvMT);
+				RecvBytePack.ReturnBytes(RecvMT, 0); std::cout << MessageTypeToString(RecvMT);
 			}
 		}
 		return RecvMT;
