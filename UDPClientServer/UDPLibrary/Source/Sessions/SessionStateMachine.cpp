@@ -2,7 +2,8 @@
 #include "SessionStates.h"
 #include "SessionStateMachine.h"
 
-SessionStateMachine::SessionStateMachine(uint8_t session_size) :
+SessionStateMachine::SessionStateMachine(uint8_t session_size, std::string session_name) :
+SessionName(session_name),
 AdressArray( new AdressCtr[session_size]),
 StateArray
 (
@@ -12,10 +13,7 @@ StateArray
 		new DestroyingSession_SessionState(this)
 	}
 ),
-	CurrentState(StateArray[0]),
-	SendBytePack(200, 10),
-	RecvBytePack(200, 10),
-	Server(80, 61, 175, 45, 8000, "Server", false)
+	CurrentState(StateArray[0])
 { }
 
 SessionStateMachine::~SessionStateMachine() {

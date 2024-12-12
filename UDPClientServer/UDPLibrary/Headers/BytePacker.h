@@ -276,6 +276,10 @@ private:
  		 }
  	 }
 
+	 inline bool GetCRCValid() {
+		return bCRCisValid;
+	 }
+
 	 inline void IndexBytes(bool bPrint = false) {
 		 ByteIndexArray.clear();
 		 ByteSizesArray.clear();

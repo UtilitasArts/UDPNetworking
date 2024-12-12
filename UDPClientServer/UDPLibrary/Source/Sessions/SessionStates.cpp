@@ -7,8 +7,8 @@ BaseSessionState::BaseSessionState(SessionStateMachine* sm) :
 StateMachine(sm)
 {}
 void BaseSessionState::InitState(){
-	StateMachine->SendBytePack.Clear(200,20);
-	StateMachine->RecvBytePack.Clear(200,20);
+	UDPPacks::SendBytePack.Clear(200,20);
+	UDPPacks::SendBytePack.Clear(200,20);
 	StateEnum = ESessionStates::InitializeSession;
 }
 void BaseSessionState::OnEnter() {
@@ -27,37 +27,33 @@ void Initialize_SessionState::InitState(){
 }
 void Initialize_SessionState::OnEnter() {
 	BaseSessionState::OnEnter();
-    UDPSetup::InitConnect();
-	StateMachine->SendBytePack.AddBytes(MessageType::ConnectRequest);
-	StateMachine->SendBytePack.AddBytes(UDPSetup::MyName);
-	StateMachine->Server.SendPack(StateMachine->SendBytePack, true);
 
-	AdressCtr ReceiveAdress;
-	unsigned char buffer[1024];
-	std::cout << "\n - Waiting for server...\n";
+    UDPSetup::UDPInit();
+	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
+	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
+ 	UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 
-     while (true) {  
+	while (true)
+	{
+		UDPPacks::RecvBytes(true);
 
-       	int bytesReceived = recvfrom(UDPSetup::UDPSocket, (char*)buffer, sizeof(buffer), 0, ReceiveAdress.GetSockAddr(), ReceiveAdress.GetAddrSize()); // halts the loop because the socket is prolly set to blocking
-       	if (bytesReceived != SOCKET_ERROR) {       	
+		switch (UDPPacks::RecvMT) {
+		case MessageType::ConnectRequest:
 
-			ReceiveAdress.FillFromSockAddr();
-			if (ReceiveAdress.HostIP() == StateMachine->Server.HostIP())
-			{
-				std::cout << " - Received message from server\n" << std::endl;
+			break;
+		case MessageType::CreateRequest:
 
-				// Fill Receive Byte Container here and append name to ReceiverAdress
-				// Check if we are allowed or not to the server.
-				break; 
-			}       		
-       	} 
-     }
+			break;
+		case MessageType::JoinRequest:
 
+			break;
+		}
+	}
 }
+
 void Initialize_SessionState::OnExit(){
 	BaseSessionState::OnExit();
 }
-
 
 //SessionInProgress
 void SessionInProgress_SessionState::InitState(){

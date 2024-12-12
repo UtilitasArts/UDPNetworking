@@ -16,8 +16,10 @@ enum class MessageType : uint8_t {
 	None,
 	ConnectRequest,
 	ConnectApproval,
-	CreateSession,
-	JoinSession,
+	CreateRequest,
+	CreateApproval,
+	JoinRequest,
+	JoinApproval,
 	ProfilePackage,
 };
 
@@ -43,7 +45,6 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 	inline std::string  MyName;
 	inline WSADATA     WSAData;
 	inline SOCKET    UDPSocket;
-
 
 	inline void WelcomeMessage() {
 		std::cout << "Please enter your name: ";
@@ -100,7 +101,7 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 
 	}
 
-	inline void InitConnect(uint16_t port = 0) { WelcomeMessage(); InitWinsock(); OpenUDPSocket(); BindSocket(port); }
+	inline void UDPInit(uint16_t port = 0) { WelcomeMessage(); InitWinsock(); OpenUDPSocket(); BindSocket(port); }
 }
 
 struct AdressCtr
@@ -137,6 +138,17 @@ struct AdressCtr
 		if (bPrint) { PrintAdress(); }
 	}
 
+	inline void SetAdress(uint8_t octet_a, uint8_t octet_b, uint8_t octet_c, uint8_t octet_d, uint16_t port, std::string name, bool bPrint = false) {
+		Port = port;
+		Octets[0] = octet_a; Octets[1] = octet_b; Octets[2] = octet_c; Octets[3] = octet_d;
+ 		IP = (octet_a << 24) | (octet_b << 16) | (octet_c << 8) | (octet_d);
+		AdressName = name;
+		InitSockAddr(IP, Port);
+		if (bPrint) { PrintAdress(); }
+	}
+
+
+
 	inline void FillFromSockAddr(std::string name = "Server", bool bPrint = false) {
 		uint32_t SockIP = ntohl(SockAddress.sin_addr.s_addr);
 		uint16_t SockPort = ntohs(SockAddress.sin_port);
@@ -152,21 +164,6 @@ struct AdressCtr
 	inline sockaddr_in* GetSockAddr_In() { return &SockAddress;}
 	inline sockaddr* GetSockAddr()		 { return reinterpret_cast<sockaddr*>(&SockAddress); }
 	inline int32_t*  GetAddrSize()		 { return &AddrSize;}
-
-	inline void SendPack(BytePack& SendPackage, bool bPrint = false)
-	{		
-		SendPackage.AddCRC();
-		int bytesSent = sendto(UDPSetup::UDPSocket, SendPackage.GetByteArrayAsChar(), static_cast<uint32_t>(SendPackage.GetArraySize()), 0, GetSockAddr(), AddrSize);
-		MessageType MType = static_cast<MessageType>(SendPackage.GetByteArrayAsChar()[1]);
-
-		if (bytesSent == SOCKET_ERROR) {
-			std::cerr << "Failed to send message." << "\n";
-		}
-		else {
-			std::cout << " - A " << MessageTypeToString(MType) << " Sent! " << "\n\n";
-			if(bPrint){ SendPackage.PrintBytes(); }
-		}
-	}
 
 private:	
 	inline void InitSockAddr(uint32_t ip = 0, uint16_t port = 0) {
@@ -185,5 +182,50 @@ private:
 	int32_t AddrSize = sizeof(SockAddress);	 
 };
 
+
+namespace UDPPacks {
+	inline BytePack   SendBytePack;
+	inline BytePack   RecvBytePack;
+
+	inline AdressCtr  ReceiveAdress;
+	inline AdressCtr  PublicAdress;
+	inline AdressCtr  ServerAdress(80, 61, 175, 45, 8000, "Server", false);
+
+	inline AdressCtr* AdressArray;
+
+	inline unsigned char RecvBuffer[1024];
+
+	inline MessageType RecvMT;
+
+	inline MessageType RecvBytes(bool bPrint){
+
+		ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
+		RecvMT = MessageType::None;
+
+		int BytesReceived = recvfrom(UDPSetup::UDPSocket, (char*)RecvBuffer, sizeof(RecvBuffer), 0, ReceiveAdress.GetSockAddr(), ReceiveAdress.GetAddrSize());
+		if (BytesReceived != SOCKET_ERROR) {
+			ReceiveAdress.FillFromSockAddr();
+			RecvBytePack.SetByteArray(RecvBuffer, BytesReceived, bPrint);
+
+			if (RecvBytePack.GetCRCValid())	{
+				RecvBytePack.ReturnBytes(RecvMT, 0);	std::cout << MessageTypeToString(RecvMT);
+			}
+		}
+		return RecvMT;
+	}
+
+	inline void SendBytes(AdressCtr& adress_ctr, bool bPrint = false){
+		SendBytePack.AddCRC();
+		int bytesSent = sendto(UDPSetup::UDPSocket, SendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(SendBytePack.GetArraySize()), 0, adress_ctr.GetSockAddr(), *adress_ctr.GetAddrSize());
+		MessageType MType = static_cast<MessageType>(SendBytePack.GetByteArrayAsChar()[1]);
+		if (bytesSent == SOCKET_ERROR) {
+			std::cerr << "Failed to send message." << "\n";
+		}
+		else {
+			std::cout << " - A " << MessageTypeToString(MType) << " Sent! " << "\n\n";
+			if (bPrint) { SendBytePack.PrintBytes(); }
+		}
+	}
+}
 
 

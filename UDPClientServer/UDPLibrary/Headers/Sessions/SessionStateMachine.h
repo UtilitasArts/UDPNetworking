@@ -10,16 +10,13 @@ class BaseSessionState;
 class SessionStateMachine {
 
 public:
-	SessionStateMachine(uint8_t session_size);
+	SessionStateMachine(uint8_t session_size, std::string session_name);
 	~SessionStateMachine();
 
 	void SetState(ESessionStates NextState);
 
-	BytePack  SendBytePack;
-	BytePack  RecvBytePack;
-	AdressCtr Server;
-
 	AdressCtr* AdressArray;
+	std::string SessionName;
 
 private:
 	BaseSessionState* CurrentState;

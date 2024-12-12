@@ -2,35 +2,74 @@
 #include "SessionStateMachine.h"
 
 std::vector<SessionStateMachine*> Sessions;
-BytePack  SendBytePack;
-BytePack  RecvBytePack;
 
+void ConnectRequest(){
+	std::string Name;
+	UDPPacks::RecvBytePack.ReturnBytes(Name, 1, true);
+	UDPPacks::SendBytePack.Clear(20,3);
 
-void CheckMessageType()
-{
+	uint32_t RecvNetIp   = UDPPacks::ReceiveAdress.NetIP();
+	uint16_t RecvNetPort = UDPPacks::ReceiveAdress.NetPort();
+	bool     bConnectionApproved = true;
+	uint8_t  AmountOfSessions = static_cast<uint8_t>(Sessions.size());
 
+	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectApproval);
+	UDPPacks::SendBytePack.AddBytes(bConnectionApproved);
+	UDPPacks::SendBytePack.AddBytes(RecvNetIp);
+	UDPPacks::SendBytePack.AddBytes(RecvNetPort);
+	UDPPacks::SendBytePack.AddBytes(AmountOfSessions);
+
+	if (AmountOfSessions > 0)
+	{
+		for (size_t i = 0; i < Sessions.size(); i++)
+		{
+			std::string SessionName = Sessions[i]->SessionName;
+			UDPPacks::SendBytePack.AddBytes(SessionName);
+		}
+	}
+
+	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+}
+
+void CreateSession() {
+
+ 	std::string RoomID;
+ 	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 1, true);
+	UDPPacks::ReceiveAdress.PrintAdress();
+	std::cout << "- Created a room with ID:" << RoomID;
+
+ 	UDPPacks::SendBytePack.Clear(20, 3);  
+ 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectApproval);
+
+	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+
+}
+
+void JoinSession() {
+	// 	std::string Name;
+	// 	RecvBytePack.ReturnBytes(Name, 1, true);
 }
 
 int main(){
 
- 	UDPSetup::InitConnect(8000);
- 
-	AdressCtr ReceiveAdress;
-	unsigned char buffer[1024];
+ 	UDPSetup::UDPInit(8000); 
+
 	std::cout << "\n - Waiting for clients...\n";
 
 	while (true) {
 
-		int bytesReceived = recvfrom(UDPSetup::UDPSocket, (char*)buffer, sizeof(buffer), 0, ReceiveAdress.GetSockAddr(), ReceiveAdress.GetAddrSize()); // halts the loop because the socket is prolly set to blocking
-		if (bytesReceived != SOCKET_ERROR) {
-			ReceiveAdress.FillFromSockAddr();
-			RecvBytePack.SetByteArray(buffer, bytesReceived, true);
+		UDPPacks::RecvBytes(true);
 
-
-			MessageType RecvMT;
-			std::string Name;
-			RecvBytePack.ReturnBytes(RecvMT,0);	std::cout << MessageTypeToString(RecvMT);
-			RecvBytePack.ReturnBytes(Name,  1, true);
+		switch (UDPPacks::RecvMT) {
+		case MessageType::ConnectRequest:
+			ConnectRequest();
+			break;
+		case MessageType::CreateRequest:
+			CreateSession();
+			break;
+		case MessageType::JoinRequest:
+			JoinSession();
+			break;
 		}
 	}
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <regex>
 #include "NetClientStateMachine.h"
 #include "NetClientStates.h"
 
@@ -26,34 +27,117 @@ void Unconnected_NetClientState::InitState(){
 }
 void Unconnected_NetClientState::OnEnter() {
 	BaseNetClientState::OnEnter();
-    UDPSetup::InitConnect();
-	StateMachine->SendBytePack.AddBytes(MessageType::ConnectRequest);
-	StateMachine->SendBytePack.AddBytes(UDPSetup::MyName);
-	StateMachine->Server.SendPack(StateMachine->SendBytePack, true);
 
-	AdressCtr ReceiveAdress;
-	unsigned char buffer[1024];
-	std::cout << "\n - Waiting for server...\n";
+    UDPSetup::UDPInit();
+// 
+ 	UDPPacks::SendBytePack.Clear(20,3);
+ 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
+ 	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
+	UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 
-     while (true) {  
+ 	while (true)
+ 	{
+ 		UDPPacks::RecvBytes(true);		
 
-       	int bytesReceived = recvfrom(UDPSetup::UDPSocket, (char*)buffer, sizeof(buffer), 0, ReceiveAdress.GetSockAddr(), ReceiveAdress.GetAddrSize()); // halts the loop because the socket is prolly set to blocking
-       	if (bytesReceived != SOCKET_ERROR) {       	
+		// --------------------------------------------------------------------|
+		// for now only accept messages from the server ignore everything else |
+		// --------------------------------------------------------------------|
+		if (UDPPacks::ReceiveAdress.HostIP() == UDPPacks::ServerAdress.HostIP())
+		{
+			// --------------------------|
+			// Extract Approval Messages |
+			// --------------------------|
+			if (UDPPacks::RecvMT == MessageType::ConnectApproval)
+			{
+				uint32_t MyNetIp;
+				uint16_t MyNetPort;
+				bool     bConnectionApproved;
+				uint8_t  AmountOfSessions;
 
-			ReceiveAdress.FillFromSockAddr();
-			if (ReceiveAdress.HostIP() == StateMachine->Server.HostIP()) {
+				UDPPacks::RecvBytePack.ReturnBytes(MyNetIp,1,true);
+				UDPPacks::RecvBytePack.ReturnBytes(MyNetPort, 2, true);
+				UDPPacks::RecvBytePack.ReturnBytes(bConnectionApproved, 3, true);
+				UDPPacks::RecvBytePack.ReturnBytes(AmountOfSessions, 4, true);
+		
+				std::cout <<"- Connection Approved \n";
+				UDPPacks::PublicAdress.SetAdress(MyNetIp,MyNetPort,UDPSetup::MyName, true);
 
-				std::cout << " - Received message from server\n" << std::endl;
 
-				// Fill Receive Byte Container here and append name to ReceiverAdress
-				// Check if we are allowed or not to the server.
-				break; 
-			}       		
-       	} 
-     }
+				if (AmountOfSessions > 0){
+					std::cout << "- Found Session Id's - \n";
+					for (size_t i = 0; i < AmountOfSessions; i++)
+					{
+						std::string SessionName;
+						UDPPacks::RecvBytePack.ReturnBytes(SessionName, 5 + i, true);
+						std::cout << "- " << i << " " << SessionName;
+					}
+					std::cout << "- Join a session with -J [RoomNumber] \n";
+				}
+				std::cout << "- Or Create a session with -C [SessionID] with a maximum amount of 6 characters \n";
 
-	StateMachine->SetState(ENetClientStates::ConnectedToServer);
+				// -----------------------------------------------------|
+				// If we got an approval message we send an answer back	|
+				// We can Create or Join a room							|
+				//  ----------------------------------------------------|
+
+				while (true) {
+					std::string Response;
+					getline(std::cin, Response);
+					std::regex JoinPattern{ R"(^-J)"  , std::regex::icase };
+					std::regex CreatePattern{ R"(^-C)", std::regex::icase };
+
+					if (std::regex_search(Response, CreatePattern))	{
+						std::regex RoomIDPattern{ R"(\d{1,6})" };
+
+						std::smatch Match;
+						if (std::regex_search(Response, Match, RoomIDPattern))
+						{
+							std::string RoomID = Match.str();
+							std::cout << "- Request to create Room with ID:" << RoomID;
+							UDPPacks::SendBytePack.Clear(20, 3);
+							UDPPacks::SendBytePack.AddBytes(MessageType::CreateRequest);
+							UDPPacks::SendBytePack.AddBytes(RoomID);
+							UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+							break;
+						}
+					}
+
+					if (std::regex_search(Response, JoinPattern) && (AmountOfSessions > 0))	{
+						std::regex RoomNumber{ R"(\d{1,2})" };
+						std::smatch Match;
+						if (std::regex_search(Response, Match, RoomNumber))
+						{
+							uint8_t RoomNr = min(std::stoi(Match.str()), AmountOfSessions);
+							std::cout << "- Request to join Room with number:" << RoomNr;
+							UDPPacks::SendBytePack.AddBytes(MessageType::JoinRequest);
+							UDPPacks::SendBytePack.AddBytes(RoomNr);
+							UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+							break;
+						}
+					}
+					std::cout << "Wrong Input \n";
+				}
+			}
+			// -----------------------|
+			// Creating Room Approved |
+			// -----------------------|
+			if (UDPPacks::RecvMT == MessageType::CreateApproval){
+				std::cout << "- creation of room was approved";
+			}
+
+			// ----------------------|
+			// Joining Room Approved |
+			// ----------------------|
+			if (UDPPacks::RecvMT == MessageType::JoinApproval){
+
+			}
+
+
+
+		}
+ 	}	
 }
+
 void Unconnected_NetClientState::OnExit(){
 	BaseNetClientState::OnExit();
 }

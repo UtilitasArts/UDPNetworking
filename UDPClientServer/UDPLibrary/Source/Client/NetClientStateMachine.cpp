@@ -10,10 +10,7 @@ NetClientStateMachine::NetClientStateMachine() :
 			new ConnectedToServer_NetClientState(this),
 			new ConnectedToPlayers_NetClientState(this)
 		}
-	),
-	SendBytePack(200, 10),
-	RecvBytePack(200, 10),
-	Server(80, 61, 175, 45, 8000, "Server", false)
+	)
 {
 }
 

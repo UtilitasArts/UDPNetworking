@@ -16,12 +16,6 @@ public:
 
 	void SetState(ENetClientStates NextState);
 
-	BytePack  SendBytePack;
-	BytePack  RecvBytePack;
-	AdressCtr Server;
-
-	AdressCtr AdressArray[3];
-
 private:
 	BaseNetClientState* CurrentState;
 	std::array<BaseNetClientState*, 3> StateArray;
