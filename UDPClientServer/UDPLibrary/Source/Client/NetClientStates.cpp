@@ -128,6 +128,8 @@ void Unconnected_NetClientState::OnEnter() {
 						UDPPacks::SendBytePack.Clear(20, 3);
 						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
 						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+
+
  						break;					
 					}
 				// ----------------|
