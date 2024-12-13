@@ -102,7 +102,7 @@ int main(){
 
  	UDPSetup::UDPInit(8000,"Server");
 
-	std::cout << "\n - Waiting for NOG een test...\n";
+	std::cout << "\n - Waiting for GG test...\n";
 
 	while (true) {
 
