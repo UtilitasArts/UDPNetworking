@@ -56,8 +56,29 @@ void JoinSession() {
 }
 
 void UpdateServer() {
+	std::cout << "- Request to update server: \n";
+	fs::path targetFolder = "UDPClientServer";
+	fs::path Location = fs::current_path();
+	fs::path RestartFolder;
 
-	std::cout << "Update Request";
+	for (const fs::path& part : Location) {
+		RestartFolder /= part;
+		if (part == targetFolder) {
+			break;
+		}
+	} fs::path ReposFolder = RestartFolder.parent_path();
+	RestartFolder = RestartFolder / "x64" / "Release" / "UDPServer";
+
+	//std::string Command3 = "&& start cmd /K \"" + RestartFolder.string() + "\"";
+	std::string Command2 = "&& git restore . && git pull";
+	std::string Command = "cd " + ReposFolder.string() + Command2;
+	system(Command.c_str());
+
+	UDPPacks::SendBytePack.Clear(20, 3);
+	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
+	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+
+
 // 	closesocket(UDPSetup::UDPSocket);
 // 	WSACleanup();
 // 

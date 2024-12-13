@@ -121,10 +121,8 @@ void Unconnected_NetClientState::OnEnter() {
 						RestartFolder = RestartFolder / "x64" / "Release" / "UDPClient"; 	
 						
 						//std::string Command3 = "&& start cmd /K \"" + RestartFolder.string() + "\"";
-
 						std::string Command2 = "&& git add . && git commit -m \"" + CommitLog + "\" && git push -u origin main";
 						std::string Command  = "cd " + ReposFolder.string() + Command2;
-
  						system(Command.c_str());
 
 						UDPPacks::SendBytePack.Clear(20, 3);
@@ -165,22 +163,26 @@ void Unconnected_NetClientState::OnEnter() {
 							break;
 						}
 					}
-
-
-
 					std::cout << "Wrong Input \n";
 				}
 			}
-			// -----------------------|
-			// Creating Room Approved |
-			// =======================|
+		// -------------------------|
+		// Updating Server Approved |
+		// =========================|
+			if (UDPPacks::RecvMT == MessageType::UpdateApproval) {
+				std::cout << "- Creation of room was approved";
+			}
+
+		// -----------------------|
+		// Creating Room Approved |
+		// =======================|
 			if (UDPPacks::RecvMT == MessageType::CreateApproval){
 				std::cout << "- Creation of room was approved";
 			}
 
-			// ----------------------|
-			// Joining Room Approved |
-			// ======================|
+		// ----------------------|
+		// Joining Room Approved |
+		// ======================|
 			if (UDPPacks::RecvMT == MessageType::JoinApproval){
 
 			}

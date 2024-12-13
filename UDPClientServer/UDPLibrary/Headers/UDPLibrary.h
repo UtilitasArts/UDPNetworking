@@ -21,6 +21,7 @@ enum class MessageType : uint8_t {
 	JoinRequest,
 	JoinApproval,
 	UpdateRequest,
+	UpdateApproval,
 	ProfilePackage,
 };
 
@@ -46,6 +47,9 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 			break;
 		case MessageType::UpdateRequest:
 			return "UpdateRequest";
+			break;
+		case MessageType::UpdateApproval:
+			return "UpdateApproval";
 			break;
 		case MessageType::ProfilePackage:
 			return "ProfilePackage";
