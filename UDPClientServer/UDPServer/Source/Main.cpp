@@ -62,6 +62,9 @@ void UpdateServer() {
 	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
 
+	closesocket(UDPSetup::UDPSocket);
+	WSACleanup();
+
 	std::string Command3 = "&& start cmd /K \"" + UDPSetup::RestartFolder.string() + "/UDPServer" + "\"";
 	std::string Command2 = "&& git restore . && git pull" + Command3;
 	std::string Command = "start cmd /K \"cd " + UDPSetup::ReposFolder.string() + Command2 + "\"";
