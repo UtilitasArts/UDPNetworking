@@ -69,7 +69,6 @@ void UpdateServer() {
 
 	exit(0);
 
-
 }
 
 
@@ -78,6 +77,8 @@ int main(){
  	UDPSetup::UDPInit(8000,"Server");
 
 	std::cout << "\n - Waiting for clients...\n";
+
+	std::cout << "\n - LiveUpdate...\n";
 
 	while (true) {
 
