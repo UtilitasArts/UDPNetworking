@@ -111,7 +111,7 @@ int main(){
 
  	UDPSetup::UDPInit(8000,"Server");
 
-	std::cout << "\n - Waiting Updates2...\n";
+	std::cout << "\n - Waiting Updates...\n";
 
 	while (true) {
 
