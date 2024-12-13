@@ -82,8 +82,6 @@ void UpdateServer() {
 	exit(0);
 
 
-
-
 // 
 // 	fs::path Repos = fs::current_path().parent_path().parent_path();
 // 	fs::path Location = fs::current_path();
