@@ -68,6 +68,8 @@ void UpdateServer() {
 	system(Command.c_str());
 
 	exit(0);
+
+
 }
 
 
