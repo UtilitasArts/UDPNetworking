@@ -37,16 +37,15 @@ void ConnectRequest(){
 void CreateSession() {
 
 	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
-
  	std::string RoomID;
- 	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 1, true);
+
+ 	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 1);
 	std::cout << "- Created a room with ID:" << RoomID;
 
  	UDPPacks::SendBytePack.Clear(20, 3);  
  	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
 
-	std::cout << "Sending: \n";
-	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
 
 }
 

@@ -160,7 +160,7 @@ struct AdressCtr
 
 
 
-	inline void FillFromSockAddr(std::string name = "Server", bool bPrint = false) {
+	inline void FillFromSockAddr(std::string name = "RecvAddr", bool bPrint = false) {
 		uint32_t SockIP = ntohl(SockAddress.sin_addr.s_addr);
 		uint16_t SockPort = ntohs(SockAddress.sin_port);
 		SetAdress(SockIP, SockPort, name, bPrint);

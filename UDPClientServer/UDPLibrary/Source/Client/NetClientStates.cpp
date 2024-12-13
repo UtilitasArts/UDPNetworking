@@ -28,25 +28,32 @@ void Unconnected_NetClientState::InitState(){
 void Unconnected_NetClientState::OnEnter() {
 	BaseNetClientState::OnEnter();
 
+// -----------------------|
+// Initialize UDP Systems |
+// -----------------------|
     UDPSetup::UDPInit();
-// 
+
+// --------------------------|
+// Send a Request to connect |
+// --------------------------|
+
  	UDPPacks::SendBytePack.Clear(20,3);
  	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
  	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
 	UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 
- 	while (true)
- 	{
- 		UDPPacks::RecvBytes(true);		
-
-		// --------------------------------------------------------------------|
-		// for now only accept messages from the server ignore everything else |
-		// --------------------------------------------------------------------|
-		if (UDPPacks::ReceiveAdress.HostIP() == UDPPacks::ServerAdress.HostIP())
-		{
-			// --------------------------|
-			// Extract Approval Messages |
-			// --------------------------|
+ 	while (true){
+	// -------------------------------------|
+	// This is where the message comes from |
+	// -------------------------------------|
+ 		UDPPacks::RecvBytes(true);	
+	// --------------------------------------------------------------------|
+	// for now only accept messages from the server ignore everything else |
+	// --------------------------------------------------------------------|
+		if (UDPPacks::ReceiveAdress.HostIP() == UDPPacks::ServerAdress.HostIP()){
+		// --------------------------|
+		// Extract Approval Messages |
+		// --------------------------|
 			if (UDPPacks::RecvMT == MessageType::ConnectApproval)
 			{
 				uint32_t MyNetIp;
@@ -74,12 +81,10 @@ void Unconnected_NetClientState::OnEnter() {
 					std::cout << "- Join a session with -J [RoomNumber] \n";
 				}
 				std::cout << "- Or Create a session with -C [SessionID] with a maximum amount of 6 characters \n";
-
-				// -----------------------------------------------------|
-				// If we got an approval message we send an answer back	|
-				// We can Create or Join a room							|
-				//  ----------------------------------------------------|
-
+			// -----------------------------------------------------|
+			// If we got an approval message we send an answer back	|
+			// We can Create or Join a room							|
+			//  ----------------------------------------------------|
 				while (true) {
 					std::string Response;
 					getline(std::cin, Response);

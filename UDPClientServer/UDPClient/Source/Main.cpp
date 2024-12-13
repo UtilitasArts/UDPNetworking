@@ -1,5 +1,9 @@
 #pragma once
+#include <filesystem>
+#include <iostream>
 #include "NetClientStateMachine.h"
+
+namespace fs = std::filesystem;
 
 // 	BytePack SendPack(200,16);
 // 	uint32_t A = 20;
@@ -14,6 +18,14 @@
 #define Message(x,y,z)  x.AddBytes(y); z x.AddCRC();
 
 int main() {
+
+	fs::path Repos = fs::current_path().parent_path().parent_path();
+
+	//std::cout << Repos;
+
+	std::string Command = "cd \"" + Repos.string() + "\" && git status";
+
+	system(Command.c_str());
 
 	NetClientStateMachine NetStateMachine;
 	NetStateMachine.SetState(ENetClientStates::Unconnected);
