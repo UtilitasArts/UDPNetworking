@@ -107,20 +107,34 @@ void Unconnected_NetClientState::OnEnter() {
 						std::cout << "- Please enter commit log: \n";
 						getline(std::cin, CommitLog);
 
-						fs::path Repos = fs::current_path().parent_path().parent_path();
-						fs::path Location = fs::current_path().parent_path() / "x64" / "Release" / "UDPClient.exe";
-						std::string Command = "cd \"" + Repos.string() + "\" && git add . && git commit -m \"" + CommitLog.c_str() + "\" && git push -u origin main && \""  "\"";
+						fs::path ReposLocation = fs::current_path().parent_path().parent_path();
+						fs::path targetFolder = "UDPClientServer";
+ 						fs::path Location	  = fs::current_path();
+						fs::path RestartLocation;
+
+						for (const fs::path& part : Location){
+							RestartLocation /= part;
+							if (part == targetFolder){
+								break;
+							}
+						} RestartLocation = RestartLocation / "x64" / "Release" / "UDPClient.exe"; 	
+
+ 						//std::string Command = "cd \"" + Repos.string() + "\" && git add . && git commit -m \"" + CommitLog.c_str() + "\" && git push -u origin main && \""  "\"";
 
 
+						std::string RestartCommand = "start " + RestartLocation.string();
 
-						system(Command.c_str());
+						std::string NextCommand = "cd \"" + ReposLocation.string() + "\" && git status && git add . && git commit -m \"" + CommitLog.c_str() + "\" && git push -u origin main ";
+
+						std::string Command = "start cmd /K \"" + NextCommand + "\"";
+ 						system(Command.c_str());exit(0);
+
 
 						UDPPacks::SendBytePack.Clear(20, 3);
 						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
 						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 
-						exit(0);
-						break;					
+// 						break;					
 					}
 				// ----------------|
 				// Create Session  |
