@@ -79,9 +79,6 @@ void UpdateServer() {
 
 
 
-
-
-
 	exit(0);
 
 }
