@@ -117,7 +117,7 @@ void Unconnected_NetClientState::OnEnter() {
 								break;
 							}
 						} fs::path ReposFolder = RestartFolder.parent_path();						
-						RestartFolder = RestartFolder / "x64" / "Release" / "UDPServer"; 	
+						RestartFolder = RestartFolder / "x64" / "Release" / "UDPClient"; 	
 	
 						
 						std::string Command3 = "&& start cmd /K \"" + RestartFolder.string() + "\"";
