@@ -58,11 +58,12 @@ void JoinSession() {
 void UpdateServer() {
 	fs::path Repos = fs::current_path().parent_path().parent_path();
 	fs::path Location = fs::current_path().parent_path() / "x64" / "Release" / "UDPServer.exe";
-	std::cout << Location;
-	std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start \"" + Location.string() + "\"";
+	std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"" + Location.string() + "\"";
 	system(Command.c_str());
 
+
 	exit(0);
+
 }
 
 
