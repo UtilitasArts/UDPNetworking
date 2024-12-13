@@ -64,10 +64,10 @@ void UpdateServer() {
 	fs::path Location = fs::current_path();
 	std::cout << "\n" << Location.string() << "\n";
 
-	std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd " + Location.string() + "&&UDPServer \"    ";
+	std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start cmd /C \"cd " + Location.string() + "&&UDPServer \"    ";
 	system(Command.c_str());
 
-	exit(0);
+	/*exit(0);*/
 
 }
 
