@@ -160,7 +160,7 @@ void Unconnected_NetClientState::OnEnter() {
 		// =========================|
 			if (UDPPacks::RecvMT == MessageType::UpdateApproval) {
 				std::cout << "- Update of server was approved, Restarting now";
-				std::string Command = "start cmd /K \"" + UDPSetup::RestartFolder.string() + "\"";
+				std::string Command = "start cmd /K \"" + UDPSetup::RestartFolder.string() +"/UDPClient" + "\"";
 				system(Command.c_str()); exit(0);
 			}
 

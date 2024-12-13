@@ -80,7 +80,7 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 				break;
 			}
 		} ReposFolder = RestartFolder.parent_path();
-		RestartFolder = RestartFolder / "x64" / "Release" / "UDPClient";
+		RestartFolder = RestartFolder / "x64" / "Release";
 	}
 
 	inline void WelcomeMessage(std::string name = "") {
