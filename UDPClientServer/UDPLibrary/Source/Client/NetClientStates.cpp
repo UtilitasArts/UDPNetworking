@@ -117,6 +117,7 @@ void Unconnected_NetClientState::OnEnter() {
 						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
 						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 
+						std::string RestartCommand = Location.string();
 						exit(0);
 
 						break;					
