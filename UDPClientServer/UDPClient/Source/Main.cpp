@@ -18,11 +18,6 @@ namespace fs = std::filesystem;
 #define Message(x,y,z)  x.AddBytes(y); z x.AddCRC();
 
 int main() {
-	
-	fs::path Repos = fs::current_path().parent_path().parent_path();
-	fs::path Location = fs::current_path().parent_path() / "x64" / "Release" / "UDPServer.exe";
-	std::string Command = "cd \"" + Repos.string() + "\" && git pull && \"" + Location.string() + "\"";
-	system(Command.c_str()); exit(0);
 
 	NetClientStateMachine NetStateMachine;
 	NetStateMachine.SetState(ENetClientStates::Unconnected);

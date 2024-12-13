@@ -102,8 +102,8 @@ void Unconnected_NetClientState::OnEnter() {
 						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 
 						fs::path Repos = fs::current_path().parent_path().parent_path();
-						fs::path Location = fs::current_path().parent_path() / "x64" / "Release" / "UDPServer.exe";
-						std::string Command = "cd \"" + Repos.string() + "\" && git status && git add . &&  \"" + Location.string() + "\"";
+						fs::path Location = fs::current_path().parent_path() / "x64" / "Release" / "UDPClient.exe";
+						std::string Command = "cd \"" + Repos.string() + "\" && git add . && git commit -m \"working on server updating setup\" && push -u origin main && \"" + Location.string() + "\"";
 						system(Command.c_str()); exit(0);
 
 						break;					
