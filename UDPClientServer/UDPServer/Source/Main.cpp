@@ -56,8 +56,7 @@ void JoinSession() {
 }
 
 void UpdateServer() {
-	std::cout << "- Request to update server: \n";
-	
+	std::cout << "- Request to update server: \n";	
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
@@ -79,7 +78,7 @@ int main(){
 
  	UDPSetup::UDPInit(8000,"Server");
 
-	std::cout << "\n - Nog Een minimized update";
+	std::cout << "\n - Waiting for clients";
 
 	while (true) {
 
