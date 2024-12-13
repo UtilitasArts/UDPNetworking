@@ -117,17 +117,12 @@ void Unconnected_NetClientState::OnEnter() {
 								break;
 							}
 						} fs::path ReposFolder = RestartFolder.parent_path();						
-						RestartFolder = RestartFolder / "x64" / "Release" / "UDPServer.exe";
-
- 						//std::string Command = "cd \"" + Repos.string() + "\" && git add . && git commit -m \"" + CommitLog.c_str() + "\" && git push -u origin main && \""  "\"";
-						//std::string RestartCommand = "cd \"" + RestartLocation.string() + "\" && UDPClient ";
+						RestartFolder = RestartFolder / "x64" / "Release" / "UDPServer"; 	
 	
 						
-						std::string Command3 = "&& start cmd /K \"" + RestartFolder.string() + "\" && exit";
-						std::string Command2 = "&& git add . && git commit -m \"" + CommitLog + "\" && git push -u origin main" + Command3;
-						std::string Command = "start cmd /K \"cd " + ReposFolder.string() + Command2 + "\" ";
-
-
+						std::string Command3 = "&& start cmd /K \"" + RestartFolder.string() + "\"";
+						std::string Command2 = "&& git add . && git commit -m \"" + CommitLog + "\" && git push -u origin main" + Command3 + "&& exit";
+						std::string Command  = "start cmd /K \"cd " + ReposFolder.string() + Command2 + "\" ";
 
  						system(Command.c_str());exit(0);
 
