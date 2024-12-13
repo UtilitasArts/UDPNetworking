@@ -57,7 +57,7 @@ void JoinSession() {
 
 void UpdateServer() {
 	fs::path Repos = fs::current_path().parent_path().parent_path();
-	fs::path Location = fs::current_path().parent_path();
+	fs::path Location = fs::current_path();
 
 	std::cout << "\n" << Location.string() << "\n";
 
