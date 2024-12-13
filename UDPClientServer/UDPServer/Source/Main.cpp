@@ -1,5 +1,8 @@
 #pragma once
+#include <filesystem>
+#include <iostream>
 #include "SessionStateMachine.h"
+namespace fs = std::filesystem;
 
 std::vector<SessionStateMachine*> Sessions;
 
@@ -44,9 +47,7 @@ void CreateSession() {
 
  	UDPPacks::SendBytePack.Clear(20, 3);  
  	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
-
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
-
 }
 
 void JoinSession() {
@@ -54,9 +55,16 @@ void JoinSession() {
 	// 	RecvBytePack.ReturnBytes(Name, 1, true);
 }
 
+void UpdateServer() {
+	fs::path Repos = fs::current_path().parent_path().parent_path();
+	fs::path Location = fs::current_path().parent_path() / "x64" / "Release" / "UDPServer.exe";
+	std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull &&  \"" + Location.string() + "\"";
+	system(Command.c_str()); exit(0);
+}
+
 int main(){
 
- 	UDPSetup::UDPInit(8000); 
+ 	UDPSetup::UDPInit(8000,"Server");
 
 	std::cout << "\n - Waiting for clients...\n";
 
@@ -73,6 +81,9 @@ int main(){
 			break;
 		case MessageType::JoinRequest:
 			JoinSession();
+			break;
+		case MessageType::UpdateRequest:
+			UpdateServer();
 			break;
 		}
 	}

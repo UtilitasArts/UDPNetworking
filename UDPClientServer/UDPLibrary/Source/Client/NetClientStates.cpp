@@ -1,7 +1,11 @@
 #pragma once
+#include <filesystem>
+#include <iostream>
 #include <regex>
 #include "NetClientStateMachine.h"
 #include "NetClientStates.h"
+
+namespace fs = std::filesystem;
 
 //BaseState
 BaseNetClientState::BaseNetClientState(NetClientStateMachine* sm) :
@@ -83,13 +87,27 @@ void Unconnected_NetClientState::OnEnter() {
 				std::cout << "- Or Create a session with -C [SessionID] with a maximum amount of 6 characters \n";
 			// -----------------------------------------------------|
 			// If we got an approval message we send an answer back	|
-			// We can Create or Join a room							|
+			// We can Create or Join a room, Or we update server	|
 			//  ----------------------------------------------------|
 				while (true) {
 					std::string Response;
 					getline(std::cin, Response);
 					std::regex JoinPattern{ R"(^-J)"  , std::regex::icase };
 					std::regex CreatePattern{ R"(^-C)", std::regex::icase };
+					std::regex UpdatePattern{ R"(^-U)", std::regex::icase };
+
+					if (std::regex_search(Response, UpdatePattern)) {							
+						std::cout << "- Request to update server:";
+						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
+						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+
+						fs::path Repos = fs::current_path().parent_path().parent_path();
+						fs::path Location = fs::current_path().parent_path() / "x64" / "Release" / "UDPServer.exe";
+						std::string Command = "cd \"" + Repos.string() + "\" && git status && git add . &&  \"" + Location.string() + "\"";
+						system(Command.c_str()); exit(0);
+
+						break;					
+					}
 
 					if (std::regex_search(Response, CreatePattern))	{
 
@@ -123,6 +141,9 @@ void Unconnected_NetClientState::OnEnter() {
 							break;
 						}
 					}
+
+
+
 					std::cout << "Wrong Input \n";
 				}
 			}

@@ -20,6 +20,7 @@ enum class MessageType : uint8_t {
 	CreateApproval,
 	JoinRequest,
 	JoinApproval,
+	UpdateRequest,
 	ProfilePackage,
 };
 
@@ -43,6 +44,9 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 		case MessageType::JoinApproval:
 			return "JoinApproval";
 			break;
+		case MessageType::UpdateRequest:
+			return "UpdateRequest";
+			break;
 		case MessageType::ProfilePackage:
 			return "ProfilePackage";
 			break;
@@ -57,10 +61,19 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 	inline WSADATA     WSAData;
 	inline SOCKET    UDPSocket;
 
-	inline void WelcomeMessage() {
-		std::cout << "Please enter your name: ";
-		getline(std::cin, MyName);
-		system("cls");
+	inline void WelcomeMessage(std::string name = "") {
+
+		if (name == "")
+		{
+			std::cout << "Please enter your name: ";
+			getline(std::cin, MyName);
+			system("cls");
+		}
+		else
+		{
+			MyName = name;
+		}
+
 		std::cout << " - Thank you " << MyName << "\n";
 	}
 	inline void InitWinsock() {
@@ -109,10 +122,9 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 		else{
 			std::cout << " - The UDP Socket was succesfully bound to the local-adress\n";
 		}
-
 	}
 
-	inline void UDPInit(uint16_t port = 0) { WelcomeMessage(); InitWinsock(); OpenUDPSocket(); BindSocket(port); }
+	inline void UDPInit(uint16_t port = 0, std::string name = "") { WelcomeMessage(name); InitWinsock(); OpenUDPSocket(); BindSocket(port); }
 }
 
 struct AdressCtr
