@@ -129,7 +129,7 @@ void Unconnected_NetClientState::OnEnter() {
 						//std::string Command3 = "&& start cmd /K \"" + RestartFolder.string() + "\"";
 
 						std::string Command2 = "&& git add . && git commit -m \"" + CommitLog + "\" && git push -u origin main";
-						std::string Command  = "cd " + ReposFolder.string() + Command2 + "\" ";
+						std::string Command  = "cd " + ReposFolder.string() + Command2;
 
  						system(Command.c_str());
 
