@@ -75,7 +75,6 @@ int main(){
 
  	UDPSetup::UDPInit(8000,"Server");
 
-	std::cout << "\n - zojuist geupdate!!...\n";
 	std::cout << "\n - Waiting for clients...\n";
 
 	while (true) {
