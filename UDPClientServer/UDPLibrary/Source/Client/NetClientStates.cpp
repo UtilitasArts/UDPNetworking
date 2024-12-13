@@ -34,12 +34,12 @@ void Unconnected_NetClientState::OnEnter() {
 
 // -----------------------|
 // Initialize UDP Systems |
-// -----------------------|
+// =======================|
     UDPSetup::UDPInit();
 
 // --------------------------|
 // Send a Request to connect |
-// --------------------------|
+// ==========================|
 
  	UDPPacks::SendBytePack.Clear(20,3);
  	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
@@ -47,17 +47,19 @@ void Unconnected_NetClientState::OnEnter() {
 	UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 
  	while (true){
-	// -------------------------------------|
-	// This is where the message comes from |
-	// -------------------------------------|
+	// --------------------------------------|
+	// This is where the messages comes from |
+	// ======================================|
  		UDPPacks::RecvBytes(true);	
+
 	// --------------------------------------------------------------------|
 	// for now only accept messages from the server ignore everything else |
-	// --------------------------------------------------------------------|
+	// ====================================================================|
 		if (UDPPacks::ReceiveAdress.HostIP() == UDPPacks::ServerAdress.HostIP()){
+
 		// --------------------------|
 		// Extract Approval Messages |
-		// --------------------------|
+		// ==========================|
 			if (UDPPacks::RecvMT == MessageType::ConnectApproval)
 			{
 				uint32_t MyNetIp;
@@ -83,40 +85,45 @@ void Unconnected_NetClientState::OnEnter() {
 						std::cout << "- " << i << " " << SessionName;
 					}
 					std::cout << "- Join a session with -J [RoomNumber] \n";
-				}
-				std::cout << "- Or Create a session with -C [SessionID] with a maximum amount of 6 characters \n";
+				}	std::cout << "- Or Create a session with -C [SessionID] with a maximum amount of 6 characters \n";
+
 			// -----------------------------------------------------|
 			// If we got an approval message we send an answer back	|
 			// We can Create or Join a room, Or we update server	|
-			//  ----------------------------------------------------|
+			// =====================================================|
 				while (true) {
 					std::string Response;
 					getline(std::cin, Response);
-					std::regex JoinPattern{ R"(^-J)"  , std::regex::icase };
+					std::regex JoinPattern  { R"(^-J)", std::regex::icase };
 					std::regex CreatePattern{ R"(^-C)", std::regex::icase };
 					std::regex UpdatePattern{ R"(^-U)", std::regex::icase };
 
+				// ----------------|
+				// Updating Server |
+				//=================|
 					if (std::regex_search(Response, UpdatePattern)) {							
-						std::cout << "- Request to update server:";
-						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
-						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+						std::cout << "- Request to update server: \n";
+						std::string CommitLog;
+						std::cout << "- Please enter commit log: \n";
+						getline(std::cin, CommitLog);
 
 						fs::path Repos = fs::current_path().parent_path().parent_path();
 						fs::path Location = fs::current_path().parent_path() / "x64" / "Release" / "UDPClient.exe";
-						std::string Command = "cd \"" + Repos.string() + "\" && git add . && git commit -m \"working on server updating setup\" && push -u origin main && \"" + Location.string() + "\"";
-						system(Command.c_str()); exit(0);
+						std::string Command = "cd \"" + Repos.string() + "\" && git add . && git commit -m \"" + CommitLog.c_str() + "\" && push -u origin main && \"" + Location.string() + "\"";
 
+						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
+						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+						system(Command.c_str()); exit(0);
 						break;					
 					}
-
+				// ----------------|
+				// Create Session  |
+				// ================|
 					if (std::regex_search(Response, CreatePattern))	{
-
 						Response = std::regex_replace(Response, CreatePattern, "");
 						std::regex RoomIDPattern{ R"([a-zA-Z0-9]{1,6})" };
-
 						std::smatch Match;
-						if (std::regex_search(Response, Match, RoomIDPattern))
-						{
+						if (std::regex_search(Response, Match, RoomIDPattern))	{
 							std::string RoomID = Match.str();
 							std::cout << "- Request to create Room with ID:" << RoomID;
 							UDPPacks::SendBytePack.Clear(20, 3);
@@ -126,13 +133,14 @@ void Unconnected_NetClientState::OnEnter() {
 							break;
 						}
 					}
-
+				// ----------------|
+				// Join Session	   |
+				// ================|
 					if (std::regex_search(Response, JoinPattern) && (AmountOfSessions > 0))	{
 						Response = std::regex_replace(Response, JoinPattern, "");
 						std::regex RoomNumber{ R"(\d{1,2})" };
 						std::smatch Match;
-						if (std::regex_search(Response, Match, RoomNumber))
-						{
+						if (std::regex_search(Response, Match, RoomNumber))	{
 							uint8_t RoomNr = min(std::stoi(Match.str()), AmountOfSessions);
 							std::cout << "- Request to join Room with number:" << RoomNr;
 							UDPPacks::SendBytePack.AddBytes(MessageType::JoinRequest);
@@ -149,14 +157,14 @@ void Unconnected_NetClientState::OnEnter() {
 			}
 			// -----------------------|
 			// Creating Room Approved |
-			// -----------------------|
+			// =======================|
 			if (UDPPacks::RecvMT == MessageType::CreateApproval){
 				std::cout << "- Creation of room was approved";
 			}
 
 			// ----------------------|
 			// Joining Room Approved |
-			// ----------------------|
+			// ======================|
 			if (UDPPacks::RecvMT == MessageType::JoinApproval){
 
 			}
