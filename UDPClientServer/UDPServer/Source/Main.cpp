@@ -61,7 +61,7 @@ void UpdateServer() {
 
 	std::cout << "\n" << Location.string() << "\n";
 
-	std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd \" " + Repos.string() + "\"\"   ";
+	std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd \" " + Location.string() + "\" && ./UDPServer \"    ";
 	system(Command.c_str());
 
 	//exit(0);
