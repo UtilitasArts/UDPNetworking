@@ -79,7 +79,7 @@ int main(){
 
  	UDPSetup::UDPInit(8000,"Server");
 
-	std::cout << "\n - Een minimized update";
+	std::cout << "\n - Nog Een minimized update";
 
 	while (true) {
 
