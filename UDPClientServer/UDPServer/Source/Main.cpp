@@ -78,8 +78,6 @@ int main(){
 
 	std::cout << "\n - Waiting for clients...\n";
 
-	std::cout << "\n - LiveUpdate...\n";
-
 	while (true) {
 
 		UDPPacks::RecvBytes(true);
