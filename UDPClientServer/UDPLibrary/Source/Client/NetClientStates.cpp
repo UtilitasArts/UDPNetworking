@@ -123,7 +123,7 @@ void Unconnected_NetClientState::OnEnter() {
 						//std::string RestartCommand = "cd \"" + RestartLocation.string() + "\" && UDPClient ";
 	
 						
-						std::string Command3 = "&& start cmd /K \"cd " + RestartFolder.string() + "\" && UDPClient ";
+						std::string Command3 = "&& start cmd /K \"cd " + RestartFolder.string() + "&& UDPClient" + "\" ";
 						std::string Command2 = "&& git add . && git commit -m \"" + CommitLog + "\" && git push -u origin main" + Command3 + "exit";
 						std::string Command = "start cmd /K \"cd " + ReposFolder.string() + Command2 + "\" ";
 
