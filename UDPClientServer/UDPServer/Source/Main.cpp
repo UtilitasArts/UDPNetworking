@@ -111,7 +111,7 @@ int main(){
 
  	UDPSetup::UDPInit(8000,"Server");
 
-	std::cout << "\n - NU apply ik updates aan code..\n";
+	std::cout << "\n - Nog een commit..\n";
 
 	while (true) {
 
