@@ -35,14 +35,8 @@ void Unconnected_NetClientState::OnEnter() {
 // -----------------------|
 // Initialize UDP Systems |
 // =======================|
+
     UDPSetup::UDPInit();
-
-	if (UDPSetup::bUpdate)
-	{
-
-	}
-
-
 
 // --------------------------|
 // Send a Request to connect |
@@ -136,11 +130,7 @@ void Unconnected_NetClientState::OnEnter() {
 						UDPPacks::SendBytePack.Clear(20, 3);
 						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
 						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
-
-
-
-
-// 						break;					
+ 						break;					
 					}
 				// ----------------|
 				// Create Session  |

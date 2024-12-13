@@ -17,14 +17,7 @@ namespace fs = std::filesystem;
 
 #define Message(x,y,z)  x.AddBytes(y); z x.AddCRC();
 
-int main(int argc, char* argv[]) {
-
-	if (argv[1] == "update"){
-		UDPSetup::bUpdate = true;
-	}
-	else{
-		UDPSetup::bUpdate = false;
-	}
+int main() {
 
 	NetClientStateMachine NetStateMachine;
 	NetStateMachine.SetState(ENetClientStates::Unconnected);
