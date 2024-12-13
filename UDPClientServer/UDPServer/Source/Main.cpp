@@ -58,13 +58,14 @@ void JoinSession() {
 void UpdateServer() {
 	std::cout << "- Request to update server: \n";
 	
+	UDPPacks::SendBytePack.Clear(20, 3);
+	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
+	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+
 	std::string Command2 = "&& git restore . && git pull";
 	std::string Command = "cd " + UDPSetup::ReposFolder.string() + Command2;
 	system(Command.c_str());
 
-	UDPPacks::SendBytePack.Clear(20, 3);
-	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
-	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
 
 	std::cout << "- Update of server was approved, Restarting now";
 
