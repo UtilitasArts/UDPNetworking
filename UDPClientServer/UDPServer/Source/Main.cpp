@@ -62,14 +62,13 @@ void UpdateServer() {
 	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
 
-	std::string Command2 = "&& git restore . && git pull";
-	std::string Command = "cd " + UDPSetup::ReposFolder.string() + Command2;
+	std::string Command3 = "&& start cmd /K \"" + UDPSetup::RestartFolder.string() + "\"";
+	std::string Command2 = "&& git restore . && git pull" + Command3;
+	std::string Command = "start cmd /K \"cd " + UDPSetup::ReposFolder.string() + Command2 + "\"";
 	system(Command.c_str());
-
 
 	std::cout << "- Update of server was approved, Restarting now";
 
-	std::string Command3 = "start cmd /K \"" + UDPSetup::RestartFolder.string() + "\"";
 	exit(0);
 
 
