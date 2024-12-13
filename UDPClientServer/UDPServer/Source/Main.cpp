@@ -68,9 +68,6 @@ void UpdateServer() {
 
 	std::cout << "- Update of server was approved, Restarting now";
 
-	closesocket(UDPSetup::UDPSocket);
-	WSACleanup();
-
 	std::string Command3 = "start cmd /K \"" + UDPSetup::RestartFolder.string() + "\"";
 	exit(0);
 
