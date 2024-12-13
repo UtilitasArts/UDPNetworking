@@ -64,10 +64,12 @@ void UpdateServer() {
 	fs::path Location = fs::current_path();
 	std::cout << "\n" << Location.string() << "\n";
 
-	std::string Command = "cmd /C \"cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd " + Location.string() + "&&UDPServer \" \"    ";
+	//std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd " + Location.string() + "&&UDPServer \"    ";
 
+	std::string Command = "start cmd /C \"cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd \"" + Location.string() + "\" && UDPServer\"\"";
 	system(Command.c_str());
-	//exit(0);
+
+	exit(0);
 
 }
 
@@ -76,7 +78,7 @@ int main(){
 
  	UDPSetup::UDPInit(8000,"Server");
 
-	std::cout << "\n - Waiting for ...\n";
+	std::cout << "\n - Waiting for clients...\n";
 
 	while (true) {
 
