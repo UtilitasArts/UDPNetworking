@@ -59,6 +59,8 @@ void UpdateServer() {
 	fs::path Repos = fs::current_path().parent_path().parent_path();
 	fs::path Location = fs::current_path().parent_path() / "x64" / "Release";
 
+	std::cout << Location.string();
+
 	std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd \" " + Repos.string() + "\"\"   ";
 	system(Command.c_str());
 
