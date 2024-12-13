@@ -57,29 +57,25 @@ void JoinSession() {
 
 void UpdateServer() {
 
-	closesocket(UDPSetup::UDPSocket);
-	WSACleanup();
-
-	fs::path Repos = fs::current_path().parent_path().parent_path();
-	fs::path Location = fs::current_path();
-	std::cout << "\n" << Location.string() << "\n";
-
-	//std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd " + Location.string() + "&&UDPServer \"    ";
-
-	//std::string NewServer   = "start cmd /K \"cd \"" + Location.string() + "\" && UDPServer\"";
-
-	std::string GitTerminal = "exit && start cmd /C \"cd " + Repos.string() + " && git restore . && git pull" "\"  ";
-
-	std::string Command = GitTerminal;
-
-	//std::string Command = "start cmd /C \"cd \"" + Repos.string() + "\" && git status && git pull && exit\" && start cmd /K \"cd \"" + Location.string() + "\" && UDPServer\"";
-
-	//std::string Command = "start cmd /C \"cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd \"" + Location.string() + "\" && UDPServer\"\"";
-	system(Command.c_str());
-
-
-
-
+// 	closesocket(UDPSetup::UDPSocket);
+// 	WSACleanup();
+// 
+// 	fs::path Repos = fs::current_path().parent_path().parent_path();
+// 	fs::path Location = fs::current_path();
+// 	std::cout << "\n" << Location.string() << "\n";
+// 
+// 	//std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd " + Location.string() + "&&UDPServer \"    ";
+// 
+// 	//std::string NewServer   = "start cmd /K \"cd \"" + Location.string() + "\" && UDPServer\"";
+// 
+// 	std::string GitTerminal = "exit && start cmd /C \"cd " + Repos.string() + " && git restore . && git pull" "\"  ";
+// 
+// 	std::string Command = GitTerminal;
+// 
+// 	//std::string Command = "start cmd /C \"cd \"" + Repos.string() + "\" && git status && git pull && exit\" && start cmd /K \"cd \"" + Location.string() + "\" && UDPServer\"";
+// 
+// 	//std::string Command = "start cmd /C \"cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd \"" + Location.string() + "\" && UDPServer\"\"";
+// 	system(Command.c_str());
 
 }
 
