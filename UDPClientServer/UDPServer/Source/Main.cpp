@@ -57,7 +57,6 @@ void JoinSession() {
 
 void UpdateServer() {
 
-
 	std::cout << "Update Request";
 // 	closesocket(UDPSetup::UDPSocket);
 // 	WSACleanup();

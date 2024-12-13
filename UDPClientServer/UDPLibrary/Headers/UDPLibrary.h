@@ -60,6 +60,7 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 	inline std::string  MyName;
 	inline WSADATA     WSAData;
 	inline SOCKET    UDPSocket;
+	inline bool		   bUpdate;
 
 	inline void WelcomeMessage(std::string name = "") {
 
