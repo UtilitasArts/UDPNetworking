@@ -111,6 +111,7 @@ void Unconnected_NetClientState::OnEnter() {
 						fs::path Location = fs::current_path().parent_path() / "x64" / "Release" / "UDPClient.exe";
 						std::string Command = "cd \"" + Repos.string() + "\" && git add . && git commit -m \"" + CommitLog.c_str() + "\" && push -u origin main && \"" + Location.string() + "\"";
 
+						UDPPacks::SendBytePack.Clear(20, 3);
 						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
 						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 						system(Command.c_str()); exit(0);
