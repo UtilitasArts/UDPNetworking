@@ -62,6 +62,8 @@ void UpdateServer() {
 	std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start \"" + Location.string() + "\"";
 	system(Command.c_str());
 
+	exit(0);
+
 
 
 }
