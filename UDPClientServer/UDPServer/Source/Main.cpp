@@ -98,7 +98,7 @@ int main(){
 
  	UDPSetup::UDPInit(8000,"Server");
 
-	std::cout << "\n - Waiting for clients...\n";
+	std::cout << "\n - Waiting for cliente...\n";
 
 	while (true) {
 
