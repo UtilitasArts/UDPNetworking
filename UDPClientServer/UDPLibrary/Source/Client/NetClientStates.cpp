@@ -107,28 +107,29 @@ void Unconnected_NetClientState::OnEnter() {
 						std::cout << "- Please enter commit log: \n";
 						getline(std::cin, CommitLog);
 
-						fs::path ReposLocation = fs::current_path().parent_path().parent_path();
 						fs::path targetFolder = "UDPClientServer";
  						fs::path Location	  = fs::current_path();
-						fs::path RestartLocation;
+						fs::path RestartFolder;
 
 						for (const fs::path& part : Location){
-							RestartLocation /= part;
+							RestartFolder /= part;
 							if (part == targetFolder){
 								break;
 							}
-						} RestartLocation = RestartLocation / "x64" / "Release" / "UDPClient.exe"; 	
+						} fs::path ReposFolder = RestartFolder.parent_path();						
+						RestartFolder = RestartFolder / "x64" / "Release"; 	
 
  						//std::string Command = "cd \"" + Repos.string() + "\" && git add . && git commit -m \"" + CommitLog.c_str() + "\" && git push -u origin main && \""  "\"";
+						//std::string RestartCommand = "cd \"" + RestartLocation.string() + "\" && UDPClient ";
+	
+						
+						//std::string Command2 = "start cmd /K \"cd " + RestartFolder.string() + "\" && UDPClient ";
 
+						std::string Command2 = "git add . && git commit -m \"" + CommitLog + "\" && git push -u origin main";
 
-						std::string RestartCommand = "start " + RestartLocation.string();
+						std::string Command = "start cmd /K \"cd \"" + ReposFolder.string() + "\" && " + Command2 + "\"";
 
-						std::string NextCommand = "cd \"" + ReposLocation.string() + "\" && git status && git add . && git commit -m \"" + CommitLog.c_str() + "\" && git push -u origin main ";
-
-						std::string Command = "start cmd /K \"" + NextCommand + "\"";
  						system(Command.c_str());exit(0);
-
 
 						UDPPacks::SendBytePack.Clear(20, 3);
 						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
