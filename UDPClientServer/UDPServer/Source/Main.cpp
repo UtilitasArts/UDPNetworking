@@ -66,7 +66,7 @@ void UpdateServer() {
 
 
 
-	exit(0);
+	//exit(0);
 
 
 
