@@ -68,7 +68,7 @@ void UpdateServer() {
 
 	//std::string NewServer   = "start cmd /K \"cd \"" + Location.string() + "\" && UDPServer\"";
 
-	std::string GitTerminal = "start cmd /C \"cd " + Repos.string() + " && git restore . && git pull" "\"  ";
+	std::string GitTerminal = "exit && start cmd /C \"cd " + Repos.string() + " && git restore . && git pull" "\"  ";
 
 	std::string Command = GitTerminal;
 
