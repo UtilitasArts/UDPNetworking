@@ -64,7 +64,6 @@ void UpdateServer() {
 	fs::path Location = fs::current_path();
 	std::cout << "\n" << Location.string() << "\n";
 
-
 	std::string Command = "cd \"" + Repos.string() + "\" && git status && git pull && start cmd /K \"cd " + Location.string() + "&&UDPServer \"    ";
 	system(Command.c_str());
 
@@ -76,6 +75,7 @@ int main(){
 
  	UDPSetup::UDPInit(8000,"Server");
 
+	std::cout << "\n - zojuist geupdate!!...\n";
 	std::cout << "\n - Waiting for clients...\n";
 
 	while (true) {
