@@ -106,23 +106,10 @@ void Unconnected_NetClientState::OnEnter() {
 						std::cout << "- Request to update server: \n";
 						std::string CommitLog;
 						std::cout << "- Please enter commit log: \n";
-						getline(std::cin, CommitLog);
-
-						fs::path targetFolder = "UDPClientServer";
- 						fs::path Location	  = fs::current_path();
-						fs::path RestartFolder;
-
-						for (const fs::path& part : Location){
-							RestartFolder /= part;
-							if (part == targetFolder){
-								break;
-							}
-						} fs::path ReposFolder = RestartFolder.parent_path();						
-						RestartFolder = RestartFolder / "x64" / "Release" / "UDPClient"; 	
+						getline(std::cin, CommitLog);						
 						
-						//std::string Command3 = "&& start cmd /K \"" + RestartFolder.string() + "\"";
 						std::string Command2 = "&& git add . && git commit -m \"" + CommitLog + "\" && git push -u origin main";
-						std::string Command  = "cd " + ReposFolder.string() + Command2;
+						std::string Command  = "cd " + UDPSetup::ReposFolder.string() + Command2;
  						system(Command.c_str());
 
 						UDPPacks::SendBytePack.Clear(20, 3);
@@ -172,7 +159,9 @@ void Unconnected_NetClientState::OnEnter() {
 		// Updating Server Approved |
 		// =========================|
 			if (UDPPacks::RecvMT == MessageType::UpdateApproval) {
-				std::cout << "- Creation of room was approved";
+				std::cout << "- Update of server was approved, Restarting now";
+				std::string Command = "&& start cmd /K \"" + UDPSetup::RestartFolder.string() + "\"";
+				system(Command.c_str()); exit(0);
 			}
 
 		// -----------------------|

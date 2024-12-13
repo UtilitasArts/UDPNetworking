@@ -7,9 +7,12 @@
 #include <cassert>
 #include <winsock2.h>
 #include <WS2tcpip.h>
+#include <filesystem>
 #include "BytePacker.h"
 #pragma comment( lib, "wsock32.lib" )
 #pragma comment( lib, "Ws2_32.lib" )
+
+namespace fs = std::filesystem;
 
 
 enum class MessageType : uint8_t {
@@ -61,9 +64,24 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 
  namespace UDPSetup {
 
-	inline std::string  MyName;
-	inline WSADATA     WSAData;
-	inline SOCKET    UDPSocket;
+	inline std::string     MyName;
+	inline WSADATA        WSAData;
+	inline SOCKET       UDPSocket;
+	inline fs::path RestartFolder;
+	inline fs::path   ReposFolder;
+
+	inline void InstallFolders() {
+		fs::path targetFolder = "UDPClientServer";
+		fs::path Location = fs::current_path();	
+
+		for (const fs::path& part : Location) {
+			RestartFolder /= part;
+			if (part == targetFolder) {
+				break;
+			}
+		} ReposFolder = RestartFolder.parent_path();
+		RestartFolder = RestartFolder / "x64" / "Release" / "UDPClient";
+	}
 
 	inline void WelcomeMessage(std::string name = "") {
 
@@ -128,7 +146,7 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 		}
 	}
 
-	inline void UDPInit(uint16_t port = 0, std::string name = "") { WelcomeMessage(name); InitWinsock(); OpenUDPSocket(); BindSocket(port); }
+	inline void UDPInit(uint16_t port = 0, std::string name = "") { InstallFolders(); WelcomeMessage(name); InitWinsock(); OpenUDPSocket(); BindSocket(port); }
 }
 
 struct AdressCtr
