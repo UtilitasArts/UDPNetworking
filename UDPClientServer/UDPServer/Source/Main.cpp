@@ -111,7 +111,7 @@ int main(){
 
  	UDPSetup::UDPInit(8000,"Server");
 
-	std::cout << "\n - Waiting Gangsters...\n";
+	std::cout << "\n - New Test...\n";
 
 	while (true) {
 
