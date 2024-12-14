@@ -6,38 +6,6 @@ namespace fs = std::filesystem;
 
 std::vector<SessionStateMachine*> Sessions;
 
-
-namespace CMD {
-
-	template <typename T, typename... Args>
-	std::string MultiCMD(T first, Args&... rest)
-	{
-		std::string CombinedCMD = first;
-		((CombinedCMD += "&&" + rest), ...);
-		return CombinedCMD;		
-	}
-
-	std::string Command(std::string command, std::string vars = "")
-	{
-		return command + vars;
-	}
-
-	std::string Terminal(std::string command, std::string vars = "/K")
-	{
-		return "start cmd " + vars + "\"" + command + "\"";
-	}
-
-	std::string SetPath(std::filesystem::path path) {
-		return "cd \"" + path.string() + "\"";
-	}
-
-	std::string SetString(std::string string) {
-		return "\"" + string + "\"";
-	}
-}
-
-
-
 void ConnectRequest(){
 
 	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
@@ -106,6 +74,35 @@ void UpdateServer() {
 }
 
 
+namespace CMD {
+
+	template <typename T, typename... Args>
+	std::string MultiCMD(T first, Args&... rest)
+	{
+		std::string CombinedCMD = first;
+		((CombinedCMD += "&&" + rest), ...);
+		return CombinedCMD;
+	}
+
+	std::string Command(std::string command, std::string vars = "")
+	{
+		return command + vars;
+	}
+
+	std::string Terminal(std::string command, std::string vars = "/K")
+	{
+		return "start cmd " + vars + " \"" + command + "\"";
+	}
+
+	std::string SetPath(std::filesystem::path path) {
+		return "cd \"" + path.string() + "\"";
+	}
+
+	std::string SetString(std::string string) {
+		return "\"" + string + "\"";
+	}
+}
+
 int main(){
 
 
@@ -126,8 +123,8 @@ int main(){
 	std::string GitCommit		= CMD::Command("git commit -m", CMD::SetString("Test"));
 	std::string GitPush			= CMD::Command("git push -u origin main");
 
-	std::string GitCommands		= CMD::MultiCMD(GitStatus,GitAdd,GitCommit,GitPush, RestartTerminal);
-	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands));
+	std::string GitCommands		= CMD::MultiCMD(GitStatus,GitAdd,GitCommit,GitPush);
+	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands,RestartTerminal));
 
 	std::string FinalCommand  = GitTerminal;
 
