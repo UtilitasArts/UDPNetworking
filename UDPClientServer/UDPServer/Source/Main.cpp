@@ -97,6 +97,8 @@ int main(){
 		std::string command = "UpdateClient.bat \"" + CommitMessage + "\"";
 		system(command.c_str());
 
+
+
  
 //    	UDPSetup::UDPInit(8000,"Server");
 //  
