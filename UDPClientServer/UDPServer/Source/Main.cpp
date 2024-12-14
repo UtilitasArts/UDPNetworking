@@ -70,13 +70,12 @@ void UpdateServer() {
 	std::string RestartSoftware = CMD::Command(UDPSetup::RestartFolder.string() + "/UDPServer.exe");
 	std::string RestartTerminal = CMD::Terminal(RestartSoftware);
 
-	std::string ReposPath = CMD::SetPath(UDPSetup::ReposFolder);
-	std::string GitStatus = CMD::Command("git status");
-	std::string GitAdd    = CMD::Command("git add .");
-	std::string GitCommit = CMD::Command("git commit -m", CMD::SetString("Test"));
-	std::string GitPush   = CMD::Command("git push -u origin main");
+	std::string ReposPath   = CMD::SetPath(UDPSetup::ReposFolder);
+	std::string GitStatus   = CMD::Command("git status");
+	std::string GitRestore  = CMD::Command("git restore .");
+	std::string GitPull		= CMD::Command("git pull");	
 
-	std::string GitCommands = CMD::MultiCMD(GitStatus, GitAdd, GitCommit, GitPush);
+	std::string GitCommands = CMD::MultiCMD(GitStatus, GitRestore, GitPull);
 	std::string GitTerminal = CMD::Terminal(CMD::MultiCMD(ReposPath, GitCommands, RestartTerminal, Exit));
 
 	std::string FinalCommand = GitTerminal;
