@@ -25,11 +25,11 @@ namespace CMD {
 
 	std::string Terminal(std::string command, std::string vars = "/K")
 	{
-		return " start cmd " + vars + "\"" + command + "\" ";
+		return "start cmd " + vars + "\"" + command + "\"";
 	}
 
 	std::string SetPath(std::filesystem::path path) {
-		return "cd " + path.string();
+		return "cd \"" + path.string() + "\"";
 	}
 
 	std::string SetString(std::string string) {
