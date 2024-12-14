@@ -125,13 +125,11 @@ int main(){
 	std::string GitAdd			= CMD::Command("git add .");
 	std::string GitCommit		= CMD::Command("git commit -m", CMD::SetString("Test"));
 	std::string GitPush			= CMD::Command("git push -u origin main");
-	std::string GitCommands		= CMD::MultiCMD(GitStatus,GitAdd,GitCommit,GitPush);
-	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands,RestartTerminal));
+
+	std::string GitCommands		= CMD::MultiCMD(GitStatus,GitAdd,GitCommit,GitPush, RestartTerminal);
+	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands));
 
 	std::string FinalCommand  = GitTerminal;
-
-	FinalCommand.pop_back();
-	FinalCommand.pop_back();
 
 	system(FinalCommand.c_str());
 
