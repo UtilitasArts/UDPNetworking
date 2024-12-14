@@ -1,8 +1,6 @@
 #pragma once
-#include <filesystem>
 #include <iostream>
 #include "SessionStateMachine.h"
-namespace fs = std::filesystem;
 
 std::vector<SessionStateMachine*> Sessions;
 
@@ -64,96 +62,50 @@ void UpdateServer() {
 	closesocket(UDPSetup::UDPSocket);
 	WSACleanup();
 
-	std::string Command2 = "&& git pull && cd \"" + UDPSetup::RestartFolder.string() + "\" && start cmd /K \"UDPServer.exe\"";
-	std::string Command  = "start cmd /C \" cd \"" + UDPSetup::ReposFolder.string()   + "\"" + Command2 + "\"";
+	std::string Exit = CMD::Command("exit");
+	std::string RestartSoftware = CMD::Command(UDPSetup::RestartFolder.string() + "/UDPServer.exe");
+	std::string RestartTerminal = CMD::Terminal(RestartSoftware);
 
-	system(Command.c_str());
+	std::string ReposPath = CMD::SetPath(UDPSetup::ReposFolder);
+	std::string GitStatus = CMD::Command("git status");
+	std::string GitAdd = CMD::Command("git add .");
+	std::string GitCommit = CMD::Command("git commit -m", CMD::SetString("Test"));
+	std::string GitPush = CMD::Command("git push -u origin main");
 
+	std::string GitCommands = CMD::MultiCMD(GitStatus, GitAdd, GitCommit, GitPush);
+	std::string GitTerminal = CMD::Terminal(CMD::MultiCMD(ReposPath, GitCommands, RestartTerminal, Exit));
+
+	std::string FinalCommand = GitTerminal;
+
+	system(FinalCommand.c_str());
 	std::cout << "- Update of server was approved, Restarting now";
 	exit(0);
 }
 
-
-namespace CMD {
-
-	template <typename T, typename... Args>
-	std::string MultiCMD(T first, Args&... rest)
-	{
-		std::string CombinedCMD = first;
-		((CombinedCMD += " && " + rest), ...);
-		return CombinedCMD;
-	}
-
-	std::string Command(std::string command, std::string vars = "")
-	{
-		return command + vars;
-	}
-
-	std::string Terminal(std::string command, std::string vars = "/K")
-	{
-		return "start cmd " + vars + "\"" + command + "\"";
-	}
-
-	std::string SetPath(std::filesystem::path path) {
-		return "cd \"" + path.string() + "\"";
-	}
-
-	std::string SetString(std::string string) {
-		return "\"" + string + "\"";
-	}
-}
-
 int main(){
 
-
   	UDPSetup::UDPInit(8000,"Server");
+	std::cout << "\n - Waiting for Clients";
 
-	fs::path Dir = "C:/";
-	Dir = Dir / "users" / "Utili";
+	while (true) {
 
-	std::string Exit			= CMD::Command("exit");
+		UDPPacks::RecvBytes(true);
 
-	std::string RestartSoftware = CMD::Command(UDPSetup::RestartFolder.string() + "/UDPServer.exe");
-	std::string RestartTerminal = CMD::Terminal(RestartSoftware);
-
-	std::string ReposPath		= CMD::SetPath(UDPSetup::ReposFolder);
-	std::string GitStatus		= CMD::Command("git status");
-	std::string GitAdd			= CMD::Command("git add .");
-	std::string GitCommit		= CMD::Command("git commit -m", CMD::SetString("Test"));
-	std::string GitPush			= CMD::Command("git push -u origin main");
-
-	std::string GitCommands		= CMD::MultiCMD(GitStatus,GitAdd,GitCommit,GitPush);
-	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands,RestartTerminal,Exit));
-
-	std::string FinalCommand  = GitTerminal;
-
-	system(FinalCommand.c_str()); exit(0);
-
-	
-
-
-// 
-// 	std::cout << "\n - Waiting for Clients";
-// 
-// 	while (true) {
-// 
-// 		UDPPacks::RecvBytes(true);
-// 
-// 		switch (UDPPacks::RecvMT) {
-// 		case MessageType::ConnectRequest:
-// 			ConnectRequest();
-// 			break;
-// 		case MessageType::CreateRequest:
-// 			CreateSession();
-// 			break;
-// 		case MessageType::JoinRequest:
-// 			JoinSession();
-// 			break;
-// 		case MessageType::UpdateRequest:
-// 			UpdateServer();
-// 			break;
-// 		}
-// 	}
+		switch (UDPPacks::RecvMT) {
+		case MessageType::ConnectRequest:
+			ConnectRequest();
+			break;
+		case MessageType::CreateRequest:
+			CreateSession();
+			break;
+		case MessageType::JoinRequest:
+			JoinSession();
+			break;
+		case MessageType::UpdateRequest:
+			UpdateServer();
+			break;
+		}
+	}
 
 
 	return 0;

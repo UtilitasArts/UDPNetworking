@@ -62,6 +62,35 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 	}
 }
 
+namespace CMD {
+
+	template <typename T, typename... Args>
+	inline std::string MultiCMD(T first, Args&... rest)
+	{
+		std::string CombinedCMD = first;
+		((CombinedCMD += " && " + rest), ...);
+		return CombinedCMD;
+	}
+
+	inline std::string Command(std::string command, std::string vars = "")
+	{
+		return command + vars;
+	}
+
+	inline std::string Terminal(std::string command, std::string vars = "/K")
+	{
+		return "start cmd " + vars + "\"" + command + "\"";
+	}
+
+	inline std::string SetPath(std::filesystem::path path) {
+		return "cd \"" + path.string() + "\"";
+	}
+
+	inline std::string SetString(std::string string) {
+		return "\"" + string + "\"";
+	}
+}
+
  namespace UDPSetup {
 
 	inline std::string     MyName;
