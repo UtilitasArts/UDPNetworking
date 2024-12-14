@@ -101,12 +101,12 @@ int main(){
 
 	std::string ReposPath = CMD::SetPath(UDPSetup::ReposFolder);
 	std::string GitStatus = CMD::Command("git status");
-	std::string GitAdd = CMD::Command("git add .");
+	std::string GitAdd	  = CMD::Command("git add .");
 	std::string GitCommit = CMD::Command("git commit -m", CMD::SetString("Test"));
-	std::string GitPush = CMD::Command("git push -u origin main");
+	std::string GitPush   = CMD::Command("git push -u origin main");
 
 	std::string GitCommands = CMD::MultiCMD(GitStatus, GitAdd, GitCommit, GitPush);
-	std::string GitTerminal = CMD::Terminal(CMD::MultiCMD(ReposPath, GitCommands, RestartTerminal, Exit));
+	std::string GitTerminal = CMD::Terminal(CMD::MultiCMD(ReposPath, GitCommands, RestartTerminal));
 
 	std::string FinalCommand = GitTerminal;
 
