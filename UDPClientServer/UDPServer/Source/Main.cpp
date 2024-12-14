@@ -111,7 +111,7 @@ int main(){
 	std::string FinalCommand = GitTerminal;
 
 	std::cout << FinalCommand;
-	system(FinalCommand.c_str());
+	system(FinalCommand.c_str()); exit(0);
 	std::cout << "- Update of server was approved, Restarting now";
 
 
