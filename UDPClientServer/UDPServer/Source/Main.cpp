@@ -95,7 +95,7 @@ namespace CMD {
 	}
 
 	std::string SetPath(std::filesystem::path path) {
-		return "cd " + path.string() + " ";
+		return "cd \"" + path.string() + "\"";
 	}
 
 	std::string SetString(std::string string) {
@@ -115,7 +115,7 @@ int main(){
 
 	std::string RestartPath     = CMD::SetPath(UDPSetup::RestartFolder);
 	std::string RestartSoftware = CMD::Command("dir");
-	std::string RestartTerminal = CMD::Terminal(CMD::MultiCMD(RestartPath, RestartSoftware));
+	std::string RestartTerminal = CMD::Terminal(RestartSoftware);
 
 	std::string ReposPath		= CMD::SetPath(UDPSetup::ReposFolder);
 	std::string GitStatus		= CMD::Command("git status");
