@@ -29,7 +29,7 @@ namespace CMD {
 	}
 
 	std::string SetPath(std::filesystem::path path) {
-		return "cd \"" + path.string() + "\"";
+		return "cd " + path.string();
 	}
 
 	std::string SetString(std::string string) {
@@ -119,7 +119,7 @@ int main(){
 
 	std::string RestartPath     = CMD::SetPath(UDPSetup::RestartFolder);
 	std::string RestartSoftware = CMD::Command("dir");
-	std::string RestartTerminal = CMD::Terminal(CMD::Terminal(CMD::MultiCMD(RestartPath,RestartSoftware)));
+	std::string RestartTerminal = CMD::Terminal(CMD::MultiCMD(RestartPath,RestartSoftware));
 
 	std::string ReposPath		= CMD::SetPath(UDPSetup::ReposFolder);
 	std::string GitStatus		= CMD::Command("git status");
@@ -129,7 +129,9 @@ int main(){
 	std::string GitCommands		= CMD::MultiCMD(GitStatus,GitAdd,GitCommit,GitPush);
 	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands,RestartTerminal));
 
-	std::string FinalCommand	= CMD::MultiCMD(GitTerminal);
+	std::string FinalCommand  = CMD::MultiCMD(GitTerminal);
+
+	std::cout << FinalCommand;
 
 
 	system(FinalCommand.c_str());
