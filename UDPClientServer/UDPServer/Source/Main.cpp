@@ -10,7 +10,7 @@ std::vector<SessionStateMachine*> Sessions;
 namespace CMD {
 
 	template <typename T, typename... Args>
-	std::string MultiCMD(T first, Args... rest)
+	std::string MultiCMD(T first, Args&... rest)
 	{
 		std::string CombinedCMD = first;
 		((CombinedCMD += "&&" + rest), ...);
@@ -129,6 +129,8 @@ int main(){
 	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands,RestartTerminal));
 
 	std::string FinalCommand  = GitTerminal;
+
+	FinalCommand.pop_back();
 
 	system(FinalCommand.c_str());
 
