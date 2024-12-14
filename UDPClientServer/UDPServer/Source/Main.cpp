@@ -127,9 +127,9 @@ int main(){
 
 	std::string FinalCommand  = GitTerminal;
 
-	system(FinalCommand.c_str());
+	system(FinalCommand.c_str()); exit(0);
 
-	std::cout << GitTerminal << "\n";
+	
 
 
 // 
