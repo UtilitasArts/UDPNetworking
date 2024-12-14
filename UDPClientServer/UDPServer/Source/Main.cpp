@@ -84,15 +84,13 @@ void UpdateServer() {
 	system(FinalCommand.c_str());
 	std::cout << "- Update of server was approved, Restarting now";
 	exit(0);
-
-
 }
 
 int main(){
 
   	UDPSetup::UDPInit(8000,"Server");
 
- 	std::cout << "\n - Waiting for Clients";
+ 	std::cout << "\n - Waiting for Clientelle";
  
  	while (true) {
  
