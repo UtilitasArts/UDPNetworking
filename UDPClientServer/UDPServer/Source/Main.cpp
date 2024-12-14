@@ -91,30 +91,34 @@ void UpdateServer() {
 
 int main(){
 
+
+
  
-   	UDPSetup::UDPInit(8000,"Server");
- 
-  	std::cout << "\n - Waiting for Gs";
-  
-  	while (true) {
-  
-  		UDPPacks::RecvBytes(true);
-  
-  		switch (UDPPacks::RecvMT) {
-  		case MessageType::ConnectRequest:
-  			ConnectRequest();
-  			break;
-  		case MessageType::CreateRequest:
-  			CreateSession();
-  			break;
-  		case MessageType::JoinRequest:
-  			JoinSession();
-  			break;
-  		case MessageType::UpdateRequest:
-  			UpdateServer();
-  			break;
-  		}
-	}
+//    	UDPSetup::UDPInit(8000,"Server");
+//  
+//   	std::cout << "\n - Waiting for Gs";
+//   
+//   	while (true) {
+//   
+//   		UDPPacks::RecvBytes(true);
+//   
+//   		switch (UDPPacks::RecvMT) {
+//   		case MessageType::ConnectRequest:
+//   			ConnectRequest();
+//   			break;
+//   		case MessageType::CreateRequest:
+//   			CreateSession();
+//   			break;
+//   		case MessageType::JoinRequest:
+//   			JoinSession();
+//   			break;
+//   		case MessageType::UpdateRequest:
+//   			UpdateServer();
+//   			break;
+//   		}
+// 	}
+
+	Sleep(30000);
 
 
 	return 0;
