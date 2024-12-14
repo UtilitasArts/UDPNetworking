@@ -111,7 +111,7 @@ int main(){
 	fs::path Dir = "C:/";
 	Dir = Dir / "users" / "Utili";
 
-	std::string Exit		 = CMD::Command("exit");
+	std::string Exit			= CMD::Command("exit");
 
 	std::string RestartSoftware = CMD::Command(UDPSetup::RestartFolder.string() + "/UDPServer.exe");
 	std::string RestartTerminal = CMD::Terminal(RestartSoftware);
