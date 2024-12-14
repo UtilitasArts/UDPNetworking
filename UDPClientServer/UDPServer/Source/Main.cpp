@@ -55,9 +55,42 @@ void JoinSession() {
 
 void UpdateServer() {
 	std::cout << "- Request to update server: \n";	
+
+	std::string Message = "OK werkt";
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
+	UDPPacks::SendBytePack.AddBytes(Message);
+
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+
+	closesocket(UDPSetup::UDPSocket);
+	WSACleanup();
+
+	std::string Exit = CMD::Command("exit");
+	std::string RestartSoftware = CMD::Command(UDPSetup::RestartFolder.string() + "/UDPServer.exe");
+	std::string RestartTerminal = CMD::Terminal(RestartSoftware);
+
+	std::string ReposPath = CMD::SetPath(UDPSetup::ReposFolder);
+	std::string GitStatus = CMD::Command("git status");
+	std::string GitAdd    = CMD::Command("git add .");
+	std::string GitCommit = CMD::Command("git commit -m", CMD::SetString("Test"));
+	std::string GitPush   = CMD::Command("git push -u origin main");
+
+	std::string GitCommands = CMD::MultiCMD(GitStatus, GitAdd, GitCommit, GitPush);
+	std::string GitTerminal = CMD::Terminal(CMD::MultiCMD(ReposPath, GitCommands, RestartTerminal, Exit));
+
+	std::string FinalCommand = GitTerminal;
+
+	std::cout << FinalCommand;
+	system(FinalCommand.c_str());
+	std::cout << "- Update of server was approved, Restarting now";
+	exit(0);
+
+}
+
+int main(){
+
+  	UDPSetup::UDPInit(8000,"Server");
 
 	closesocket(UDPSetup::UDPSocket);
 	WSACleanup();
@@ -77,36 +110,33 @@ void UpdateServer() {
 
 	std::string FinalCommand = GitTerminal;
 
+	std::cout << FinalCommand;
 	system(FinalCommand.c_str());
 	std::cout << "- Update of server was approved, Restarting now";
-	exit(0);
 
-}
 
-int main(){
-
-  	UDPSetup::UDPInit(8000,"Server");
-	std::cout << "\n - Waiting for Clients";
-
-	while (true) {
-
-		UDPPacks::RecvBytes(true);
-
-		switch (UDPPacks::RecvMT) {
-		case MessageType::ConnectRequest:
-			ConnectRequest();
-			break;
-		case MessageType::CreateRequest:
-			CreateSession();
-			break;
-		case MessageType::JoinRequest:
-			JoinSession();
-			break;
-		case MessageType::UpdateRequest:
-			UpdateServer();
-			break;
-		}
-	}
+// 
+// 	std::cout << "\n - Waiting for Clients";
+// 
+// 	while (true) {
+// 
+// 		UDPPacks::RecvBytes(true);
+// 
+// 		switch (UDPPacks::RecvMT) {
+// 		case MessageType::ConnectRequest:
+// 			ConnectRequest();
+// 			break;
+// 		case MessageType::CreateRequest:
+// 			CreateSession();
+// 			break;
+// 		case MessageType::JoinRequest:
+// 			JoinSession();
+// 			break;
+// 		case MessageType::UpdateRequest:
+// 			UpdateServer();
+// 			break;
+// 		}
+// 	}
 
 
 	return 0;

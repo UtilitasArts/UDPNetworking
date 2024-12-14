@@ -115,9 +115,8 @@ void Unconnected_NetClientState::OnEnter() {
 						UDPPacks::SendBytePack.Clear(20, 3);
 						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
 						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
-
-
  						break;					
+
 					}
 				// ----------------|
 				// Create Session  |
@@ -159,7 +158,12 @@ void Unconnected_NetClientState::OnEnter() {
 		// Updating Server Approved |
 		// =========================|
 			if (UDPPacks::RecvMT == MessageType::UpdateApproval) {
+
 				std::cout << "- Update of server was approved, Restarting now";
+				std::string message;
+				UDPPacks::RecvBytePack.ReturnBytes(message, 1);
+				std::cout << message;
+
 				std::string Command = "start cmd /K \"" + UDPSetup::RestartFolder.string() +"/UDPClient" + "\"";
 				system(Command.c_str()); exit(0);
 			}
