@@ -80,6 +80,7 @@ void UpdateServer() {
 	system(FinalCommand.c_str());
 	std::cout << "- Update of server was approved, Restarting now";
 	exit(0);
+
 }
 
 int main(){
