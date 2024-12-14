@@ -129,7 +129,7 @@ int main(){
 	std::string GitCommands		= CMD::MultiCMD(GitStatus,GitAdd,GitCommit,GitPush);
 	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands,RestartTerminal));
 
-	std::string FinalCommand  = CMD::MultiCMD(GitTerminal);
+	std::string FinalCommand  = GitTerminal;
 
 	std::cout << GitTerminal;
 
