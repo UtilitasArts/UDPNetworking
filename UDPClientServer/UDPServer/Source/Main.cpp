@@ -120,8 +120,9 @@ int main(){
 	std::string GitAdd		 = CMD::Command("git add .");
 	std::string GitCommit	 = CMD::Command("git commit -m", CMD::SetString("Test"));
 	std::string GitPush		 = CMD::Command("git push -u origin main");
+	std::string Exit		 = CMD::Command("exit");
 
-	std::string TestCommand  = CMD::Terminal(CMD::MultiCMD(PathCommand,GitStatus,GitAdd,GitCommit,GitPush));
+	std::string TestCommand  = CMD::MultiCMD(CMD::Terminal(CMD::MultiCMD(PathCommand, GitStatus, GitAdd, GitCommit, GitPush, Exit)), Exit);
 
 
 
