@@ -64,7 +64,7 @@ void UpdateServer() {
 	closesocket(UDPSetup::UDPSocket);
 	WSACleanup();
 
-	std::string Command2 = "&& git pull && cls && cd \"" + UDPSetup::RestartFolder.string() + "\" && start cmd /K \"UDPServer.exe\" && exit";
+	std::string Command2 = "&& git pull && cd \"" + UDPSetup::RestartFolder.string() + "\" && start cmd /K \"UDPServer.exe\" && exit";
 	std::string Command  = "start /MIN cmd /K \"cd \""   + UDPSetup::ReposFolder.string()   + "\"" + Command2 + "\"";
 	system(Command.c_str());
 
