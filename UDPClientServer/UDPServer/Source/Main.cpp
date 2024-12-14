@@ -91,7 +91,7 @@ namespace CMD {
 
 	std::string Terminal(std::string command, std::string vars = "/K")
 	{
-		return "start cmd " + vars + " \"" + command + "\"";
+		return "start cmd " + vars + "\"" + command + "\"";
 	}
 
 	std::string SetPath(std::filesystem::path path) {
@@ -124,7 +124,7 @@ int main(){
 	std::string GitPush			= CMD::Command("git push -u origin main");
 
 	std::string GitCommands		= CMD::MultiCMD(GitStatus,GitAdd,GitCommit,GitPush);
-	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands) + " && " + CMD::Terminal(RestartTerminal));
+	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands,RestartTerminal));
 
 	std::string FinalCommand  = GitTerminal;
 
