@@ -68,7 +68,8 @@ void UpdateServer() {
 
 	std::string Exit = CMD::Command("exit");
 	std::string RestartSoftware = CMD::Command(UDPSetup::RestartFolder.string() + "/UDPServer.exe");
-	std::string RestartTerminal = CMD::Terminal(RestartSoftware);
+	std::string RestartPath		= CMD::SetPath(UDPSetup::RestartFolder);
+	std::string RestartTerminal = CMD::Terminal(CMD::MultiCMD(RestartPath,RestartSoftware));
 
 	std::string ReposPath   = CMD::SetPath(UDPSetup::ReposFolder);
 	std::string GitStatus   = CMD::Command("git status");
