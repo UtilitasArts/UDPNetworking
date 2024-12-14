@@ -114,7 +114,7 @@ int main(){
 	std::string Exit		 = CMD::Command("exit");
 
 	std::string RestartPath     = CMD::SetPath(UDPSetup::RestartFolder);
-	std::string RestartSoftware = CMD::Command("\"cls && dir \"");
+	std::string RestartSoftware = CMD::Command("\"cls && dir ");
 	std::string RestartTerminal = CMD::Terminal(RestartSoftware);
 
 	std::string ReposPath		= CMD::SetPath(UDPSetup::ReposFolder);
