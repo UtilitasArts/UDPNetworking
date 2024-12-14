@@ -118,8 +118,8 @@ int main(){
 	std::string Exit		 = CMD::Command("exit");
 
 	std::string RestartPath     = CMD::SetPath(UDPSetup::RestartFolder);
-	std::string RestartSoftware = CMD::Command("start UDPServer.exe");
-	std::string RestartTerminal = CMD::Terminal(CMD::MultiCMD(RestartPath));
+	std::string RestartSoftware = CMD::Command("UDPServer.exe");
+	std::string RestartTerminal = CMD::Terminal(CMD::MultiCMD(RestartPath, RestartSoftware));
 
 	std::string ReposPath    = CMD::SetPath(UDPSetup::ReposFolder);
 	std::string GitStatus    = CMD::Command("git status");
