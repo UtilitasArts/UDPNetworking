@@ -6,6 +6,39 @@ namespace fs = std::filesystem;
 
 std::vector<SessionStateMachine*> Sessions;
 
+
+namespace CMD {
+
+	template <typename T, typename... Args>
+	std::string MultiCMD(T first, Args&... rest)
+	{
+		std::string CombinedCMD = first;
+
+		((CombinedCMD += " && " + rest), ...);
+		return CombinedCMD;		
+	}
+
+	std::string Command(std::string command, std::string vars = "")
+	{
+		return command + vars;
+	}
+
+	std::string Terminal(std::string command, std::string vars = "/K")
+	{
+		return " start cmd " + vars + "\"" + command + "\" ";
+	}
+
+	std::string SetPath(std::filesystem::path path) {
+		return "cd \"" + path.string() + "\"";
+	}
+
+	std::string SetString(std::string string) {
+		return "\"" + string + "\"";
+	}
+}
+
+
+
 void ConnectRequest(){
 
 	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
@@ -67,8 +100,6 @@ void UpdateServer() {
 	std::string Command2 = "&& git pull && cd \"" + UDPSetup::RestartFolder.string() + "\" && start cmd /K \"UDPServer.exe\"";
 	std::string Command  = "start cmd /C \" cd \"" + UDPSetup::ReposFolder.string()   + "\"" + Command2 + "\"";
 
-
-
 	system(Command.c_str());
 
 	std::cout << "- Update of server was approved, Restarting now";
@@ -78,29 +109,47 @@ void UpdateServer() {
 
 int main(){
 
- 	UDPSetup::UDPInit(8000,"Server");
 
-	std::cout << "\n - Waiting for Clients";
+  	UDPSetup::UDPInit(8000,"Server");
 
-	while (true) {
+	fs::path Dir = "C:/";
+	Dir = Dir / "users" / "Utili";
 
-		UDPPacks::RecvBytes(true);
+	std::string PathCommand  = CMD::SetPath(UDPSetup::ReposFolder);
+	std::string GitStatus    = CMD::Command("git status");
+	std::string GitAdd		 = CMD::Command("git add .");
+	std::string GitCommit	 = CMD::Command("git commit -m", CMD::SetString("Test"));
+	std::string GitPush		 = CMD::Command("git push -u origin main");
 
-		switch (UDPPacks::RecvMT) {
-		case MessageType::ConnectRequest:
-			ConnectRequest();
-			break;
-		case MessageType::CreateRequest:
-			CreateSession();
-			break;
-		case MessageType::JoinRequest:
-			JoinSession();
-			break;
-		case MessageType::UpdateRequest:
-			UpdateServer();
-			break;
-		}
-	}
+	std::string TestCommand  = CMD::Terminal(CMD::MultiCMD(PathCommand,GitStatus,GitAdd,GitCommit,GitPush));
+
+
+
+	system(TestCommand.c_str());
+
+
+// 
+// 	std::cout << "\n - Waiting for Clients";
+// 
+// 	while (true) {
+// 
+// 		UDPPacks::RecvBytes(true);
+// 
+// 		switch (UDPPacks::RecvMT) {
+// 		case MessageType::ConnectRequest:
+// 			ConnectRequest();
+// 			break;
+// 		case MessageType::CreateRequest:
+// 			CreateSession();
+// 			break;
+// 		case MessageType::JoinRequest:
+// 			JoinSession();
+// 			break;
+// 		case MessageType::UpdateRequest:
+// 			UpdateServer();
+// 			break;
+// 		}
+// 	}
 
 
 	return 0;
