@@ -119,7 +119,7 @@ int main(){
 
 	std::string RestartPath     = CMD::SetPath(UDPSetup::RestartFolder);
 	std::string RestartSoftware = CMD::Command("dir");
-	std::string RestartTerminal = CMD::Terminal(CMD::MultiCMD(RestartPath));
+	std::string RestartTerminal = CMD::Terminal(CMD::MultiCMD(RestartPath),RestartSoftware);
 
 	std::string ReposPath		= CMD::SetPath(UDPSetup::ReposFolder);
 	std::string GitStatus		= CMD::Command("git status");
@@ -131,7 +131,7 @@ int main(){
 
 	std::string FinalCommand  = CMD::MultiCMD(GitTerminal);
 
-	std::cout << FinalCommand;
+	std::cout << GitTerminal;
 
 
 	system(FinalCommand.c_str());
