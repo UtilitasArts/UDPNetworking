@@ -10,11 +10,10 @@ std::vector<SessionStateMachine*> Sessions;
 namespace CMD {
 
 	template <typename T, typename... Args>
-	std::string MultiCMD(T first, Args&... rest)
+	std::string MultiCMD(T first, Args... rest)
 	{
 		std::string CombinedCMD = first;
-
-		((CombinedCMD += " && " + rest), ...);
+		((CombinedCMD += "&&" + rest), ...);
 		return CombinedCMD;		
 	}
 
@@ -25,7 +24,7 @@ namespace CMD {
 
 	std::string Terminal(std::string command, std::string vars = "/K")
 	{
-		return "start cmd " + vars + " " + command;
+		return "start cmd " + vars + "\"" + command + "\"";
 	}
 
 	std::string SetPath(std::filesystem::path path) {
