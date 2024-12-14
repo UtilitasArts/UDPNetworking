@@ -2,6 +2,8 @@
 #include <iostream>
 #include "SessionStateMachine.h"
 
+namespace fs = std::filesystem;
+
 std::vector<SessionStateMachine*> Sessions;
 
 void ConnectRequest(){
@@ -76,10 +78,10 @@ void UpdateServer() {
 	std::string GitRestore  = CMD::Command("git restore .");
 	std::string GitPull		= CMD::Command("git pull");	
 
-	std::string GitCommands = CMD::MultiCMD(GitPull);
-	std::string GitTerminal = CMD::Terminal(CMD::MultiCMD(ReposPath, GitCommands, RestartTerminal, Exit));
+	std::string GitCommands = CMD::MultiCMD(GitPull,RestartPath, RestartSoftware);
 
-	std::string FinalCommand = GitTerminal;
+
+	std::string FinalCommand = GitCommands;
 
 	std::cout << FinalCommand;
 	system(FinalCommand.c_str());
@@ -89,29 +91,30 @@ void UpdateServer() {
 
 int main(){
 
-  	UDPSetup::UDPInit(8000,"Server");
-
- 	std::cout << "\n - Waiting for Clients";
  
- 	while (true) {
+   	UDPSetup::UDPInit(8000,"Server");
  
- 		UDPPacks::RecvBytes(true);
- 
- 		switch (UDPPacks::RecvMT) {
- 		case MessageType::ConnectRequest:
- 			ConnectRequest();
- 			break;
- 		case MessageType::CreateRequest:
- 			CreateSession();
- 			break;
- 		case MessageType::JoinRequest:
- 			JoinSession();
- 			break;
- 		case MessageType::UpdateRequest:
- 			UpdateServer();
- 			break;
- 		}
- 	}
+  	std::cout << "\n - Waiting for Clients";
+  
+  	while (true) {
+  
+  		UDPPacks::RecvBytes(true);
+  
+  		switch (UDPPacks::RecvMT) {
+  		case MessageType::ConnectRequest:
+  			ConnectRequest();
+  			break;
+  		case MessageType::CreateRequest:
+  			CreateSession();
+  			break;
+  		case MessageType::JoinRequest:
+  			JoinSession();
+  			break;
+  		case MessageType::UpdateRequest:
+  			UpdateServer();
+  			break;
+  		}
+	}
 
 
 	return 0;

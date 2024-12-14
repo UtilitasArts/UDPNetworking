@@ -69,6 +69,7 @@ namespace CMD {
 	{
 		std::string CombinedCMD = first;
 		((CombinedCMD += " && " + rest), ...);
+
 		return CombinedCMD;
 	}
 
