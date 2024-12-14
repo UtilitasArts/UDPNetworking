@@ -131,6 +131,7 @@ int main(){
 	std::string FinalCommand  = GitTerminal;
 
 	FinalCommand.pop_back();
+	FinalCommand.pop_back();
 
 	system(FinalCommand.c_str());
 
