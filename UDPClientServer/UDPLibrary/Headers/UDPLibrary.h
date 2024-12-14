@@ -79,7 +79,7 @@ namespace CMD {
 
 	inline std::string Terminal(std::string command, std::string vars = "/K")
 	{
-		return "start cmd " + vars +  "/C  \"" + command + "\"";
+		return "start cmd " + vars +  "\"" + command + "\"";
 	}
 
 	inline std::string SetPath(std::filesystem::path path) {
