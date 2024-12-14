@@ -69,7 +69,6 @@ void UpdateServer() {
 	system(Command.c_str());
 
 
-
 	std::cout << "- Update of server was approved, Restarting now";
 	exit(0);
 }
