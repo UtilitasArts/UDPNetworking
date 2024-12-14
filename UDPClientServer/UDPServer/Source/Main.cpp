@@ -70,6 +70,7 @@ void UpdateServer() {
 
 	std::cout << "- Update of server was approved, Restarting now";
 
+
 	exit(0);
 }
 
