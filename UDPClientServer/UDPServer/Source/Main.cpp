@@ -75,7 +75,7 @@ void UpdateServer() {
 	std::string GitRestore  = CMD::Command("git restore .");
 	std::string GitPull		= CMD::Command("git pull");	
 
-	std::string GitCommands = CMD::MultiCMD(GitStatus, GitRestore, GitPull);
+	std::string GitCommands = CMD::MultiCMD(GitPull);
 	std::string GitTerminal = CMD::Terminal(CMD::MultiCMD(ReposPath, GitCommands, RestartTerminal, Exit));
 
 	std::string FinalCommand = GitTerminal;
