@@ -123,7 +123,7 @@ int main(){
 	std::string GitPush			= CMD::Command("git push -u origin main");
 
 	std::string GitCommands		= CMD::MultiCMD(GitStatus,GitAdd,GitCommit,GitPush);
-	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands,RestartTerminal));
+	std::string GitTerminal		= CMD::Terminal(CMD::MultiCMD(ReposPath,GitCommands,RestartTerminal,Exit));
 
 	std::string FinalCommand  = GitTerminal;
 
