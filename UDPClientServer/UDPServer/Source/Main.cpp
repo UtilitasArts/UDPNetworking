@@ -25,7 +25,7 @@ namespace CMD {
 
 	std::string Terminal(std::string command, std::string vars = "/K")
 	{
-		return "start cmd " + vars + "\"" + command + "\"";
+		return "start cmd " + vars + " " + command;
 	}
 
 	std::string SetPath(std::filesystem::path path) {
@@ -131,10 +131,9 @@ int main(){
 
 	std::string FinalCommand  = GitTerminal;
 
-	std::cout << GitTerminal << "\n";
-
-
 	system(FinalCommand.c_str());
+
+	std::cout << GitTerminal << "\n";
 
 
 // 
