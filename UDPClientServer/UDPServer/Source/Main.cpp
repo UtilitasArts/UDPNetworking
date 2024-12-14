@@ -96,7 +96,7 @@ int main(){
 	WSACleanup();
 
 	std::string Exit = CMD::Command("exit");
-	std::string RestartSoftware = CMD::Command(UDPSetup::RestartFolder.string() + "/UDPServer.exe");
+	std::string RestartSoftware = CMD::Command(UDPSetup::RestartFolder.string() + "\\UDPServer.exe");
 	std::string RestartTerminal = CMD::Terminal(RestartSoftware);
 
 	std::string ReposPath = CMD::SetPath(UDPSetup::ReposFolder);
