@@ -68,6 +68,7 @@ void UpdateServer() {
 	std::string Command  = "start cmd /K \"cd" + UDPSetup::ReposFolder.string() + Command2 + "\"";
 
 
+
 	system(Command.c_str());
 
 	std::cout << "- Update of server was approved, Restarting now";
