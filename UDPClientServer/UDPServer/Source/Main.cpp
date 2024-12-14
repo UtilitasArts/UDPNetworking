@@ -115,7 +115,7 @@ int main(){
 
 	std::string RestartPath     = CMD::SetPath(UDPSetup::RestartFolder);
 	std::string RestartSoftware = CMD::Command("dir");
-	std::string RestartTerminal = CMD::Terminal(CMD::MultiCMD(RestartSoftware,RestartPath));
+	std::string RestartTerminal = CMD::Terminal(CMD::MultiCMD(RestartSoftware,RestartSoftware));
 
 	std::string ReposPath		= CMD::SetPath(UDPSetup::ReposFolder);
 	std::string GitStatus		= CMD::Command("git status");
