@@ -5,7 +5,7 @@
 SessionStateMachine::SessionStateMachine(std::string session_name, uint8_t session_size) :
 SessionName(session_name),
 SessionSize(session_size),
-JoinedCount(1),
+JoinedCount(0),
 AdressArray( new AdressCtr[session_size]),
 StateArray
 (

@@ -88,7 +88,7 @@ void Unconnected_NetClientState::RecvCnctApproval(){
 			UDPPacks::RecvBytePack.ReturnBytes(JoinedCount,  7 + count);
 			UDPPacks::RecvBytePack.ReturnBytes(SessionState, 8 + count);
 
-			printf("|Room#%02zd[ID:%s][%d/%d][State:%s]\n", i, SessionName.c_str(), JoinedCount, SessionSize,ESessionStateString(SessionState).c_str());
+			printf("|Room#%02zd[ID:%-10s][%d/%d][State:%s]\n", i, SessionName.c_str(), JoinedCount, SessionSize,ESessionStateString(SessionState).c_str());
 		}
 		std::cout << "\n- Type -J to Join a session \n";
 	}	std::cout << "- Type -C to Create a session \n";
@@ -150,10 +150,10 @@ bool Unconnected_NetClientState::SendReqCreateSession(std::string Response, std:
 
 		std::cout << "- Request to create session: \n";
 		std::string SessionID;
-		std::cout << "- Please enter session ID with a maximum amount of 6 characters : \n";
+		std::cout << "- Please enter session ID with a maximum amount of 10 characters : \n";
 		getline(std::cin, SessionID);
 
-		std::regex RoomID{ R"(^[a-zA-Z\d]{1,6})" };std::smatch IDMatch;
+		std::regex RoomID{ R"(^[a-zA-Z\d]{1,10})" };std::smatch IDMatch;
 		if (std::regex_search(SessionID, IDMatch, RoomID)) {
 
 			std::string SessionIDString = IDMatch.str();
