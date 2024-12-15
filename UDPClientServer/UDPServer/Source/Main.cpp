@@ -27,11 +27,11 @@ void ConnectRequest(){
 
 	if (AmountOfSessions > 0) {
 		for (size_t i = 0; i < Sessions.size(); i++) {	
-			
-			size_t count = i * 3;
+		
 			UDPPacks::SendBytePack.AddBytes(Sessions[i]->SessionName);
 			UDPPacks::SendBytePack.AddBytes(Sessions[i]->SessionSize);
 			UDPPacks::SendBytePack.AddBytes(Sessions[i]->JoinedCount);
+			UDPPacks::SendBytePack.AddBytes(Sessions[i]->CurrentStateEnum);
 		}
 	}
 	std::cout << "Sending: \n";

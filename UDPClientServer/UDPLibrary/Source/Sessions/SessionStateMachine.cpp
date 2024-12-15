@@ -14,9 +14,8 @@ StateArray
 		new SessionInProgress_SessionState(this),
 		new DestroyingSession_SessionState(this)
 	}
-),
-	CurrentState(StateArray[0])
-{ }
+)
+{ SetState(ESessionStates::InitializeSession); }
 
 SessionStateMachine::~SessionStateMachine() {
 	for (size_t i = 0; i < StateArray.size(); i++) {
@@ -29,5 +28,6 @@ void SessionStateMachine::SetState(ESessionStates NextState) {
 	if (CurrentState) {	CurrentState->OnExit();	}
 	CurrentState = StateArray.at((size_t)NextState);
 	if (CurrentState) {	CurrentState->OnEnter();}
+	CurrentStateEnum = NextState;
 }
 

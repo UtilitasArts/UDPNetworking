@@ -2,6 +2,7 @@
 #include <filesystem>
 #include "NetClientStateMachine.h"
 #include "NetClientStates.h"
+#include "SessionStateEnums.h"
 
 namespace fs = std::filesystem;
 
@@ -76,16 +77,18 @@ void Unconnected_NetClientState::RecvCnctApproval(){
 		std::cout << "\n- Session Count = " << (int)AmountOfSessions << "\n";
 		for (size_t i = 0; i < AmountOfSessions; i++) {
 
-			std::string SessionName;
-			uint8_t		SessionSize;
-			uint8_t		JoinedCount;
+			std::string    SessionName;
+			uint8_t		   SessionSize;
+			uint8_t		   JoinedCount;
+			ESessionStates SessionState;
 
-			size_t count = i * 3;
-			UDPPacks::RecvBytePack.ReturnBytes(SessionName, 5 + count);
-			UDPPacks::RecvBytePack.ReturnBytes(SessionSize, 6 + count);
-			UDPPacks::RecvBytePack.ReturnBytes(JoinedCount, 7 + count);
+			size_t count = i * 4;
+			UDPPacks::RecvBytePack.ReturnBytes(SessionName,  5 + count);
+			UDPPacks::RecvBytePack.ReturnBytes(SessionSize,  6 + count);
+			UDPPacks::RecvBytePack.ReturnBytes(JoinedCount,  7 + count);
+			UDPPacks::RecvBytePack.ReturnBytes(SessionState, 8 + count);
 
-			printf("|Room#%02zd[ID:%s][%d/%d]\n", i, SessionName.c_str(), JoinedCount, SessionSize);
+			printf("|Room#%02zd[ID:%s][%d/%d][State:%s]\n", i, SessionName.c_str(), JoinedCount, SessionSize,ESessionStateString(SessionState).c_str());
 		}
 		std::cout << "\n- Type -J to Join a session \n";
 	}	std::cout << "- Type -C to Create a session \n";
