@@ -242,6 +242,7 @@ struct AdressCtr
 	inline sockaddr_in* GetSockAddr_In() { return &SockAddress;}
 	inline sockaddr* GetSockAddr()		 { return reinterpret_cast<sockaddr*>(&SockAddress); }
 	inline int32_t*  GetAddrSize()		 { return &AddrSize;}
+	inline std::string& GetAddrName()	 { return AdressName; }
 
 private:	
 	inline void InitSockAddr(uint32_t ip = 0, uint16_t port = 0) {

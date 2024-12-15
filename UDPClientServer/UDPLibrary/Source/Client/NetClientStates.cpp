@@ -42,7 +42,9 @@ void Unconnected_NetClientState::SendConnectionRequest() {
 
 void Unconnected_NetClientState::ReceiveConnectionApproval() {
 	while (true) {
+
 		UDPPacks::RecvBytes(true);
+
 		if (UDPPacks::ReceiveAdress.HostIP() == UDPPacks::ServerAdress.HostIP()) {
 			switch (UDPPacks::RecvMT) {
 			case MessageType::ConnectApproval:
@@ -217,7 +219,18 @@ void Unconnected_NetClientState::RecvJoinSessionApproval() {
 	UDPPacks::RecvBytePack.ReturnBytes(bApproved, 1);
 
 	if (bApproved){
-		std::cout << "- Joining of room was approved";
+
+		std::cout << "- Joining of room was approved\n";
+
+		uint8_t JoinedCount;
+		UDPPacks::RecvBytePack.ReturnBytes(JoinedCount, 2);
+
+		std::cout << "- " << (int)JoinedCount << " Players in session : \n";
+		for (uint8_t i = 0; i < JoinedCount; i++){
+			std::string NameInArray;
+			UDPPacks::RecvBytePack.ReturnBytes(NameInArray, 3 + i);
+			std::cout << NameInArray << "\n";		
+		}
 	}
 	else {
 		std::cout << "- Joining of room was denied, Room was probably full";
@@ -231,7 +244,19 @@ void Unconnected_NetClientState::RecvCreateSessionApproval() {
 	UDPPacks::RecvBytePack.ReturnBytes(bApproved,1);
 
 	if (bApproved){
-		std::cout << "- Creation of room was approved";
+		uint8_t JoinedCount;
+		UDPPacks::RecvBytePack.ReturnBytes(JoinedCount, 2);
+
+		std::cout << "- Players in session: \n";
+		for (uint8_t i = 0; i < JoinedCount; i++)
+		{
+			std::string NameInArray;
+			UDPPacks::RecvBytePack.ReturnBytes(NameInArray, 3 + i);
+			std::cout << NameInArray << "\n";
+
+		}
+
+		std::cout << "- Creation of room was approved\n";
 	}
 	else{
 		std::cout << "- Creation of room was denied, Too many rooms where probably created";

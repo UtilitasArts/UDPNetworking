@@ -62,8 +62,16 @@ void CreateSession() {
 }
 
 void JoinSession() {
-	// 	std::string Name;
-	// 	RecvBytePack.ReturnBytes(Name, 1, true);
+	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
+	std::string Name;
+	uint8_t RoomNr;
+
+	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
+	UDPPacks::RecvBytePack.ReturnBytes(RoomNr, 2);
+
+	UDPPacks::ReceiveAdress.SetName(Name);
+	Sessions[RoomNr]->JoinSession(UDPPacks::ReceiveAdress);
+
 }
 
 void UpdateServer() {
