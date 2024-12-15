@@ -33,6 +33,7 @@ void SessionStateMachine::SetState(ESessionStates NextState) {
 }
 
 bool SessionStateMachine::JoinSession(AdressCtr adress_ctr) {
+
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::JoinApproval);
 
@@ -44,10 +45,15 @@ bool SessionStateMachine::JoinSession(AdressCtr adress_ctr) {
 
 		for (size_t i = 0; i < AdressArray.size(); i++)	{
 			std::string NameInArray = AdressArray[i].GetAddrName();
+			uint32_t PublicIP		= AdressArray[i].HostIP();
+			uint16_t PublicPort		= AdressArray[i].HostPort();
+
 			UDPPacks::SendBytePack.AddBytes(NameInArray);
+			UDPPacks::SendBytePack.AddBytes(PublicIP);
+			UDPPacks::SendBytePack.AddBytes(PublicPort);
 		}
 		
-		UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 		return true;
 	}
 	else {

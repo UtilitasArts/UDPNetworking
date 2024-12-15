@@ -270,7 +270,7 @@ namespace UDPPacks {
 	inline AdressCtr  PublicAdress;
 	inline AdressCtr  ServerAdress(80, 61, 175, 45, 8000, "Server", false);
 
-	inline AdressCtr* AdressArray;
+	inline std::vector<AdressCtr>AdressArray;
 
 	inline unsigned char RecvBuffer[1024];
 

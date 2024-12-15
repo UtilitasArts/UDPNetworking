@@ -33,7 +33,6 @@ void ConnectRequest(){
 			std::cout << "SessionState = " << ESessionStateString(Sessions[i]->CurrentStateEnum);
 		}
 	}
-
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 }
 

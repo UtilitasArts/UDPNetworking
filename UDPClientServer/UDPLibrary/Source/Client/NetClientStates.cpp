@@ -230,15 +230,21 @@ void Unconnected_NetClientState::RecvJoinSessionApproval() {
 		std::cout << "- " << (int)JoinedCount << " Players in session : \n";
 		for (uint8_t i = 0; i < JoinedCount; i++){
 			std::string NameInArray;
-			UDPPacks::RecvBytePack.ReturnBytes(NameInArray, 3 + i);
-			std::cout << NameInArray << "\n";		
+			uint32_t PublicIP;
+			uint16_t PublicPort;
+
+			size_t count = i * (size_t)JoinedCount;
+			UDPPacks::RecvBytePack.ReturnBytes(NameInArray, 3 + count);
+			UDPPacks::RecvBytePack.ReturnBytes(PublicIP,    4 + count);
+			UDPPacks::RecvBytePack.ReturnBytes(PublicPort,  5 + count);
+
+			std::cout << NameInArray << "IP:" << (int)PublicIP << ":" << (int)PublicPort << "\n";
 		}
 	}
 	else {
 		std::cout << "- Joining of room was denied, Room was probably full";
 		StateMachine->SetState(ENetClientStates::Unconnected);
-	}
-	
+	}	
 }
 
 void Unconnected_NetClientState::RecvCreateSessionApproval() {
