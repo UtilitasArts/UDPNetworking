@@ -296,7 +296,7 @@ namespace UDPPacks {
 			std::cerr << "Failed to send message." << "\n";
 		}
 		else {
-			std::cout << " - A " << MessageTypeToString(MType) << " Sent! " << "\n\n";
+			std::cout << "- A " << MessageTypeToString(MType) << " Sent! " << "\n\n";
 			if (bPrint) { SendBytePack.PrintBytes(); }
 		}
 	}
