@@ -26,8 +26,8 @@ SessionStateMachine::~SessionStateMachine() {
 
 void SessionStateMachine::SetState(ESessionStates NextState) {
 	if (CurrentState) {	CurrentState->OnExit();	}
-	CurrentState = StateArray.at((size_t)NextState);
+	CurrentState      = StateArray.at((size_t)NextState);
+	CurrentStateEnum  = NextState;
 	if (CurrentState) {	CurrentState->OnEnter();}
-	CurrentStateEnum = NextState;
 }
 

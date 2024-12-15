@@ -32,6 +32,8 @@ void ConnectRequest(){
 			UDPPacks::SendBytePack.AddBytes(Sessions[i]->SessionSize);
 			UDPPacks::SendBytePack.AddBytes(Sessions[i]->JoinedCount);
 			UDPPacks::SendBytePack.AddBytes(Sessions[i]->CurrentStateEnum);
+
+			std::cout << "SessionState = " << ESessionStateString(Sessions[i]->CurrentStateEnum);
 		}
 	}
 	std::cout << "Sending: \n";
