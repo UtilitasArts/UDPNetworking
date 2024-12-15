@@ -180,9 +180,6 @@ void Unconnected_NetClientState::RecvCreateSessionApproval() {
 
 void Unconnected_NetClientState::RecvUpdateApproval() {
 	std::cout << "- Update of server was approved, Restarting now";
-	std::string message;
-	UDPPacks::RecvBytePack.ReturnBytes(message, 1);
-	std::cout << message;
 
 	std::string RestartPath = CMD::SetPath(UDPSetup::RestartFolder);
 	std::string BatchFile = CMD::Command("Restart.bat ", CMD::SetString("UDPClient.exe"));

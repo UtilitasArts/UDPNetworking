@@ -58,11 +58,8 @@ void JoinSession() {
 void UpdateServer() {
 	std::cout << "- Request to update server: \n";	
 
-	std::string Message = "OK werkt";
-
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
-	UDPPacks::SendBytePack.AddBytes(Message);
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
 
 	//todo vertel iedereen te updaten.
