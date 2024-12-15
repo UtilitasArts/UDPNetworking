@@ -124,7 +124,7 @@ void Unconnected_NetClientState::SendCnctApprovalResp(uint8_t& AmountOfSessions)
 			break;
 		}
 	
-		if (SendReqJoinSession(Response, CreatePattern, AmountOfSessions))	{
+		if (SendReqJoinSession(Response, JoinPattern, AmountOfSessions))	{
 			break;
 		}
 
@@ -204,7 +204,9 @@ bool Unconnected_NetClientState::SendReqJoinSession(std::string Response, std::r
 			uint8_t RoomNr = min(std::stoi(Match.str()), AmountOfSessions);
 			std::cout << "- Request to join Room with number:" << RoomNr;
 
+			UDPPacks::SendBytePack.Clear(20,3);
 			UDPPacks::SendBytePack.AddBytes(MessageType::JoinRequest);
+			UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
 			UDPPacks::SendBytePack.AddBytes(RoomNr);
 			UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 
