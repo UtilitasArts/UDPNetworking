@@ -14,4 +14,4 @@ cd /d "%currentFolder%"
 timeout /t 1 /nobreak > nul
 
 :: Restart the software
-start %program%
+start "" %program%

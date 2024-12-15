@@ -13,6 +13,3 @@ git commit -m commitMessage
 git push -u origin main
 
 cd /d "%currentFolder%"
-
-:: Wait for 2 seconds before restarting
-timeout /t 1 /nobreak > nul
