@@ -83,7 +83,7 @@ int main(){
 
     	UDPSetup::UDPInit(8000,"Server"); 
 
-		std::cout << "\n - Waiting for Gs";
+		std::cout << "\n - Waiting for clients";
 
 		while (true) {
 
