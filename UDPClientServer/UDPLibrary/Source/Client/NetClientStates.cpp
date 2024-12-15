@@ -247,7 +247,7 @@ void Unconnected_NetClientState::RecvCreateSessionApproval() {
 		uint8_t JoinedCount;
 		UDPPacks::RecvBytePack.ReturnBytes(JoinedCount, 2);
 
-		std::cout << "- Players in session: \n";
+		std::cout << "- " << (int)JoinedCount << " Players in session: \n";
 		for (uint8_t i = 0; i < JoinedCount; i++)
 		{
 			std::string NameInArray;
