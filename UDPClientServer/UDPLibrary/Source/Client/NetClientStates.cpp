@@ -159,10 +159,13 @@ bool Unconnected_NetClientState::SendReqCreateSession(std::string Response, std:
 bool Unconnected_NetClientState::SendReqJoinSession(std::string Response, std::regex& Pattern, uint8_t& AmountOfSessions) {
 	if (std::regex_search(Response, Pattern) && (AmountOfSessions > 0)) {
 
-		Response = std::regex_replace(Response, Pattern, "");
+		std::cout << "- Request to join session: \n";
+		std::string SessionID;
+		std::cout << "- Please enter room number : \n";
+		getline(std::cin, SessionID);
+		
 		std::regex RoomNumber{ R"(\d{1,2})" };	std::smatch Match;
-
-		if (std::regex_search(Response, Match, RoomNumber)) {
+		if (std::regex_search(SessionID, Match, RoomNumber)) {
 
 			uint8_t RoomNr = min(std::stoi(Match.str()), AmountOfSessions);
 			std::cout << "- Request to join Room with number:" << RoomNr;
