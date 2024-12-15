@@ -17,6 +17,8 @@ public:
 
 	AdressCtr* AdressArray;
 	std::string SessionName;
+	uint8_t SessionSize;
+	uint8_t JoinedCount;
 
 private:
 	BaseSessionState* CurrentState;

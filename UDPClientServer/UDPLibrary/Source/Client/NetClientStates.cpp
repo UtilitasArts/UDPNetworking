@@ -73,15 +73,22 @@ void Unconnected_NetClientState::RecvCnctApproval(){
 	UDPPacks::PublicAdress.SetAdress(MyNetIp, MyNetPort, UDPSetup::MyName, true);
 
 	if (AmountOfSessions > 0) {
-		std::cout << "- Found Session Id's - \n";
-		for (size_t i = 0; i < AmountOfSessions; i++)
-		{
+		std::cout << "\n- Session Count = " << (int)AmountOfSessions << "\n";
+		for (size_t i = 0; i < AmountOfSessions; i++) {
+
 			std::string SessionName;
-			UDPPacks::RecvBytePack.ReturnBytes(SessionName, 5 + i, true);
-			std::cout << "- " << i << " " << SessionName;
+			uint8_t		SessionSize;
+			uint8_t		JoinedCount;
+
+			size_t count = i * 3;
+			UDPPacks::RecvBytePack.ReturnBytes(SessionName, 5 + count);
+			UDPPacks::RecvBytePack.ReturnBytes(SessionSize, 6 + count);
+			UDPPacks::RecvBytePack.ReturnBytes(JoinedCount, 7 + count);
+
+			printf("|Room#%02zd[ID:%s][%d/%d]\n", i, SessionName.c_str(), JoinedCount, SessionSize);
 		}
-		std::cout << "- Join a session with   -J \n";
-	}	std::cout << "- Create a session with -C \n";
+		std::cout << "\n- Type -J to Join a session \n";
+	}	std::cout << "- Type -C to Create a session \n";
 
 	SendCnctApprovalResp(AmountOfSessions);
 }

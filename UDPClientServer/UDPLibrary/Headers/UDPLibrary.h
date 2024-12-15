@@ -278,11 +278,18 @@ namespace UDPPacks {
 
 		int BytesReceived = recvfrom(UDPSetup::UDPSocket, (char*)RecvBuffer, sizeof(RecvBuffer), 0, ReceiveAdress.GetSockAddr(), ReceiveAdress.GetAddrSize());
 		if (BytesReceived != SOCKET_ERROR) {
+
 			ReceiveAdress.FillFromSockAddr();
-			RecvBytePack.SetByteArray(RecvBuffer, BytesReceived, bPrint);
+			RecvBytePack.SetByteArray(RecvBuffer, BytesReceived);
 
 			if (RecvBytePack.GetCRCValid())	{
-				RecvBytePack.ReturnBytes(RecvMT, 0); std::cout << MessageTypeToString(RecvMT);
+				RecvBytePack.ReturnBytes(RecvMT, 0); 
+				std::cout << "- A " << MessageTypeToString(RecvMT) << " Received! \n";
+
+				if (bPrint)
+				{
+					RecvBytePack.PrintBytes();
+				}
 			}
 		}
 		return RecvMT;
@@ -296,7 +303,7 @@ namespace UDPPacks {
 			std::cerr << "Failed to send message." << "\n";
 		}
 		else {
-			std::cout << "- A " << MessageTypeToString(MType) << " Sent! " << "\n\n";
+			std::cout << "\n- A " << MessageTypeToString(MType) << " Sent! " << "\n";
 			if (bPrint) { SendBytePack.PrintBytes(); }
 		}
 	}

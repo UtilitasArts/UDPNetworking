@@ -11,7 +11,7 @@ void ConnectRequest(){
 	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
 
 	std::string Name;
-	UDPPacks::RecvBytePack.ReturnBytes(Name, 1, true);
+	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
 	UDPPacks::SendBytePack.Clear(20,3);
 
 	uint32_t RecvNetIp   = UDPPacks::ReceiveAdress.HostIP();
@@ -25,12 +25,13 @@ void ConnectRequest(){
 	UDPPacks::SendBytePack.AddBytes(bConnectionApproved);
 	UDPPacks::SendBytePack.AddBytes(AmountOfSessions);
 
-	if (AmountOfSessions > 0)
-	{
-		for (size_t i = 0; i < Sessions.size(); i++)
-		{
-			std::string SessionName = Sessions[i]->SessionName;
-			UDPPacks::SendBytePack.AddBytes(SessionName);
+	if (AmountOfSessions > 0) {
+		for (size_t i = 0; i < Sessions.size(); i++) {	
+			
+			size_t count = i * 3;
+			UDPPacks::SendBytePack.AddBytes(Sessions[i + count]->SessionName);
+			UDPPacks::SendBytePack.AddBytes(Sessions[i + 1 + count]->SessionSize);
+			UDPPacks::SendBytePack.AddBytes(Sessions[i + 2 + count]->JoinedCount);
 		}
 	}
 	std::cout << "Sending: \n";
@@ -47,14 +48,16 @@ void CreateSession() {
  	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 2);
 	UDPPacks::RecvBytePack.ReturnBytes(AmountOfPlayers, 3);
 
+	SessionStateMachine* NewSession = new SessionStateMachine(RoomID, AmountOfPlayers);
 	std::cout << "- " << Name << "Created a room with ID:" << RoomID << " for " << (int)AmountOfPlayers << " players.\n";
-
-	SessionStateMachine* NewSession = new SessionStateMachine(RoomID,AmountOfPlayers);
-	Sessions.push_back(NewSession);
 
  	UDPPacks::SendBytePack.Clear(20, 3);  
  	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+
+
+
+	Sessions.push_back(NewSession);
 }
 
 void JoinSession() {

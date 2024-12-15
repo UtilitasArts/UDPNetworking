@@ -233,14 +233,14 @@ private:
 				 BytesToPrint--;
 				 if (BytesToPrint == 0) { printf("\n"); }
 			 }
-		 } printf("- Total ByteCount = %zd - \n", MaxIndex);
+		 } printf("- Total ByteCount = %zd - \n\n", MaxIndex);
 	 }
 
 	 inline const uint8_t* GetByteArray() { ByteArray.shrink_to_fit(); return ByteArray.data(); }
 	 inline const size_t   GetArraySize() { return ByteArray.size(); }
 	 inline const size_t	GetElementCount()  { return ElementCount;}
 
-	 inline void SetByteArray(const uint8_t* OtherByteArray, const size_t Size, bool bPrint) {
+	 inline void SetByteArray(const uint8_t* OtherByteArray, const size_t Size, bool bPrint = false) {
 		Clear(Size);
 		if (CRCValid(OtherByteArray, Size, bPrint)) {
 			ByteArray.clear();
@@ -251,7 +251,7 @@ private:
 			if(bPrint){	PrintBytes(); }
 		}
  	 }
-	 inline void SetByteArray(const char* OtherByteArrayAsChar, const size_t Size, bool bPrint) {
+	 inline void SetByteArray(const char* OtherByteArrayAsChar, const size_t Size, bool bPrint = false) {
 		SetByteArray(reinterpret_cast<const uint8_t*>(ByteArray.data()), Size, bPrint);	 }
 
 	 inline const char* GetByteArrayAsChar() { ByteArray.shrink_to_fit(); return reinterpret_cast<const char*>(ByteArray.data()); }
