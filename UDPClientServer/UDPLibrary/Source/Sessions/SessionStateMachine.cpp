@@ -52,7 +52,7 @@ bool SessionStateMachine::JoinSession(AdressCtr adress_ctr) {
 	}
 	else {
 		UDPPacks::SendBytePack.AddBytes(false);
-		UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 		return false;
 	}
 }

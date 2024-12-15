@@ -56,7 +56,7 @@ void CreateSession() {
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
 	UDPPacks::SendBytePack.AddBytes(true);
-	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 
 	NewSession->JoinSession(UDPPacks::ReceiveAdress);
 }
