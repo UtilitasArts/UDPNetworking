@@ -63,16 +63,15 @@ void UpdateServer() {
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
 	UDPPacks::SendBytePack.AddBytes(Message);
-
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+
+	//todo vertel iedereen te updaten.
 
 	closesocket(UDPSetup::UDPSocket);
 	WSACleanup();
 
-	std::string Exit = CMD::Command("exit");
-
 	std::string RestartPath		= CMD::SetPath(UDPSetup::RestartFolder);
-	std::string BatchFile		= CMD::Command("UpdateServer.bat " ,CMD::SetString("UDPServer.exe"));
+	std::string BatchFile		= CMD::Command("Update.bat " ,CMD::SetString("UDPServer.exe"));
 	std::string FinalCommand	= CMD::MultiCMD(RestartPath, BatchFile);
 
 	std::cout << "- Update of server was approved, Restarting now";

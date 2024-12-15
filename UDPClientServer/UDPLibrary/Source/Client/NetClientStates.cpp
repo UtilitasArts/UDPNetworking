@@ -108,13 +108,16 @@ void Unconnected_NetClientState::OnEnter() {
 						std::cout << "- Please enter commit log: \n";
 						getline(std::cin, CommitLog);						
 						
-						std::string Command2 = "&& git add . && git commit -m \"" + CommitLog + "\" && git push -u origin main";
-						std::string Command  = "cd " + UDPSetup::ReposFolder.string() + Command2;
- 						system(Command.c_str());
+						std::string RestartPath  = CMD::SetPath(UDPSetup::RestartFolder);
+						std::string BatchFile	 = CMD::Command("Push.bat ", CMD::SetString(CommitLog));
+						std::string FinalCommand = CMD::MultiCMD(RestartPath, BatchFile);
+
+						system(FinalCommand.c_str());
 
 						UDPPacks::SendBytePack.Clear(20, 3);
 						UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
 						UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+
  						break;					
 
 					}
@@ -164,8 +167,11 @@ void Unconnected_NetClientState::OnEnter() {
 				UDPPacks::RecvBytePack.ReturnBytes(message, 1);
 				std::cout << message;
 
-				std::string Command = "start cmd /K \"" + UDPSetup::RestartFolder.string() +"/UDPClient" + "\"";
-				system(Command.c_str()); exit(0);
+				std::string RestartPath = CMD::SetPath(UDPSetup::RestartFolder);
+				std::string BatchFile = CMD::Command("Restart.bat ", CMD::SetString("UDPServer.exe"));
+				std::string FinalCommand = CMD::MultiCMD(RestartPath, BatchFile);
+				system(FinalCommand.c_str());
+				exit(0);
 			}
 
 		// -----------------------|
