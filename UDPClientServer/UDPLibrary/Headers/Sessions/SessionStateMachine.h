@@ -14,7 +14,7 @@ public:
 	~SessionStateMachine();
 
 	void SetState(ESessionStates NextState);
-	bool JoinSession(AdressCtr adress_ctr);
+	bool JoinSession();
 
 	std::vector<AdressCtr> AdressArray;
 	std::string SessionName;
