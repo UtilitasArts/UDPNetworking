@@ -80,7 +80,7 @@ void Unconnected_NetClientState::RecvCnctApproval(){
 			UDPPacks::RecvBytePack.ReturnBytes(SessionName, 5 + i, true);
 			std::cout << "- " << i << " " << SessionName;
 		}
-		std::cout << "- Join a session with -J \n";
+		std::cout << "- Join a session with   -J \n";
 	}	std::cout << "- Create a session with -C \n";
 
 	SendCnctApprovalResp(AmountOfSessions);
@@ -143,15 +143,28 @@ bool Unconnected_NetClientState::SendReqCreateSession(std::string Response, std:
 		std::cout << "- Please enter session ID with a maximum amount of 6 characters : \n";
 		getline(std::cin, SessionID);
 
-		std::cout << "- Request to create Room with ID:" << SessionID;
-		UDPPacks::SendBytePack.Clear(20, 3);
-		UDPPacks::SendBytePack.AddBytes(MessageType::CreateRequest);
-		UDPPacks::SendBytePack.AddBytes(SessionID);
-		UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
-		UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+		std::regex RoomID{ R"(^[a-zA-Z\d]{1,6}$)" };std::smatch IDMatch;
+		if (std::regex_search(SessionID, IDMatch, RoomID)) {
 
-		return true;
-		
+			std::string RoomIDString = IDMatch.str();
+			std::string AmountOfPlayers;
+			std::cout << "- Please enter the amount of players 2-4 : \n";
+			getline(std::cin, AmountOfPlayers);
+
+			std::regex RoomNumber{ R"(^[2-4]$)" };	std::smatch Match;
+			if (std::regex_search(AmountOfPlayers, Match, RoomNumber)) {
+				uint8_t AOP = std::stoi(Match.str());
+				std::cout << "- Request to create Room with ID:" << SessionID << " That has space for " << AOP << " Players";
+
+				UDPPacks::SendBytePack.Clear(20, 3);
+				UDPPacks::SendBytePack.AddBytes(MessageType::CreateRequest);
+				UDPPacks::SendBytePack.AddBytes(RoomIDString);
+				UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
+				UDPPacks::SendBytePack.AddBytes(AOP);
+				UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+				return true;
+			}		
+		}
 	}
 	return false;
 }
@@ -160,12 +173,12 @@ bool Unconnected_NetClientState::SendReqJoinSession(std::string Response, std::r
 	if (std::regex_search(Response, Pattern) && (AmountOfSessions > 0)) {
 
 		std::cout << "- Request to join session: \n";
-		std::string SessionID;
+		std::string RoomNr;
 		std::cout << "- Please enter room number : \n";
-		getline(std::cin, SessionID);
+		getline(std::cin, RoomNr);
 		
-		std::regex RoomNumber{ R"(\d{1,2})" };	std::smatch Match;
-		if (std::regex_search(SessionID, Match, RoomNumber)) {
+		std::regex RoomNumber{ R"(^[1-10]$)" };	std::smatch Match;
+		if (std::regex_search(RoomNr, Match, RoomNumber)) {
 
 			uint8_t RoomNr = min(std::stoi(Match.str()), AmountOfSessions);
 			std::cout << "- Request to join Room with number:" << RoomNr;
