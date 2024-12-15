@@ -38,7 +38,6 @@ void ConnectRequest(){
 }
 
 void CreateSession() {
-
 	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
 	std::string Name;
  	std::string RoomID;
@@ -50,9 +49,8 @@ void CreateSession() {
 
 	std::cout << "- " << Name << "Created a room with ID:" << RoomID << " for " << (int)AmountOfPlayers << " players.\n";
 
-	//SessionStateMachine* NewSession = new SessionStateMachine();
-	//Sessions.push_back()
-
+	SessionStateMachine* NewSession = new SessionStateMachine(RoomID,AmountOfPlayers);
+	Sessions.push_back(NewSession);
 
  	UDPPacks::SendBytePack.Clear(20, 3);  
  	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);

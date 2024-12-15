@@ -2,7 +2,7 @@
 #include "SessionStates.h"
 #include "SessionStateMachine.h"
 
-SessionStateMachine::SessionStateMachine(uint8_t session_size, std::string session_name) :
+SessionStateMachine::SessionStateMachine(std::string session_name, uint8_t session_size) :
 SessionName(session_name),
 AdressArray( new AdressCtr[session_size]),
 StateArray
