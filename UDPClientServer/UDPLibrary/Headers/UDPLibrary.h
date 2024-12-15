@@ -273,7 +273,6 @@ namespace UDPPacks {
 	inline MessageType RecvMT;
 
 	inline MessageType RecvBytes(bool bPrint){
-
 		ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
 		RecvMT = MessageType::None;
 

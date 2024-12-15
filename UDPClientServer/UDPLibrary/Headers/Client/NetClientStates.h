@@ -35,9 +35,10 @@ public:
 	void RecvUpdateApproval();
 	void RecvCnctApproval();
 	void SendCnctApprovalResp(uint8_t& AmountOfSessions);
-	void SendReqJoinSession(std::smatch& Match, uint8_t& AmountOfSessions);
-	void SendReqCreateSession(std::smatch& Match);
-	void SendReqUpdate();
+
+	bool SendReqUpdate(std::string Response, std::regex& Pattern);
+	bool SendReqCreateSession(std::string& Response, std::regex& Pattern);
+	bool SendReqJoinSession(std::string Response, std::regex& Pattern, uint8_t& AmountOfSessions);
 };
 
 

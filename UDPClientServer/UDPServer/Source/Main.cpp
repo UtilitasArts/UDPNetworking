@@ -45,6 +45,13 @@ void CreateSession() {
  	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 1);
 	std::cout << "- Created a room with ID:" << RoomID;
 
+	std::string Name;
+	UDPPacks::RecvBytePack.ReturnBytes(Name, 2);
+
+	//SessionStateMachine* NewSession = new SessionStateMachine();
+	//Sessions.push_back()
+
+
  	UDPPacks::SendBytePack.Clear(20, 3);  
  	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
@@ -57,7 +64,6 @@ void JoinSession() {
 
 void UpdateServer() {
 	std::cout << "- Request to update server: \n";	
-
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
@@ -72,6 +78,7 @@ void UpdateServer() {
 	std::string FinalCommand	= CMD::MultiCMD(RestartPath, BatchFile);
 
 	std::cout << "- Update of server was approved, Restarting now";
+
 	system(FinalCommand.c_str());
 	exit(0);
 }

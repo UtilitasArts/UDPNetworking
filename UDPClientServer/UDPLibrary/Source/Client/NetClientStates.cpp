@@ -10,7 +10,6 @@ BaseNetClientState::BaseNetClientState(NetClientStateMachine* sm) :
 StateMachine(sm)
 {}
 void BaseNetClientState::InitState(){
-
 	StateEnum = ENetClientStates::Unconnected;
 }
 void BaseNetClientState::OnEnter() {
@@ -95,80 +94,90 @@ void Unconnected_NetClientState::SendCnctApprovalResp(uint8_t& AmountOfSessions)
 		std::regex CreatePattern{ R"(^-C)", std::regex::icase };
 		std::regex UpdatePattern{ R"(^-U)", std::regex::icase };
 
-		// -------|
-		// Update |
-		// =======|
-		if (std::regex_search(Response, UpdatePattern)) {
-			SendReqUpdate();
+	
+		if (SendReqUpdate(Response, UpdatePattern)) {
 			break;
 		}
-		// ----------------|
-		// Create Session  |
-		// ================|
-		if (std::regex_search(Response, CreatePattern)) {
 
-			Response = std::regex_replace(Response, CreatePattern, "");
-			std::regex RoomIDPattern{ R"([a-zA-Z0-9]{1,6})" }; std::smatch Match;
-
-			if (std::regex_search(Response, Match, RoomIDPattern)) {
-				SendReqCreateSession(Match);
-				break;
-			}
+		if (SendReqCreateSession(Response, CreatePattern)) {
+			break;
 		}
-		// ----------------|
-		// Join Session	   |
-		// ================|
-		if (std::regex_search(Response, JoinPattern) && (AmountOfSessions > 0)) {
-
-			Response = std::regex_replace(Response, JoinPattern, "");
-			std::regex RoomNumber{ R"(\d{1,2})" };	std::smatch Match;
-
-			if (std::regex_search(Response, Match, RoomNumber)) {
-				SendReqJoinSession(Match, AmountOfSessions);
-				break;
-			}
+	
+		if (SendReqJoinSession(Response, CreatePattern, AmountOfSessions))	{
+			break;
 		}
 
-		// ------------|
-		// Wrong input |
-		// ============|
 		std::cout << "Wrong Input \n";
 	}
 }
 
-void Unconnected_NetClientState::SendReqUpdate() {
-	std::cout << "- Request to update server: \n";
-	std::string CommitLog;
-	std::cout << "- Please enter commit log: \n";
-	getline(std::cin, CommitLog);
+bool Unconnected_NetClientState::SendReqUpdate(std::string Response, std::regex& Pattern) {
+	if (std::regex_search(Response, Pattern)) {
 
-	std::string RestartPath = CMD::SetPath(UDPSetup::RestartFolder);
-	std::string BatchFile = CMD::Command("Push.bat ", CMD::SetString(CommitLog));
-	std::string FinalCommand = CMD::MultiCMD(RestartPath, BatchFile);
+		std::cout << "- Request to update server: \n";
+		std::string CommitLog;
+		std::cout << "- Please enter commit log: \n";
+		getline(std::cin, CommitLog);
 
-	system(FinalCommand.c_str());
+		std::string RestartPath = CMD::SetPath(UDPSetup::RestartFolder);
+		std::string BatchFile   = CMD::Command("Push.bat ", CMD::SetString(CommitLog));
+		std::string FinalCommand = CMD::MultiCMD(RestartPath, BatchFile);
 
-	UDPPacks::SendBytePack.Clear(20, 3);
-	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
-	UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+		system(FinalCommand.c_str());
+
+		UDPPacks::SendBytePack.Clear(20, 3);
+		UDPPacks::SendBytePack.AddBytes(MessageType::UpdateRequest);
+		UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+		
+		return true;
+	}	
+	return false;	
 }
 
-void Unconnected_NetClientState::SendReqCreateSession(std::smatch& Match) {
-	std::string RoomID = Match.str();
-	std::cout << "- Request to create Room with ID:" << RoomID;
-	UDPPacks::SendBytePack.Clear(20, 3);
-	UDPPacks::SendBytePack.AddBytes(MessageType::CreateRequest);
-	UDPPacks::SendBytePack.AddBytes(RoomID);
-	UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+bool Unconnected_NetClientState::SendReqCreateSession(std::string& Response, std::regex& Pattern) {
+	if (std::regex_search(Response, Pattern)) {
+		std::cout << "- Request to create session: \n";
+		Response = std::regex_replace(Response, Pattern, "");
+		std::regex RoomIDPattern{ R"([a-zA-Z0-9]{1,6})" }; std::smatch Match;
+		if (std::regex_search(Response, Match, RoomIDPattern)) {
+			
+			std::string RoomID = Match.str();
+			std::cout << "- Request to create Room with ID:" << RoomID;
+			UDPPacks::SendBytePack.Clear(20, 3);
+			UDPPacks::SendBytePack.AddBytes(MessageType::CreateRequest);
+			UDPPacks::SendBytePack.AddBytes(RoomID);
+			UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
+			UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+
+			return true;
+		}
+	}
+	return false;
 }
 
-void Unconnected_NetClientState::SendReqJoinSession(std::smatch& Match, uint8_t& AmountOfSessions){
-	uint8_t RoomNr = min(std::stoi(Match.str()), AmountOfSessions);
-	std::cout << "- Request to join Room with number:" << RoomNr;
-	UDPPacks::SendBytePack.AddBytes(MessageType::JoinRequest);
-	UDPPacks::SendBytePack.AddBytes(RoomNr);
-	UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+bool Unconnected_NetClientState::SendReqJoinSession(std::string Response, std::regex& Pattern, uint8_t& AmountOfSessions) {
+	if (std::regex_search(Response, Pattern) && (AmountOfSessions > 0)) {
+
+		Response = std::regex_replace(Response, Pattern, "");
+		std::regex RoomNumber{ R"(\d{1,2})" };	std::smatch Match;
+
+		if (std::regex_search(Response, Match, RoomNumber)) {
+
+			uint8_t RoomNr = min(std::stoi(Match.str()), AmountOfSessions);
+			std::cout << "- Request to join Room with number:" << RoomNr;
+
+			UDPPacks::SendBytePack.AddBytes(MessageType::JoinRequest);
+			UDPPacks::SendBytePack.AddBytes(RoomNr);
+			UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+
+			return true;
+		}
+	}
+	return false;
 }
+
+
+
 
 void Unconnected_NetClientState::RecvJoinSessionApproval() {
 	std::cout << "- Joining of room was approved";
