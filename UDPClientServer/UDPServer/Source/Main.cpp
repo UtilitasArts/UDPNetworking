@@ -72,9 +72,7 @@ void UpdateServer() {
 
 	std::string RestartPath		= CMD::SetPath(UDPSetup::RestartFolder);
 	std::string BatchFile		= CMD::Command("UpdateServer.bat");
-
-
-	std::string FinalCommand = CMD::MultiCMD(RestartPath, BatchFile);
+	std::string FinalCommand	= CMD::MultiCMD(RestartPath, BatchFile);
 
 	std::cout << "- Update of server was approved, Restarting now";
 	system(FinalCommand.c_str());
@@ -85,7 +83,7 @@ int main(){
 
     	UDPSetup::UDPInit(8000,"Server"); 
 
-		std::cout << "\n - Waiting for clients";
+		std::cout << "\n - Waiting for Gs";
 
 		while (true) {
 
