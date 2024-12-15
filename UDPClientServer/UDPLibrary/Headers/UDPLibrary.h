@@ -117,8 +117,11 @@ namespace CMD {
 
 		if (name == "")
 		{
-			std::cout << "Please enter your name: ";
-			getline(std::cin, MyName);
+			std::cout << "Please enter your name with a maximum of 10 characters: ";
+
+			std::string TempName;
+			getline(std::cin, TempName);
+			MyName = TempName.substr(0,10);
 			system("cls");
 		}
 		else
@@ -233,7 +236,7 @@ struct AdressCtr
 		AdressName = name;
 	}
 
- 	void PrintAdress() {printf("- %s adress = %d.%d.%d.%d:%d\n",AdressName.c_str(),Octets[0], Octets[1], Octets[2], Octets[3], Port); }
+ 	void PrintAdress() {printf("- %-10s adress = %d.%d.%d.%d:%d\n",AdressName.c_str(),Octets[0], Octets[1], Octets[2], Octets[3], Port); }
 
 	inline uint32_t HostIP()			 { return IP;}
 	inline uint16_t HostPort()			 { return Port; }
