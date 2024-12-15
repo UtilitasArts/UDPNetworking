@@ -168,7 +168,7 @@ void Unconnected_NetClientState::OnEnter() {
 				std::cout << message;
 
 				std::string RestartPath = CMD::SetPath(UDPSetup::RestartFolder);
-				std::string BatchFile = CMD::Command("Restart.bat ", CMD::SetString("UDPServer.exe"));
+				std::string BatchFile = CMD::Command("Restart.bat ", CMD::SetString("UDPClient.exe"));
 				std::string FinalCommand = CMD::MultiCMD(RestartPath, BatchFile);
 				system(FinalCommand.c_str());
 				exit(0);
