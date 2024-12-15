@@ -69,60 +69,43 @@ void UpdateServer() {
 	WSACleanup();
 
 	std::string Exit = CMD::Command("exit");
-	std::string RestartSoftware = CMD::Command(UDPSetup::RestartFolder.string() + "/UDPServer.exe");
+
 	std::string RestartPath		= CMD::SetPath(UDPSetup::RestartFolder);
-	std::string RestartTerminal = CMD::Terminal(CMD::MultiCMD(RestartPath,RestartSoftware));
-
-	std::string ReposPath   = CMD::SetPath(UDPSetup::ReposFolder);
-	std::string GitStatus   = CMD::Command("git status");
-	std::string GitRestore  = CMD::Command("git restore .");
-	std::string GitPull		= CMD::Command("git pull");	
-
-	std::string GitCommands = CMD::MultiCMD(GitPull,RestartPath, RestartSoftware);
+	std::string BatchFile		= CMD::Command("UpdateServer.bat");
 
 
-	std::string FinalCommand = GitCommands;
+	std::string FinalCommand = CMD::MultiCMD(RestartPath, BatchFile);
 
-	std::cout << FinalCommand;
-	system(FinalCommand.c_str());
 	std::cout << "- Update of server was approved, Restarting now";
+	system(FinalCommand.c_str());
 	exit(0);
 }
 
 int main(){
 
-		std::string CommitMessage;
-		getline(std::cin, CommitMessage);
+    	UDPSetup::UDPInit(8000,"Server"); 
 
-		std::string command = "UpdateClient.bat \"" + CommitMessage + "\"";
-		system(command.c_str());
+		std::cout << "\n - Waiting for Gs";
 
+		while (true) {
 
+			UDPPacks::RecvBytes(true);
 
- 
-//    	UDPSetup::UDPInit(8000,"Server");
-//  
-//   	std::cout << "\n - Waiting for Gs";
-//   
-//   	while (true) {
-//   
-//   		UDPPacks::RecvBytes(true);
-//   
-//   		switch (UDPPacks::RecvMT) {
-//   		case MessageType::ConnectRequest:
-//   			ConnectRequest();
-//   			break;
-//   		case MessageType::CreateRequest:
-//   			CreateSession();
-//   			break;
-//   		case MessageType::JoinRequest:
-//   			JoinSession();
-//   			break;
-//   		case MessageType::UpdateRequest:
-//   			UpdateServer();
-//   			break;
-//   		}
-// 	}
+			switch (UDPPacks::RecvMT) {
+			case MessageType::ConnectRequest:
+				ConnectRequest();
+				break;
+			case MessageType::CreateRequest:
+				CreateSession();
+				break;
+			case MessageType::JoinRequest:
+				JoinSession();
+				break;
+			case MessageType::UpdateRequest:
+				UpdateServer();
+				break;
+			}
+		}
 
 	Sleep(30000);
 
