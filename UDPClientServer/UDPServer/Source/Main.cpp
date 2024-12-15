@@ -48,7 +48,7 @@ void CreateSession() {
  	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 2);
 	UDPPacks::RecvBytePack.ReturnBytes(AmountOfPlayers, 3);
 
-	std::cout << "- " << Name << "Created a room with ID:" << RoomID << " for " << AmountOfPlayers << " players.";
+	std::cout << "- " << Name << "Created a room with ID:" << RoomID << " for " << (int)AmountOfPlayers << " players.";
 
 	//SessionStateMachine* NewSession = new SessionStateMachine();
 	//Sessions.push_back()

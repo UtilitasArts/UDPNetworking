@@ -154,7 +154,7 @@ bool Unconnected_NetClientState::SendReqCreateSession(std::string Response, std:
 			std::regex RoomNumber{ R"(^[2-4]$)" };	std::smatch Match;
 			if (std::regex_search(AmountOfPlayers, Match, RoomNumber)) {
 				uint8_t AOP = std::stoi(Match.str());
-				std::cout << "- Request to create Room with ID:" << SessionID << " That has space for " << AOP << " Players";
+				std::cout << "- Request to create Room with ID:" << SessionID << " That has space for " << (int)AOP << " Players";
 
 				UDPPacks::SendBytePack.Clear(20, 3);
 				UDPPacks::SendBytePack.AddBytes(MessageType::CreateRequest);
