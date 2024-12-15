@@ -7,22 +7,19 @@ namespace fs = std::filesystem;
 std::vector<SessionStateMachine*> Sessions;
 
 void ConnectRequest(){
-
-	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
-
+	UDPPacks::ReceiveAdress.PrintAdress();
 	std::string Name;
 	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
 	UDPPacks::SendBytePack.Clear(20,3);
 
 	uint32_t RecvNetIp   = UDPPacks::ReceiveAdress.HostIP();
 	uint16_t RecvNetPort = UDPPacks::ReceiveAdress.HostPort();
-	bool     bConnectionApproved = true;
 	uint8_t  AmountOfSessions = static_cast<uint8_t>(Sessions.size());
 
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectApproval);
+	UDPPacks::SendBytePack.AddBytes(true);
 	UDPPacks::SendBytePack.AddBytes(RecvNetIp);
 	UDPPacks::SendBytePack.AddBytes(RecvNetPort);
-	UDPPacks::SendBytePack.AddBytes(bConnectionApproved);
 	UDPPacks::SendBytePack.AddBytes(AmountOfSessions);
 
 	if (AmountOfSessions > 0) {
@@ -36,7 +33,7 @@ void ConnectRequest(){
 			std::cout << "SessionState = " << ESessionStateString(Sessions[i]->CurrentStateEnum);
 		}
 	}
-	std::cout << "Sending: \n";
+
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 }
 
@@ -51,15 +48,17 @@ void CreateSession() {
 	UDPPacks::RecvBytePack.ReturnBytes(AmountOfPlayers, 3);
 
 	SessionStateMachine* NewSession = new SessionStateMachine(RoomID, AmountOfPlayers);
-	std::cout << "- " << Name << "Created a room with ID:" << RoomID << " for " << (int)AmountOfPlayers << " players.\n";
-
- 	UDPPacks::SendBytePack.Clear(20, 3);  
- 	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
-	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
-
-
+	std::cout << "- " << Name << " Created a room with ID:" << RoomID << " for " << (int)AmountOfPlayers << " players.\n";
 
 	Sessions.push_back(NewSession);
+	UDPPacks::ReceiveAdress.SetName(Name);
+
+	UDPPacks::SendBytePack.Clear(20, 3);
+	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
+	UDPPacks::SendBytePack.AddBytes(true);
+	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+
+	NewSession->JoinSession(UDPPacks::ReceiveAdress);
 }
 
 void JoinSession() {
@@ -92,7 +91,7 @@ int main(){
 
     	UDPSetup::UDPInit(8000,"Server"); 
 
-		std::cout << "\n - Waiting for clients";
+		std::cout << "\n - Waiting for clients \n";
 
 		while (true) {
 

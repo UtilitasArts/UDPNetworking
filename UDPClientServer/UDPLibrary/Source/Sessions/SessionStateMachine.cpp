@@ -6,7 +6,6 @@ SessionStateMachine::SessionStateMachine(std::string session_name, uint8_t sessi
 SessionName(session_name),
 SessionSize(session_size),
 JoinedCount(0),
-AdressArray( new AdressCtr[session_size]),
 StateArray
 (
 	{
@@ -15,13 +14,15 @@ StateArray
 		new DestroyingSession_SessionState(this)
 	}
 )
-{ SetState(ESessionStates::InitializeSession); }
+{ 
+	AdressArray.reserve(SessionSize);
+	SetState(ESessionStates::InitializeSession);
+}
 
 SessionStateMachine::~SessionStateMachine() {
 	for (size_t i = 0; i < StateArray.size(); i++) {
 		delete StateArray[i];		
 	}
-	delete[] AdressArray;
 }
 
 void SessionStateMachine::SetState(ESessionStates NextState) {
@@ -29,5 +30,26 @@ void SessionStateMachine::SetState(ESessionStates NextState) {
 	CurrentState      = StateArray.at((size_t)NextState);
 	CurrentStateEnum  = NextState;
 	if (CurrentState) {	CurrentState->OnEnter();}
+}
+
+bool SessionStateMachine::JoinSession(AdressCtr adress_ctr)
+{
+	UDPPacks::SendBytePack.Clear(20, 3);
+	UDPPacks::SendBytePack.AddBytes(MessageType::JoinApproval);
+
+	if (SessionSize > JoinedCount + 1) {
+		JoinedCount++;
+		AdressArray.push_back(adress_ctr);
+
+		UDPPacks::SendBytePack.AddBytes(true);
+		UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+		return true;
+	}
+	else
+	{
+		UDPPacks::SendBytePack.AddBytes(false);
+		UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+		return false;
+	}
 }
 

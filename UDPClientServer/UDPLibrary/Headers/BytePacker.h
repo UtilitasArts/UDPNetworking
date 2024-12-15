@@ -69,6 +69,17 @@ public:
 		}
 		return Size;
 	}
+	
+	// Bools
+	template <typename T>
+	std::enable_if_t<std::is_same_v<T, bool>, size_t>
+		AddBytes(T Element) {
+		size_t Size = sizeof(T);
+		T* Ptr = &Element;
+		AddToArray(Ptr, Size);	
+		return Size;
+	}
+
 	//
 	// SINGLE PTR
 	template <typename T>
@@ -152,6 +163,7 @@ public:
 		AddToArray(Ptr, Size);
 		return Size;
 	}
+
 private:
 
 	template<typename T>

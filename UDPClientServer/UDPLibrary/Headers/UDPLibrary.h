@@ -222,12 +222,15 @@ struct AdressCtr
 		if (bPrint) { PrintAdress(); }
 	}
 
-
-
 	inline void FillFromSockAddr(std::string name = "RecvAddr", bool bPrint = false) {
 		uint32_t SockIP = ntohl(SockAddress.sin_addr.s_addr);
 		uint16_t SockPort = ntohs(SockAddress.sin_port);
 		SetAdress(SockIP, SockPort, name, bPrint);
+	}
+
+	inline void SetName(std::string name)
+	{
+		AdressName = name;
 	}
 
  	void PrintAdress() {printf("- %s adress = %d.%d.%d.%d:%d\n",AdressName.c_str(),Octets[0], Octets[1], Octets[2], Octets[3], Port); }

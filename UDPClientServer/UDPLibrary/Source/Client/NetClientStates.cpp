@@ -63,37 +63,45 @@ void Unconnected_NetClientState::ReceiveConnectionApproval() {
 }
 
 void Unconnected_NetClientState::RecvCnctApproval(){
-	uint32_t MyNetIp; uint16_t MyNetPort; bool bConnectionApproved;uint8_t AmountOfSessions;
+	uint32_t MyNetIp; uint16_t MyNetPort; bool bCnctApproved;uint8_t AmountOfSessions;
 
-	UDPPacks::RecvBytePack.ReturnBytes(MyNetIp, 1);
-	UDPPacks::RecvBytePack.ReturnBytes(MyNetPort, 2);
-	UDPPacks::RecvBytePack.ReturnBytes(bConnectionApproved, 3);
-	UDPPacks::RecvBytePack.ReturnBytes(AmountOfSessions, 4);
+	UDPPacks::RecvBytePack.ReturnBytes(bCnctApproved, 1);
 
-	std::cout << "- Connection Approved \n";
-	UDPPacks::PublicAdress.SetAdress(MyNetIp, MyNetPort, UDPSetup::MyName, true);
+	if (bCnctApproved)
+	{
+		UDPPacks::RecvBytePack.ReturnBytes(MyNetIp, 2);
+		UDPPacks::RecvBytePack.ReturnBytes(MyNetPort, 3);
+		UDPPacks::RecvBytePack.ReturnBytes(AmountOfSessions, 4);
 
-	if (AmountOfSessions > 0) {
-		std::cout << "\n- Session Count = " << (int)AmountOfSessions << "\n";
-		for (size_t i = 0; i < AmountOfSessions; i++) {
+		std::cout << "- Connection Approved \n";
+		UDPPacks::PublicAdress.SetAdress(MyNetIp, MyNetPort, UDPSetup::MyName, true);
 
-			std::string    SessionName;
-			uint8_t		   SessionSize;
-			uint8_t		   JoinedCount;
-			ESessionStates SessionState;
+		if (AmountOfSessions > 0) {
+			std::cout << "\n- Session Count = " << (int)AmountOfSessions << "\n";
+			for (size_t i = 0; i < AmountOfSessions; i++) {
 
-			size_t count = i * 4;
-			UDPPacks::RecvBytePack.ReturnBytes(SessionName,  5 + count);
-			UDPPacks::RecvBytePack.ReturnBytes(SessionSize,  6 + count);
-			UDPPacks::RecvBytePack.ReturnBytes(JoinedCount,  7 + count);
-			UDPPacks::RecvBytePack.ReturnBytes(SessionState, 8 + count);
+				std::string    SessionName;
+				uint8_t		   SessionSize;
+				uint8_t		   JoinedCount;
+				ESessionStates SessionState;
 
-			printf("|Room#%02zd[ID:%-10s][%d/%d][State:%s]\n", i, SessionName.c_str(), JoinedCount, SessionSize,ESessionStateString(SessionState).c_str());
-		}
-		std::cout << "\n- Type -J to Join a session \n";
-	}	std::cout << "- Type -C to Create a session \n";
+				size_t count = i * 4;
+				UDPPacks::RecvBytePack.ReturnBytes(SessionName,  5 + count);
+				UDPPacks::RecvBytePack.ReturnBytes(SessionSize,  6 + count);
+				UDPPacks::RecvBytePack.ReturnBytes(JoinedCount,  7 + count);
+				UDPPacks::RecvBytePack.ReturnBytes(SessionState, 8 + count);
 
-	SendCnctApprovalResp(AmountOfSessions);
+				printf("|Room#%02zd[ID:%-10s][%d/%d][State:%s]\n", i, SessionName.c_str(), JoinedCount, SessionSize,ESessionStateString(SessionState).c_str());
+			}
+			std::cout << "\n- Type -J to Join a session \n";
+		}	std::cout << "- Type -C to Create a session \n";
+
+		SendCnctApprovalResp(AmountOfSessions);
+	}
+	else
+	{
+		StateMachine->SetState(ENetClientStates::Unconnected);
+	}
 }
 
 void Unconnected_NetClientState::SendCnctApprovalResp(uint8_t& AmountOfSessions) {
@@ -204,15 +212,31 @@ bool Unconnected_NetClientState::SendReqJoinSession(std::string Response, std::r
 	return false;
 }
 
-
-
-
 void Unconnected_NetClientState::RecvJoinSessionApproval() {
-	std::cout << "- Joining of room was approved";
+	bool bApproved;
+	UDPPacks::RecvBytePack.ReturnBytes(bApproved, 1);
+
+	if (bApproved){
+		std::cout << "- Joining of room was approved";
+	}
+	else {
+		std::cout << "- Joining of room was denied, Room was probably full";
+		StateMachine->SetState(ENetClientStates::Unconnected);
+	}
+	
 }
 
 void Unconnected_NetClientState::RecvCreateSessionApproval() {
-	std::cout << "- Creation of room was approved";
+	bool bApproved;
+	UDPPacks::RecvBytePack.ReturnBytes(bApproved,1);
+
+	if (bApproved){
+		std::cout << "- Creation of room was approved";
+	}
+	else{
+		std::cout << "- Creation of room was denied, Too many rooms where probably created";
+		StateMachine->SetState(ENetClientStates::Unconnected);
+	}
 }
 
 void Unconnected_NetClientState::RecvUpdateApproval() {
