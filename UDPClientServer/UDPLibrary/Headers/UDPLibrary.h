@@ -230,7 +230,7 @@ struct AdressCtr
 		SetAdress(SockIP, SockPort, name, bPrint);
 	}
 
- 	void PrintAdress() {printf(" - %s adress = %d.%d.%d.%d:%d\n",AdressName.c_str(),Octets[0], Octets[1], Octets[2], Octets[3], Port); }
+ 	void PrintAdress() {printf("- %s adress = %d.%d.%d.%d:%d\n",AdressName.c_str(),Octets[0], Octets[1], Octets[2], Octets[3], Port); }
 
 	inline uint32_t HostIP()			 { return IP;}
 	inline uint16_t HostPort()			 { return Port; }
