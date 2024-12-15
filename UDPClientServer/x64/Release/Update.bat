@@ -1,15 +1,10 @@
 @echo off
-
-:: Which program to restart
-set "program=%1"
-
-
 :: Get the folder 3 levels up from the current script
 set "currentFolder=%~dp0"
 for %%i in ("%currentFolder%..\..\..") do set "parentFolder=%%~fi"
 
 :: Close the software
-taskkill /IM program /F
+taskkill /IM UDPServer.exe /F
 
 :: Change directory to the folder 3 levels up
 cd /d "%parentFolder%"
@@ -22,4 +17,4 @@ cd /d "%currentFolder%"
 timeout /t 1 /nobreak > nul
 
 :: Restart the software
-start program
+start UDPServer.exe

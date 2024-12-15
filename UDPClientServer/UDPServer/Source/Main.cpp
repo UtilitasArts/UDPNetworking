@@ -59,6 +59,7 @@ void UpdateServer() {
 	std::cout << "- Request to update server: \n";	
 
 	std::string Message = "OK werkt";
+
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
 	UDPPacks::SendBytePack.AddBytes(Message);
@@ -71,7 +72,7 @@ void UpdateServer() {
 	std::string Exit = CMD::Command("exit");
 
 	std::string RestartPath		= CMD::SetPath(UDPSetup::RestartFolder);
-	std::string BatchFile		= CMD::Command("UpdateServer.bat");
+	std::string BatchFile		= CMD::Command("UpdateServer.bat " ,CMD::SetString("UDPServer.exe"));
 	std::string FinalCommand	= CMD::MultiCMD(RestartPath, BatchFile);
 
 	std::cout << "- Update of server was approved, Restarting now";
@@ -83,7 +84,7 @@ int main(){
 
     	UDPSetup::UDPInit(8000,"Server"); 
 
-		std::cout << "\n - Waiting for Gs";
+		std::cout << "\n - Waiting for clients";
 
 		while (true) {
 
