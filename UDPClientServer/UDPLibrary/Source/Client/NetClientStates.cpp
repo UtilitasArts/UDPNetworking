@@ -244,18 +244,6 @@ void Unconnected_NetClientState::RecvCreateSessionApproval() {
 	UDPPacks::RecvBytePack.ReturnBytes(bApproved,1);
 
 	if (bApproved){
-		uint8_t JoinedCount;
-		UDPPacks::RecvBytePack.ReturnBytes(JoinedCount, 2);
-
-		std::cout << "- " << (int)JoinedCount << " Players in session: \n";
-		for (uint8_t i = 0; i < JoinedCount; i++)
-		{
-			std::string NameInArray;
-			UDPPacks::RecvBytePack.ReturnBytes(NameInArray, 3 + i);
-			std::cout << NameInArray << "\n";
-
-		}
-
 		std::cout << "- Creation of room was approved\n";
 	}
 	else{
