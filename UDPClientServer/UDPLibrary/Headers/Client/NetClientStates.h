@@ -1,7 +1,9 @@
 #pragma once
 #include <iostream>
+#include <regex>
 #include "NetClientStateEnums.h"
 #include "UDPLibrary.h"
+
 
 //Forward Declaration
 class NetClientStateMachine;
@@ -26,6 +28,16 @@ public:
 	virtual void InitState() override;
 	virtual void OnEnter() override;
 	virtual void OnExit()  override;
+	void ReceiveConnectionApproval();
+	void SendConnectionRequest();
+	void RecvJoinSessionApproval();
+	void RecvCreateSessionApproval();
+	void RecvUpdateApproval();
+	void RecvCnctApproval();
+	void SendCnctApprovalResp(uint8_t& AmountOfSessions);
+	void SendReqJoinSession(std::smatch& Match, uint8_t& AmountOfSessions);
+	void SendReqCreateSession(std::smatch& Match);
+	void SendReqUpdate();
 };
 
 
