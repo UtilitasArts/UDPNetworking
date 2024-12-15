@@ -80,8 +80,8 @@ void Unconnected_NetClientState::RecvCnctApproval(){
 			UDPPacks::RecvBytePack.ReturnBytes(SessionName, 5 + i, true);
 			std::cout << "- " << i << " " << SessionName;
 		}
-		std::cout << "- Join a session with -J [RoomNumber] \n";
-	}	std::cout << "- Create a session with -C [SessionID] with a maximum amount of 6 characters \n";
+		std::cout << "- Join a session with -J \n";
+	}	std::cout << "- Create a session with -C \n";
 
 	SendCnctApprovalResp(AmountOfSessions);
 }
@@ -90,6 +90,7 @@ void Unconnected_NetClientState::SendCnctApprovalResp(uint8_t& AmountOfSessions)
 	while (true) {
 
 		std::string Response; getline(std::cin, Response);
+
 		std::regex JoinPattern{   R"(^-J)", std::regex::icase };
 		std::regex CreatePattern{ R"(^-C)", std::regex::icase };
 		std::regex UpdatePattern{ R"(^-U)", std::regex::icase };
@@ -134,23 +135,23 @@ bool Unconnected_NetClientState::SendReqUpdate(std::string Response, std::regex&
 	return false;	
 }
 
-bool Unconnected_NetClientState::SendReqCreateSession(std::string& Response, std::regex& Pattern) {
+bool Unconnected_NetClientState::SendReqCreateSession(std::string Response, std::regex& Pattern) {
 	if (std::regex_search(Response, Pattern)) {
-		std::cout << "- Request to create session: \n";
-		Response = std::regex_replace(Response, Pattern, "");
-		std::regex RoomIDPattern{ R"([a-zA-Z0-9]{1,6})" }; std::smatch Match;
-		if (std::regex_search(Response, Match, RoomIDPattern)) {
-			
-			std::string RoomID = Match.str();
-			std::cout << "- Request to create Room with ID:" << RoomID;
-			UDPPacks::SendBytePack.Clear(20, 3);
-			UDPPacks::SendBytePack.AddBytes(MessageType::CreateRequest);
-			UDPPacks::SendBytePack.AddBytes(RoomID);
-			UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
-			UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 
-			return true;
-		}
+		std::cout << "- Request to create session: \n";
+		std::string SessionID;
+		std::cout << "- Please enter session ID with a maximum amount of 6 characters : \n";
+		getline(std::cin, SessionID);
+
+		std::cout << "- Request to create Room with ID:" << SessionID;
+		UDPPacks::SendBytePack.Clear(20, 3);
+		UDPPacks::SendBytePack.AddBytes(MessageType::CreateRequest);
+		UDPPacks::SendBytePack.AddBytes(SessionID);
+		UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
+		UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+
+		return true;
+		
 	}
 	return false;
 }

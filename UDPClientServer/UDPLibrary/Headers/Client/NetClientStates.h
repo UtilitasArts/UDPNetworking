@@ -37,7 +37,7 @@ public:
 	void SendCnctApprovalResp(uint8_t& AmountOfSessions);
 
 	bool SendReqUpdate(std::string Response, std::regex& Pattern);
-	bool SendReqCreateSession(std::string& Response, std::regex& Pattern);
+	bool SendReqCreateSession(std::string Response, std::regex& Pattern);
 	bool SendReqJoinSession(std::string Response, std::regex& Pattern, uint8_t& AmountOfSessions);
 };
 
