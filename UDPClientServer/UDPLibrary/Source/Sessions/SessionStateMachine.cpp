@@ -48,6 +48,8 @@ bool SessionStateMachine::JoinSession(AdressCtr adress_ctr) {
 			uint32_t PublicIP		= AdressArray[i].HostIP();
 			uint16_t PublicPort		= AdressArray[i].HostPort();
 
+			adress_ctr.PrintAdress();
+
 			UDPPacks::SendBytePack.AddBytes(NameInArray);
 			UDPPacks::SendBytePack.AddBytes(PublicIP);
 			UDPPacks::SendBytePack.AddBytes(PublicPort);

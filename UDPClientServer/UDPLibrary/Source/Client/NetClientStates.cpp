@@ -221,7 +221,6 @@ void Unconnected_NetClientState::RecvJoinSessionApproval() {
 	UDPPacks::RecvBytePack.ReturnBytes(bApproved, 1);
 
 	if (bApproved){
-
 		std::cout << "- Joining of room was approved\n";
 
 		uint8_t JoinedCount;
@@ -233,12 +232,11 @@ void Unconnected_NetClientState::RecvJoinSessionApproval() {
 			uint32_t PublicIP;
 			uint16_t PublicPort;
 
-			size_t count = i * (size_t)JoinedCount;
+			size_t count = i * 3;
 			UDPPacks::RecvBytePack.ReturnBytes(NameInArray, 3 + count);
 			UDPPacks::RecvBytePack.ReturnBytes(PublicIP,    4 + count);
 			UDPPacks::RecvBytePack.ReturnBytes(PublicPort,  5 + count);
-
-			std::cout << NameInArray << "IP:" << (int)PublicIP << ":" << (int)PublicPort << "\n";
+			AdressCtr Adress(PublicIP,PublicPort,NameInArray, true);			
 		}
 	}
 	else {
