@@ -40,13 +40,15 @@ void ConnectRequest(){
 void CreateSession() {
 
 	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
- 	std::string RoomID;
-
- 	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 1);
-	std::cout << "- Created a room with ID:" << RoomID;
-
 	std::string Name;
-	UDPPacks::RecvBytePack.ReturnBytes(Name, 2);
+ 	std::string RoomID;
+	uint8_t AmountOfPlayers;
+
+	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
+ 	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 2);
+	UDPPacks::RecvBytePack.ReturnBytes(AmountOfPlayers, 3);
+
+	std::cout << "- " << Name << "Created a room with ID:" << RoomID << " for " << AmountOfPlayers << " players.";
 
 	//SessionStateMachine* NewSession = new SessionStateMachine();
 	//Sessions.push_back()

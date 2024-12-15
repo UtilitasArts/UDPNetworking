@@ -143,10 +143,10 @@ bool Unconnected_NetClientState::SendReqCreateSession(std::string Response, std:
 		std::cout << "- Please enter session ID with a maximum amount of 6 characters : \n";
 		getline(std::cin, SessionID);
 
-		std::regex RoomID{ R"(^[a-zA-Z\d]{1,6}$)" };std::smatch IDMatch;
+		std::regex RoomID{ R"(^[a-zA-Z\d]{1,6})" };std::smatch IDMatch;
 		if (std::regex_search(SessionID, IDMatch, RoomID)) {
 
-			std::string RoomIDString = IDMatch.str();
+			std::string SessionIDString = IDMatch.str();
 			std::string AmountOfPlayers;
 			std::cout << "- Please enter the amount of players 2-4 : \n";
 			getline(std::cin, AmountOfPlayers);
@@ -158,14 +158,15 @@ bool Unconnected_NetClientState::SendReqCreateSession(std::string Response, std:
 
 				UDPPacks::SendBytePack.Clear(20, 3);
 				UDPPacks::SendBytePack.AddBytes(MessageType::CreateRequest);
-				UDPPacks::SendBytePack.AddBytes(RoomIDString);
 				UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
+				UDPPacks::SendBytePack.AddBytes(SessionIDString);
 				UDPPacks::SendBytePack.AddBytes(AOP);
 				UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 				return true;
 			}		
 		}
 	}
+
 	return false;
 }
 
