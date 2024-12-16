@@ -17,7 +17,7 @@ public:
 	bool JoinSession();
 
 	bool IsNewConnection();
-	void NotifyAllOnJoin();
+	void SendSessionAdresses(MessageType message_type);
 
 	std::vector<AdressCtr> SessionAdresses;
 	std::string SessionName;

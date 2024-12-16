@@ -51,7 +51,11 @@ public:
 	virtual void OnExit()  override;
 
 	void WaitingForPlayers();
-	void RecvJoinNotify();
+	void ReturnAddresses(MessageType message_type);
+	void SessionStart();
+	void RecvPlayerConnectRequest();
+
+	bool bSessionStarted;
 };
 
 class ConnectedToPlayers_NetClientState : public BaseNetClientState {

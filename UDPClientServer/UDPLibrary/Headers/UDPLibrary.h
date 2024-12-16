@@ -24,6 +24,7 @@ enum class MessageType : uint8_t {
 	JoinRequest,
 	JoinApproval,
 	JoinNotify,
+	SessionStart,
 	UpdateRequest,
 	UpdateApproval,
 	ProfilePackage,
@@ -287,7 +288,7 @@ namespace UDPPacks {
 	inline AdressCtr  PublicAdress;
 	inline AdressCtr  ServerAdress(80, 61, 175, 45, 8000, "Server", false);
 
-	inline std::vector<AdressCtr>ConnectedAdresses;
+	inline std::vector<AdressCtr>ConnectedAddresses;
 
 	inline unsigned char RecvBuffer[1024];
 
@@ -327,6 +328,17 @@ namespace UDPPacks {
 			std::cout << "\n- A " << MessageTypeToString(MType) << " Sent! " << "\n";
 			if (bPrint) { SendBytePack.PrintBytes(); }
 		}
+	}
+
+	inline bool RecvValidSessionAddress()	{
+		bool bValidAddress = false; 
+
+		for (size_t i = 0; i < ConnectedAddresses.size(); i++){
+			if (ReceiveAdress == ConnectedAddresses[i])	{
+				bValidAddress = true;
+			}
+		}
+		return bValidAddress;
 	}
 }
 

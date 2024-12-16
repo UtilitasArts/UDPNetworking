@@ -51,7 +51,7 @@ void Unconnected_NetClientState::ReceiveConnectionApproval() {
 
 		UDPPacks::RecvBytes(true);
 
-		if (UDPPacks::ReceiveAdress.HostIP() == UDPPacks::ServerAdress.HostIP()) {
+		if (UDPPacks::ReceiveAdress == UDPPacks::ServerAdress) {
 			switch (UDPPacks::RecvMT) {
 			case MessageType::ConnectApproval:
 				RecvCnctApproval();
@@ -190,7 +190,6 @@ bool Unconnected_NetClientState::SendReqCreateSession(std::string Response, std:
 
 bool Unconnected_NetClientState::SendReqJoinSession(std::string Response, std::regex& Pattern, uint8_t& AmountOfSessions) {
 	if (std::regex_search(Response, Pattern) && (AmountOfSessions > 0)) {
-
 		std::cout << "- Request to join session: \n";
 		std::string RoomNr;
 		std::cout << "- Please enter room number : \n";
@@ -247,8 +246,6 @@ void Unconnected_NetClientState::RecvUpdateApproval() {
 	exit(0);
 }
 
-
-
 //ConnectedToSession
 void ConnectedToSession_NetClientState::InitState(){
 	BaseNetClientState::InitState();
@@ -258,8 +255,8 @@ void ConnectedToSession_NetClientState::OnEnter() {
 	BaseNetClientState::OnEnter();
 
 	std::cout << "- Waiting For Players.. \n";
+	bSessionStarted = false;
 	WaitingForPlayers();
-
 
 }
 void ConnectedToSession_NetClientState::OnExit() {
@@ -268,22 +265,32 @@ void ConnectedToSession_NetClientState::OnExit() {
 
 void ConnectedToSession_NetClientState::WaitingForPlayers() {
 		while (bActive) {
-
 			UDPPacks::RecvBytes(true);
 
-			if (UDPPacks::ReceiveAdress.HostIP() == UDPPacks::ServerAdress.HostIP()) {
+			if (UDPPacks::ReceiveAdress == UDPPacks::ServerAdress && !bSessionStarted) {
 				switch (UDPPacks::RecvMT) {
 				case MessageType::JoinNotify:
-					std::cout << "- A new player has joined\n";
-					RecvJoinNotify();
-					break;				
+					ReturnAddresses(UDPPacks::RecvMT);
+					break;
+				case MessageType::SessionStart:
+					ReturnAddresses(UDPPacks::RecvMT);
+					SessionStart();
+					break;					
+				}
+			}
+
+ 			if (UDPPacks::RecvValidSessionAddress() && bSessionStarted)	{
+				switch (UDPPacks::RecvMT) {
+				case MessageType::ConnectRequest:
+					RecvPlayerConnectRequest();
+					break;
 				}
 			}
 		}
 }
-
-void ConnectedToSession_NetClientState::RecvJoinNotify() {
+void ConnectedToSession_NetClientState::ReturnAddresses(MessageType message_type) {
 	uint8_t JoinedCount; uint8_t SessionSize;
+
 	UDPPacks::RecvBytePack.ReturnBytes(JoinedCount,1);
 	UDPPacks::RecvBytePack.ReturnBytes(SessionSize,2);
 
@@ -299,16 +306,35 @@ void ConnectedToSession_NetClientState::RecvJoinNotify() {
 		UDPPacks::RecvBytePack.ReturnBytes(PublicPort, 4 + count);
 		UDPPacks::RecvBytePack.ReturnBytes(PublicName, 5 + count);
 
-		AdressCtr SessionAdress(PublicIP, PublicPort, PublicName);
-		SessionAdress.PrintAdress();
+		AdressCtr CurSessionAddress(PublicIP, PublicPort, PublicName);
+		CurSessionAddress.PrintAdress();
+
+		if (message_type == MessageType::SessionStart) {
+			UDPPacks::ConnectedAddresses.push_back(CurSessionAddress);
+		}
 	}
 }
 
+void ConnectedToSession_NetClientState::SessionStart() {
+	UDPPacks::SendBytePack.Clear(20, 3);
+	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
+	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
+	
+	for (size_t i = 0; i < UDPPacks::ConnectedAddresses.size(); i++) {
+		UDPPacks::SendBytes(UDPPacks::ConnectedAddresses[i], true);		
+	}
+}
+
+void ConnectedToSession_NetClientState::RecvPlayerConnectRequest() {
+	std::string PublicName;
+	UDPPacks::RecvBytePack.ReturnBytes(PublicName,1);
+	std::cout << "- " << PublicName << "says hi! \n";
+}
 
 //ConnectedToPlayers
 void ConnectedToPlayers_NetClientState::InitState(){
 	BaseNetClientState::InitState();
-	StateEnum = ENetClientStates::ConnectedToSession;
+	StateEnum = ENetClientStates::ConnectedToPlayers;
 }
 void ConnectedToPlayers_NetClientState::OnEnter(){
 	BaseNetClientState::OnEnter();
