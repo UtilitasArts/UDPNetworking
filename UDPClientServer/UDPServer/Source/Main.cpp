@@ -67,6 +67,7 @@ void JoinSession() {
 	UDPPacks::ReceiveAdress.SetName(Name);
 
 	Sessions[RoomNr]->JoinSession();
+
 }
 
 void UpdateServer() {
