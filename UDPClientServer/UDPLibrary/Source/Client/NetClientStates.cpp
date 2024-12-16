@@ -135,8 +135,8 @@ bool Unconnected_NetClientState::SendReqUpdate(std::string Response, std::regex&
 		std::cout << "- Please enter commit log: \n";
 		getline(std::cin, CommitLog);
 
-		std::string RestartPath = CMD::SetPath(UDPSetup::RestartFolder);
-		std::string BatchFile   = CMD::Command("Push.bat ", CMD::SetString(CommitLog));
+		std::string RestartPath  = CMD::SetPath(UDPSetup::RestartFolder);
+		std::string BatchFile    = CMD::Command("Push.bat ", CMD::SetString(CommitLog));
 		std::string FinalCommand = CMD::MultiCMD(RestartPath, BatchFile);
 
 		system(FinalCommand.c_str());
