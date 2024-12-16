@@ -69,23 +69,24 @@ bool SessionStateMachine::IsNewConnection() {
 void SessionStateMachine::NotifyAllOnJoin()
 {
 	std::cout << "Joined Count = " << (int)JoinedCount;
-	UDPPacks::SendBytePack.Clear(30, 10);
-	UDPPacks::SendBytePack.AddBytes(MessageType::JoinNotify);
-	UDPPacks::SendBytePack.AddBytes(JoinedCount);
 
-
-	for (size_t i = 0; i < JoinedCount; i++) {
-		uint32_t	PublicIP	= SessionAdresses[i].HostIP();
-		uint16_t	PublicPort	= SessionAdresses[i].HostPort();
-		std::string PublicName	= SessionAdresses[i].GetAddrName();
-
-		SessionAdresses[i].PrintAdress();
-
-		UDPPacks::SendBytePack.AddBytes(PublicIP);
-		UDPPacks::SendBytePack.AddBytes(PublicPort);
-		UDPPacks::SendBytePack.AddBytes(PublicName);
-	}
-
-	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+// 	UDPPacks::SendBytePack.Clear(30, 10);
+// 	UDPPacks::SendBytePack.AddBytes(MessageType::JoinNotify);
+// 	UDPPacks::SendBytePack.AddBytes(JoinedCount);
+// 
+// 
+// 	for (size_t i = 0; i < JoinedCount; i++) {
+// 		uint32_t	PublicIP	= SessionAdresses[i].HostIP();
+// 		uint16_t	PublicPort	= SessionAdresses[i].HostPort();
+// 		std::string PublicName	= SessionAdresses[i].GetAddrName();
+// 
+// 		SessionAdresses[i].PrintAdress();
+// 
+// 		UDPPacks::SendBytePack.AddBytes(PublicIP);
+// 		UDPPacks::SendBytePack.AddBytes(PublicPort);
+// 		UDPPacks::SendBytePack.AddBytes(PublicName);
+// 	}
+// 
+// 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 }
 
