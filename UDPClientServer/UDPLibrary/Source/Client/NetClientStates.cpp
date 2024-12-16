@@ -249,7 +249,6 @@ void Unconnected_NetClientState::RecvUpdateApproval() {
 
 
 
-
 //ConnectedToSession
 void ConnectedToSession_NetClientState::InitState(){
 	BaseNetClientState::InitState();

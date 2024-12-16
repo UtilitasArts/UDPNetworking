@@ -64,6 +64,7 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 		default:
 			return "None";
 	}
+
 }
 
 namespace CMD {
