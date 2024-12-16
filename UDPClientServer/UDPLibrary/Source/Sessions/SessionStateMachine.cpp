@@ -37,7 +37,7 @@ bool SessionStateMachine::JoinSession() {
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::JoinApproval);
 
-	if (SessionSize >= JoinedCount + 1 && IsNewConnection()) {
+	if (SessionSize >= JoinedCount + 1) {
 		JoinedCount++;
 		SessionAdresses.push_back(UDPPacks::ReceiveAdress);
 		UDPPacks::ConnectedAdresses.push_back(UDPPacks::ReceiveAdress);
