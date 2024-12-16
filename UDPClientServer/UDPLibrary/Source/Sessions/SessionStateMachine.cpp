@@ -68,11 +68,11 @@ bool SessionStateMachine::IsNewConnection() {
 
 void SessionStateMachine::NotifyAllOnJoin()
 {
+	std::cout << "Joined Count = " << (int)JoinedCount;
 	UDPPacks::SendBytePack.Clear(30, 10);
 	UDPPacks::SendBytePack.AddBytes(MessageType::JoinNotify);
 	UDPPacks::SendBytePack.AddBytes(JoinedCount);
 
-	std::cout << "Joined Count = " << (int)JoinedCount;
 
 	for (size_t i = 0; i < JoinedCount; i++) {
 		uint32_t	PublicIP	= SessionAdresses[i].HostIP();
