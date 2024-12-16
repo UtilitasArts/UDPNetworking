@@ -53,6 +53,7 @@ bool SessionStateMachine::JoinSession() {
 		UDPPacks::SendBytePack.AddBytes(false);
 		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 		return false;
+
 	}
 }
 
