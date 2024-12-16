@@ -338,7 +338,7 @@ void ConnectedToSession_NetClientState::SessionStart() {
 void ConnectedToSession_NetClientState::RecvPlayerConnectRequest() {
 	std::string PublicName;
 	UDPPacks::RecvBytePack.ReturnBytes(PublicName,1);
-	std::cout << "- " << PublicName << "says hi! \n";
+	std::cout << "- " << PublicName << " says hi! \n";
 }
 
 //ConnectedToPlayers
