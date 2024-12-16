@@ -72,6 +72,8 @@ void SessionStateMachine::NotifyAllOnJoin()
 	UDPPacks::SendBytePack.AddBytes(MessageType::JoinNotify);
 	UDPPacks::SendBytePack.AddBytes(JoinedCount);
 
+	std::cout << "Joined Count = " << (int)JoinedCount;
+
 	for (size_t i = 0; i < JoinedCount; i++) {
 		uint32_t	PublicIP	= SessionAdresses[i].HostIP();
 		uint16_t	PublicPort	= SessionAdresses[i].HostPort();
