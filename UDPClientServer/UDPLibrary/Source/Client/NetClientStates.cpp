@@ -294,7 +294,7 @@ void ConnectedToSession_NetClientState::ReturnAddresses(MessageType message_type
 	UDPPacks::RecvBytePack.ReturnBytes(JoinedCount,1);
 	UDPPacks::RecvBytePack.ReturnBytes(SessionSize,2);
 
-	std::cout << "\n- Players in session count = " << (int)JoinedCount << " out of <<" << (int)SessionSize << "\n";
+	std::cout << "\n- Players in session count = " << (int)JoinedCount << " out of " << (int)SessionSize << "\n";
 
 	for (size_t i = 0; i < JoinedCount; i++) {
 		uint32_t	PublicIP;

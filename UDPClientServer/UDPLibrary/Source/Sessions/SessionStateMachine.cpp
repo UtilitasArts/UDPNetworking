@@ -74,7 +74,7 @@ bool SessionStateMachine::IsNewConnection() {
 
 void SessionStateMachine::SendSessionAdresses(MessageType message_type)
 {
-	std::cout << "\n- Players in session count = " << (int)JoinedCount << " out of <<" << (int)SessionSize << "\n";
+	std::cout << "\n- Players in session count = " << (int)JoinedCount << " out of " << (int)SessionSize << "\n";
 
 	UDPPacks::SendBytePack.Clear(30, 10);
 	UDPPacks::SendBytePack.AddBytes(message_type);
