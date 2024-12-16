@@ -274,6 +274,7 @@ void ConnectedToSession_NetClientState::WaitingForPlayers() {
 			if (UDPPacks::ReceiveAdress.HostIP() == UDPPacks::ServerAdress.HostIP()) {
 				switch (UDPPacks::RecvMT) {
 				case MessageType::JoinNotify:
+					std::cout << "- A new player has joined\n";
 					RecvJoinNotify();
 					break;				
 				}
@@ -281,12 +282,12 @@ void ConnectedToSession_NetClientState::WaitingForPlayers() {
 		}
 }
 
-void ConnectedToSession_NetClientState::RecvJoinNotify()
-{
-	uint8_t JoinedCount;
+void ConnectedToSession_NetClientState::RecvJoinNotify() {
+	uint8_t JoinedCount; uint8_t SessionSize;
 	UDPPacks::RecvBytePack.ReturnBytes(JoinedCount,1);
+	UDPPacks::RecvBytePack.ReturnBytes(SessionSize,2);
 
-	std::cout << "\n- Players in session count = " << (int)JoinedCount << "\n";
+	std::cout << "\n- Players in session count = " << (int)JoinedCount << " out of <<" << (int)SessionSize << "\n";
 
 	for (size_t i = 0; i < JoinedCount; i++) {
 		uint32_t	PublicIP;
@@ -294,9 +295,9 @@ void ConnectedToSession_NetClientState::RecvJoinNotify()
 		std::string PublicName;
 
 		size_t count = i * 3;
-		UDPPacks::RecvBytePack.ReturnBytes(PublicIP,   2 + count);
-		UDPPacks::RecvBytePack.ReturnBytes(PublicPort, 3 + count);
-		UDPPacks::RecvBytePack.ReturnBytes(PublicName, 4 + count);
+		UDPPacks::RecvBytePack.ReturnBytes(PublicIP,   3 + count);
+		UDPPacks::RecvBytePack.ReturnBytes(PublicPort, 4 + count);
+		UDPPacks::RecvBytePack.ReturnBytes(PublicName, 5 + count);
 
 		AdressCtr SessionAdress(PublicIP, PublicPort, PublicName);
 		SessionAdress.PrintAdress();

@@ -280,11 +280,9 @@ public:
 	}	
 };
 
-
 namespace UDPPacks {
 	inline BytePack   SendBytePack;
 	inline BytePack   RecvBytePack;
-
 	inline AdressCtr  ReceiveAdress;
 	inline AdressCtr  PublicAdress;
 	inline AdressCtr  ServerAdress(80, 61, 175, 45, 8000, "Server", false);

@@ -74,6 +74,7 @@ void SessionStateMachine::NotifyAllOnJoin()
  	UDPPacks::SendBytePack.Clear(30, 10);
  	UDPPacks::SendBytePack.AddBytes(MessageType::JoinNotify);
  	UDPPacks::SendBytePack.AddBytes(JoinedCount); 
+	UDPPacks::SendBytePack.AddBytes(SessionSize);
  
  	for (size_t i = 0; i < JoinedCount; i++) {
  		uint32_t	PublicIP	= SessionAdresses[i].HostIP();
@@ -90,7 +91,6 @@ void SessionStateMachine::NotifyAllOnJoin()
 	for (size_t i = 0; i < JoinedCount; i++){
  		UDPPacks::SendBytes(UDPPacks::ConnectedAdresses[i], true);
 	}
-
 
  
 }
