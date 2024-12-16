@@ -45,7 +45,7 @@ bool SessionStateMachine::JoinSession() {
 		UDPPacks::SendBytePack.AddBytes(true);		
 		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 
-		NotifyAllOnJoin();
+		//NotifyAllOnJoin();
 
 		return true;
 	}
