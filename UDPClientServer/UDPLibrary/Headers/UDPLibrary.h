@@ -347,8 +347,6 @@ namespace UDPPacks {
 				bValidAddress = true;
 			}
 		}
-
-		if(bValidAddress){ std::cout << "RecvAddr Is Valid"; } else { std::cout << "RecvAddr Is NOT Valid"; }
 		return bValidAddress;
 	}
 }

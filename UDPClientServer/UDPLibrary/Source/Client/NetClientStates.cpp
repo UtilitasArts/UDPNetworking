@@ -267,21 +267,25 @@ void ConnectedToSession_NetClientState::WaitingForPlayers() {
 		while (bActive) {
 			UDPPacks::RecvBytes(true);
 
-			if (UDPPacks::ReceiveAdress == UDPPacks::ServerAdress && !bSessionStarted) {
-				switch (UDPPacks::RecvMT) {
-				case MessageType::JoinNotify:
-					ReturnAddresses(UDPPacks::RecvMT);
-					break;
-				case MessageType::SessionStart:
-					ReturnAddresses(UDPPacks::RecvMT);
-					SessionStart();
-					break;					
+
+			if (!bSessionStarted)
+			{
+				if (UDPPacks::ReceiveAdress == UDPPacks::ServerAdress && !bSessionStarted) {
+					switch (UDPPacks::RecvMT) {
+					case MessageType::JoinNotify:
+						ReturnAddresses(UDPPacks::RecvMT);
+						break;
+					case MessageType::SessionStart:
+						ReturnAddresses(UDPPacks::RecvMT);
+						SessionStart();
+						break;					
+					}
 				}
 			}
-
- 			if (UDPPacks::RecvValidSessionAddress() && bSessionStarted)	{
+			else if (UDPPacks::RecvValidSessionAddress())	{
 				switch (UDPPacks::RecvMT) {
 				case MessageType::ConnectRequest:
+					std::cout << "RecvAddr Is Valid";					
 					RecvPlayerConnectRequest();
 					break;
 				}
@@ -321,7 +325,6 @@ void ConnectedToSession_NetClientState::SessionStart() {
 	std::cout <<"- Session is being started -\n";
 
 	bSessionStarted = true;
-
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
 	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
