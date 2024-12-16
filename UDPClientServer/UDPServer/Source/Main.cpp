@@ -64,6 +64,8 @@ void JoinSession() {
 
 	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
 	UDPPacks::RecvBytePack.ReturnBytes(RoomNr, 2);
+
+	std::cout << Name << "= Joining Room" << (int)RoomNr;
 	UDPPacks::ReceiveAdress.SetName(Name);
 	Sessions[RoomNr]->JoinSession();
 }

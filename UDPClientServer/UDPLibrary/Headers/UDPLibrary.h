@@ -53,6 +53,9 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 		case MessageType::JoinNotify:
 			return "JoinNotify";
 			break;
+		case MessageType::SessionStart:
+			return "SessionStart";
+			break;
 		case MessageType::UpdateRequest:
 			return "UpdateRequest";
 			break;
