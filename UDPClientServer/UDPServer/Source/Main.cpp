@@ -89,6 +89,7 @@ void UpdateServer() {
 
 	system(FinalCommand.c_str());
 	exit(0);
+
 }
 
 int main(){
