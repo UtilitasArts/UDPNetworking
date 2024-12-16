@@ -267,7 +267,6 @@ void ConnectedToSession_NetClientState::WaitingForPlayers() {
 		while (bActive) {
 			UDPPacks::RecvBytes(true);
 
-
 			if (!bSessionStarted)
 			{
 				if (UDPPacks::ReceiveAdress == UDPPacks::ServerAdress && !bSessionStarted) {
@@ -324,7 +323,7 @@ void ConnectedToSession_NetClientState::SessionStart() {
 	std::cout <<"- Session is being started -\n";
 
 	bSessionStarted = true;
-	Sleep(500);
+	Sleep(1000);
 
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);

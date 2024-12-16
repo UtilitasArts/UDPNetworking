@@ -21,7 +21,6 @@ int main() {
 
 	NetClientStateMachine NetStateMachine;
 	NetStateMachine.SetState(ENetClientStates::Unconnected);
-
 }
 
  
