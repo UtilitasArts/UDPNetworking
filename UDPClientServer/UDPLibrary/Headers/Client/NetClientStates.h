@@ -28,14 +28,15 @@ public:
 	virtual void InitState() override;
 	virtual void OnEnter() override;
 	virtual void OnExit()  override;
+
 	void ReceiveConnectionApproval();
-	void SendConnectionRequest();
 	void RecvJoinSessionApproval();
 	void RecvCreateSessionApproval();
 	void RecvUpdateApproval();
 	void RecvCnctApproval();
-	void SendCnctApprovalResp(uint8_t& AmountOfSessions);
 
+	void SendConnectionRequest();
+	void SendCnctApprovalResp(uint8_t& AmountOfSessions);
 	bool SendReqUpdate(std::string Response, std::regex& Pattern);
 	bool SendReqCreateSession(std::string Response, std::regex& Pattern);
 	bool SendReqJoinSession(std::string Response, std::regex& Pattern, uint8_t& AmountOfSessions);
@@ -48,6 +49,9 @@ public:
 	virtual void InitState() override;
 	virtual void OnEnter() override;
 	virtual void OnExit()  override;
+
+	void WaitingForPlayers();
+	void RecvJoinNotify();
 };
 
 class ConnectedToPlayers_NetClientState : public BaseNetClientState {
