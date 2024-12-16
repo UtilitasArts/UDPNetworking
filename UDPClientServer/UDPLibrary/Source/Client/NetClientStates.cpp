@@ -284,8 +284,7 @@ void ConnectedToSession_NetClientState::WaitingForPlayers() {
 			}
 			else if (UDPPacks::RecvValidSessionAddress())	{
 				switch (UDPPacks::RecvMT) {
-				case MessageType::ConnectRequest:
-					std::cout << "RecvAddr Is Valid";					
+				case MessageType::ConnectRequest:				
 					RecvPlayerConnectRequest();
 					break;
 				}
