@@ -26,6 +26,5 @@ void NetClientStateMachine::SetState(ENetClientStates NextState) {
 	CurrentState = StateArray.at((size_t)NextState);
 
 	if (CurrentState) { CurrentState->OnEnter(); }
-
 }
 

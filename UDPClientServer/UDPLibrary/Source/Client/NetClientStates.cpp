@@ -15,12 +15,13 @@ void BaseNetClientState::InitState(){
 }
 void BaseNetClientState::OnEnter() {
 	InitState();
-	std::cout << "State=" << ENetClientStateString(StateEnum) << "\n";
+	std::cout << "- State = " << ENetClientStateString(StateEnum) << "\n";
+	bActive = true;
 }
 void BaseNetClientState::OnExit(){
+	bActive = false;
 	//std::cout << "Exit State " << ENetClientStateString(StateEnum) << "\n";
 }
-
 
 //Unconnected
 void Unconnected_NetClientState::InitState(){
@@ -34,6 +35,10 @@ void Unconnected_NetClientState::OnEnter() {
 	SendConnectionRequest();
 	ReceiveConnectionApproval();
 }
+void Unconnected_NetClientState::OnExit(){
+	BaseNetClientState::OnExit();
+}
+
 void Unconnected_NetClientState::SendConnectionRequest() {
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
@@ -42,7 +47,7 @@ void Unconnected_NetClientState::SendConnectionRequest() {
 }
 
 void Unconnected_NetClientState::ReceiveConnectionApproval() {
-	while (true) {
+	while (bActive) {
 
 		UDPPacks::RecvBytes(true);
 
@@ -219,6 +224,7 @@ void Unconnected_NetClientState::RecvJoinSessionApproval() {
 		StateMachine->SetState(ENetClientStates::Unconnected);
 	}	
 }
+
 void Unconnected_NetClientState::RecvCreateSessionApproval() {
 	bool bApproved;
 	UDPPacks::RecvBytePack.ReturnBytes(bApproved,1);
@@ -241,9 +247,10 @@ void Unconnected_NetClientState::RecvUpdateApproval() {
 	exit(0);
 }
 
-void Unconnected_NetClientState::OnExit(){
-	BaseNetClientState::OnExit();
-}
+
+
+
+
 
 
 
@@ -255,7 +262,7 @@ void ConnectedToSession_NetClientState::InitState(){
 void ConnectedToSession_NetClientState::OnEnter() {
 	BaseNetClientState::OnEnter();
 
-	std::cout << "- Waiting For Players..";
+	std::cout << "- Waiting For Players.. \n";
 
 
 }

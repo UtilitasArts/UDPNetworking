@@ -16,8 +16,8 @@ public:
 	virtual void OnEnter();
 	virtual void OnExit();
 
-
 protected:
+	bool bActive; 
 	NetClientStateMachine* StateMachine;
 	ENetClientStates StateEnum;
 };
