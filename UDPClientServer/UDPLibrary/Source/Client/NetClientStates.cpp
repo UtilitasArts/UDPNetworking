@@ -324,6 +324,8 @@ void ConnectedToSession_NetClientState::SessionStart() {
 	std::cout <<"- Session is being started -\n";
 
 	bSessionStarted = true;
+	Sleep(500);
+
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
 	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
