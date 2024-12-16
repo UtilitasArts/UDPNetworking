@@ -7,7 +7,7 @@ NetClientStateMachine::NetClientStateMachine() :
 	(
 		{
 			new Unconnected_NetClientState(this),
-			new ConnectedToServer_NetClientState(this),
+			new ConnectedToSession_NetClientState(this),
 			new ConnectedToPlayers_NetClientState(this)
 		}
 	)

@@ -2,7 +2,7 @@
 
 enum class ENetClientStates : uint8_t {
 	Unconnected,
-	ConnectedToServer,
+	ConnectedToSession,
 	ConnectedToPlayers,
 
 };
@@ -14,8 +14,8 @@ inline std::string ENetClientStateString(ENetClientStates ENetStateEnum)
 	case ENetClientStates::Unconnected:
 		return "Unconnected";
 		break;
-	case ENetClientStates::ConnectedToServer:
-		return "ConnectedToServer";
+	case ENetClientStates::ConnectedToSession:
+		return "ConnectedToSession";
 		break;
 	case ENetClientStates::ConnectedToPlayers:
 		return "ConnectedToPlayers";

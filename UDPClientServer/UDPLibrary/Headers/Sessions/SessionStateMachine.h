@@ -16,7 +16,10 @@ public:
 	void SetState(ESessionStates NextState);
 	bool JoinSession();
 
-	std::vector<AdressCtr> AdressArray;
+	bool IsNewConnection();
+	void NotifyAllOnJoin();
+
+	std::vector<AdressCtr> SessionAdresses;
 	std::string SessionName;
 	uint8_t SessionSize;
 	uint8_t JoinedCount;

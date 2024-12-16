@@ -42,7 +42,7 @@ public:
 };
 
 
-class ConnectedToServer_NetClientState : public BaseNetClientState {
+class ConnectedToSession_NetClientState : public BaseNetClientState {
 public:
 	using BaseNetClientState::BaseNetClientState;
 	virtual void InitState() override;

@@ -23,6 +23,7 @@ enum class MessageType : uint8_t {
 	CreateApproval,
 	JoinRequest,
 	JoinApproval,
+	JoinNotify,
 	UpdateRequest,
 	UpdateApproval,
 	ProfilePackage,
@@ -231,17 +232,16 @@ struct AdressCtr
 		SetAdress(SockIP, SockPort, name, bPrint);
 	}
 
-	inline void SetName(std::string name)
-	{
+	inline void SetName(std::string name){
 		AdressName = name;
 	}
 
  	void PrintAdress() {printf("- %-10s adress = %d.%d.%d.%d:%d\n",AdressName.c_str(),Octets[0], Octets[1], Octets[2], Octets[3], Port); }
 
-	inline uint32_t HostIP()			 { return IP;}
-	inline uint16_t HostPort()			 { return Port; }
-	inline uint32_t NetIP()				 { return htonl(IP); }
-	inline uint16_t NetPort()			 { return htons(Port);}
+	inline uint32_t& HostIP()			 { return IP;}
+	inline uint16_t& HostPort()			 { return Port; }
+	inline uint32_t  NetIP()			 { return htonl(IP); }
+	inline uint16_t  NetPort()			 { return htons(Port);}
 	inline sockaddr_in* GetSockAddr_In() { return &SockAddress;}
 	inline sockaddr* GetSockAddr()		 { return reinterpret_cast<sockaddr*>(&SockAddress); }
 	inline int32_t*  GetAddrSize()		 { return &AddrSize;}
@@ -262,6 +262,17 @@ private:
 
 	sockaddr_in SockAddress;
 	int32_t AddrSize = sizeof(SockAddress);	 
+
+public:
+
+	bool operator ==(const AdressCtr& obj) {
+		if (IP == obj.IP && Port == obj.Port){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}	
 };
 
 
@@ -273,7 +284,7 @@ namespace UDPPacks {
 	inline AdressCtr  PublicAdress;
 	inline AdressCtr  ServerAdress(80, 61, 175, 45, 8000, "Server", false);
 
-	inline std::vector<AdressCtr>AdressArray;
+	inline std::vector<AdressCtr>ConnectedAdresses;
 
 	inline unsigned char RecvBuffer[1024];
 

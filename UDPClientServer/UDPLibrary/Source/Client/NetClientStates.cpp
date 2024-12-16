@@ -29,6 +29,7 @@ void Unconnected_NetClientState::InitState(){
 }
 void Unconnected_NetClientState::OnEnter() {
 	BaseNetClientState::OnEnter();
+
     UDPSetup::UDPInit();
 	SendConnectionRequest();
 	ReceiveConnectionApproval();
@@ -108,26 +109,20 @@ void Unconnected_NetClientState::RecvCnctApproval(){
 
 void Unconnected_NetClientState::SendCnctApprovalResp(uint8_t& AmountOfSessions) {
 	while (true) {
-
 		std::string Response; getline(std::cin, Response);
-
 		std::regex JoinPattern{   R"(^-J)", std::regex::icase };
 		std::regex CreatePattern{ R"(^-C)", std::regex::icase };
 		std::regex UpdatePattern{ R"(^-U)", std::regex::icase };
-
 	
 		if (SendReqUpdate(Response, UpdatePattern)) {
 			break;
 		}
-
 		if (SendReqCreateSession(Response, CreatePattern)) {
 			break;
-		}
-	
+		}	
 		if (SendReqJoinSession(Response, JoinPattern, AmountOfSessions))	{
 			break;
 		}
-
 		std::cout << "Wrong Input \n";
 	}
 }
@@ -175,7 +170,6 @@ bool Unconnected_NetClientState::SendReqCreateSession(std::string Response, std:
 			if (std::regex_search(AmountOfPlayers, Match, RoomNumber)) {
 				uint8_t AOP = std::stoi(Match.str());
 				std::cout << "- Request to create Room with ID:" << SessionID << " That has space for " << (int)AOP << " Players.\n";
-
 				UDPPacks::SendBytePack.Clear(20, 3);
 				UDPPacks::SendBytePack.AddBytes(MessageType::CreateRequest);
 				UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
@@ -186,7 +180,6 @@ bool Unconnected_NetClientState::SendReqCreateSession(std::string Response, std:
 			}		
 		}
 	}
-
 	return false;
 }
 
@@ -200,10 +193,8 @@ bool Unconnected_NetClientState::SendReqJoinSession(std::string Response, std::r
 		
 		std::regex RoomNumber{ R"(^[1-10]$)" };	std::smatch Match;
 		if (std::regex_search(RoomNr, Match, RoomNumber)) {
-
 			uint8_t RoomNr = min(std::stoi(Match.str()), AmountOfSessions);
 			std::cout << "- Request to join Room with number:" << RoomNr;
-
 			UDPPacks::SendBytePack.Clear(20,3);
 			UDPPacks::SendBytePack.AddBytes(MessageType::JoinRequest);
 			UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
@@ -219,36 +210,18 @@ bool Unconnected_NetClientState::SendReqJoinSession(std::string Response, std::r
 void Unconnected_NetClientState::RecvJoinSessionApproval() {
 	bool bApproved;
 	UDPPacks::RecvBytePack.ReturnBytes(bApproved, 1);
-
 	if (bApproved){
 		std::cout << "- Joining of room was approved\n";
-
-		uint8_t JoinedCount;
-		UDPPacks::RecvBytePack.ReturnBytes(JoinedCount, 2);
-
-		std::cout << "- " << (int)JoinedCount << " Players in session : \n";
-		for (uint8_t i = 0; i < JoinedCount; i++){
-			std::string NameInArray;
-			uint32_t PublicIP;
-			uint16_t PublicPort;
-
-			size_t count = i * 3;
-			UDPPacks::RecvBytePack.ReturnBytes(NameInArray, 3 + count);
-			UDPPacks::RecvBytePack.ReturnBytes(PublicIP,    4 + count);
-			UDPPacks::RecvBytePack.ReturnBytes(PublicPort,  5 + count);
-			AdressCtr Adress(PublicIP,PublicPort,NameInArray, true);			
-		}
+		StateMachine->SetState(ENetClientStates::ConnectedToSession);
 	}
 	else {
 		std::cout << "- Joining of room was denied, Room was probably full";
 		StateMachine->SetState(ENetClientStates::Unconnected);
 	}	
 }
-
 void Unconnected_NetClientState::RecvCreateSessionApproval() {
 	bool bApproved;
 	UDPPacks::RecvBytePack.ReturnBytes(bApproved,1);
-
 	if (bApproved){
 		std::cout << "- Creation of room was approved\n";
 	}
@@ -274,18 +247,19 @@ void Unconnected_NetClientState::OnExit(){
 
 
 
-
-
-//ConnectedToServer
-void ConnectedToServer_NetClientState::InitState(){
+//ConnectedToSession
+void ConnectedToSession_NetClientState::InitState(){
 	BaseNetClientState::InitState();
-	StateEnum = ENetClientStates::ConnectedToServer;
+	StateEnum = ENetClientStates::ConnectedToSession;
 }
-void ConnectedToServer_NetClientState::OnEnter() {
+void ConnectedToSession_NetClientState::OnEnter() {
 	BaseNetClientState::OnEnter();
-	StateMachine->SetState(ENetClientStates::ConnectedToPlayers);
+
+	std::cout << "- Waiting For Players..";
+
+
 }
-void ConnectedToServer_NetClientState::OnExit() {
+void ConnectedToSession_NetClientState::OnExit() {
 	BaseNetClientState::OnExit();
 }
 
@@ -294,7 +268,7 @@ void ConnectedToServer_NetClientState::OnExit() {
 //ConnectedToPlayers
 void ConnectedToPlayers_NetClientState::InitState(){
 	BaseNetClientState::InitState();
-	StateEnum = ENetClientStates::ConnectedToPlayers;
+	StateEnum = ENetClientStates::ConnectedToSession;
 }
 void ConnectedToPlayers_NetClientState::OnEnter(){
 	BaseNetClientState::OnEnter();

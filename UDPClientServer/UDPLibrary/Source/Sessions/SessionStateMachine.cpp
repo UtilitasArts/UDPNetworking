@@ -15,7 +15,7 @@ StateArray
 	}
 )
 { 
-	AdressArray.reserve(SessionSize);
+	SessionAdresses.reserve(SessionSize);
 	SetState(ESessionStates::InitializeSession);
 }
 
@@ -37,26 +37,16 @@ bool SessionStateMachine::JoinSession() {
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::JoinApproval);
 
-	if (SessionSize >= JoinedCount + 1) {
+	if (SessionSize >= JoinedCount + 1 && IsNewConnection()) {
 		JoinedCount++;
-		AdressArray.push_back(UDPPacks::ReceiveAdress);
-		UDPPacks::SendBytePack.AddBytes(true);
-		UDPPacks::SendBytePack.AddBytes(JoinedCount);		
+		SessionAdresses.push_back(UDPPacks::ReceiveAdress);
+		UDPPacks::ConnectedAdresses.push_back(UDPPacks::ReceiveAdress);
 
-		for (size_t i = 0; i < AdressArray.size(); i++)	{
-
-			std::string NameInArray = AdressArray[i].GetAddrName();
-			uint32_t PublicIP		= AdressArray[i].HostIP();
-			uint16_t PublicPort		= AdressArray[i].HostPort();
-
-			AdressArray[i].PrintAdress();			
-
-			UDPPacks::SendBytePack.AddBytes(NameInArray);
-			UDPPacks::SendBytePack.AddBytes(PublicIP);
-			UDPPacks::SendBytePack.AddBytes(PublicPort);
-		}
-		
+		UDPPacks::SendBytePack.AddBytes(true);		
 		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+
+		NotifyAllOnJoin();
+
 		return true;
 	}
 	else {
@@ -64,5 +54,36 @@ bool SessionStateMachine::JoinSession() {
 		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 		return false;
 	}
+}
+
+bool SessionStateMachine::IsNewConnection()
+{
+	for (size_t i = 0; i < UDPPacks::ConnectedAdresses.size(); i++)
+	{
+		if (UDPPacks::ReceiveAdress == UDPPacks::ConnectedAdresses[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void SessionStateMachine::NotifyAllOnJoin()
+{
+	UDPPacks::SendBytePack.Clear(30, 10);
+	UDPPacks::SendBytePack.AddBytes(MessageType::JoinNotify);
+
+	for (size_t i = 0; i < SessionAdresses.size(); i++) {
+		std::string NameInArray = SessionAdresses[i].GetAddrName();
+		uint32_t PublicIP		= SessionAdresses[i].HostIP();
+		uint16_t PublicPort		= SessionAdresses[i].HostPort();
+
+		SessionAdresses[i].PrintAdress();
+
+		UDPPacks::SendBytePack.AddBytes(NameInArray);
+		UDPPacks::SendBytePack.AddBytes(PublicIP);
+		UDPPacks::SendBytePack.AddBytes(PublicPort);
+	}
+
+	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 }
 

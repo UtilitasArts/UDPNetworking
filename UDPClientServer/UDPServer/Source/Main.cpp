@@ -12,17 +12,15 @@ void ConnectRequest(){
 	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
 	UDPPacks::SendBytePack.Clear(20,3);
 
-	uint32_t RecvNetIp   = UDPPacks::ReceiveAdress.HostIP();
-	uint16_t RecvNetPort = UDPPacks::ReceiveAdress.HostPort();
-	uint8_t  AmountOfSessions = static_cast<uint8_t>(Sessions.size());
+	uint8_t  SessionCount = static_cast<uint8_t>(Sessions.size());
 
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectApproval);
 	UDPPacks::SendBytePack.AddBytes(true);
-	UDPPacks::SendBytePack.AddBytes(RecvNetIp);
-	UDPPacks::SendBytePack.AddBytes(RecvNetPort);
-	UDPPacks::SendBytePack.AddBytes(AmountOfSessions);
+	UDPPacks::SendBytePack.AddBytes(UDPPacks::ReceiveAdress.HostIP());
+	UDPPacks::SendBytePack.AddBytes(UDPPacks::ReceiveAdress.HostPort());
+	UDPPacks::SendBytePack.AddBytes(SessionCount);
 
-	if (AmountOfSessions > 0) {
+	if (SessionCount > 0) {
 		for (size_t i = 0; i < Sessions.size(); i++) {	
 		
 			UDPPacks::SendBytePack.AddBytes(Sessions[i]->SessionName);
@@ -67,11 +65,9 @@ void JoinSession() {
 
 	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
 	UDPPacks::RecvBytePack.ReturnBytes(RoomNr, 2);
-
 	UDPPacks::ReceiveAdress.SetName(Name);
 
 	Sessions[RoomNr]->JoinSession();
-
 }
 
 void UpdateServer() {
