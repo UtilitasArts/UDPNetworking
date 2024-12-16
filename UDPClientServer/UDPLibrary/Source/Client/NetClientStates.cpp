@@ -316,6 +316,7 @@ void ConnectedToSession_NetClientState::ReturnAddresses(MessageType message_type
 }
 
 void ConnectedToSession_NetClientState::SessionStart() {
+	std::cout <<"- Session is being started -\n";
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
 	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
