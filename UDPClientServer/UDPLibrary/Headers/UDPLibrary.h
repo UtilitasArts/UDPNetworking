@@ -278,7 +278,16 @@ public:
 		else {
 			return false;
 		}
-	}	
+	}
+
+	bool operator !=(const AdressCtr& obj) {
+		if (IP != obj.IP || Port != obj.Port) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 };
 
 namespace UDPPacks {

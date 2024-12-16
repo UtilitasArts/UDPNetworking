@@ -310,13 +310,16 @@ void ConnectedToSession_NetClientState::ReturnAddresses(MessageType message_type
 		CurSessionAddress.PrintAdress();
 
 		if (message_type == MessageType::SessionStart) {
-			UDPPacks::ConnectedAddresses.push_back(CurSessionAddress);
+			if (CurSessionAddress != UDPPacks::PublicAdress){
+				UDPPacks::ConnectedAddresses.push_back(CurSessionAddress);
+			}
 		}
 	}
 }
 
 void ConnectedToSession_NetClientState::SessionStart() {
 	std::cout <<"- Session is being started -\n";
+
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
 	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
