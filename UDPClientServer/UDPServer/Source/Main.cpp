@@ -65,7 +65,6 @@ void JoinSession() {
 	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
 	UDPPacks::RecvBytePack.ReturnBytes(RoomNr, 2);
 	UDPPacks::ReceiveAdress.SetName(Name);
-
 	Sessions[RoomNr]->JoinSession();
 
 }
