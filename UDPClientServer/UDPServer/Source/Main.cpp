@@ -11,7 +11,7 @@ std::vector<SessionStateMachine*> Sessions;
 void ConnectRequest(){
 	UDPPacks::ReceiveAdress.PrintAdress();
 	std::string Name;
-	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
+	UDPPacks::RecvBytePack.ReturnBytes(Name, 2);
 	UDPPacks::SendBytePack.Clear(20,3);
 
 	uint8_t  SessionCount = static_cast<uint8_t>(Sessions.size());

@@ -24,6 +24,7 @@ void Unconnected_Client::OnExit(){
 void Unconnected_Client::SendConnectionRequest() {
 	UDPPacks::SendBytePack.Clear(20, 3);
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
+	UDPPacks::SendBytePack.AddBytes(MessageType::EchoRequest);
 	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
 	UDPPacks::SendBytes(UDPPacks::ServerAdress, true, true);
 }
