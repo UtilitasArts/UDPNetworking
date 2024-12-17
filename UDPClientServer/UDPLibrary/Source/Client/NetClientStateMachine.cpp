@@ -6,7 +6,7 @@ NetClientStateMachine::NetClientStateMachine() :
 	StateArray
 	(
 		{
-			new Unconnected_NetClientState(this),
+			new Unconnected_Client(this),
 			new ConnectedToSession_NetClientState(this),
 			new ConnectedToPlayers_NetClientState(this)
 		}

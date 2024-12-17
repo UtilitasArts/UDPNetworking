@@ -12,11 +12,12 @@ enum class MessageType : uint8_t {
 	SessionStart,
 	UpdateRequest,
 	UpdateApproval,
-	ProfilePackage,
+	EchoRequest,
+	EchoResponse,
 };
 
-inline std::string MessageTypeToString(MessageType& MesType) {
-	switch (MesType) {
+inline std::string MessageTypeToString(MessageType& message_type) {
+	switch (message_type) {
 		case MessageType::ConnectRequest:	return "ConnectRequest";
 		case MessageType::ConnectApproval:	return "ConnectApproval";
 		case MessageType::CreateRequest:	return "CreateRequest";
@@ -27,7 +28,8 @@ inline std::string MessageTypeToString(MessageType& MesType) {
 		case MessageType::SessionStart:		return "SessionStart";
 		case MessageType::UpdateRequest:	return "UpdateRequest";
 		case MessageType::UpdateApproval:	return "UpdateApproval";
-		case MessageType::ProfilePackage:	return "ProfilePackage";
+		case MessageType::EchoRequest:		return "EchoRequest";
+		case MessageType::EchoResponse:		return "EchoResponse";
 		default:							return "UnknownMessage";
 	}
 }

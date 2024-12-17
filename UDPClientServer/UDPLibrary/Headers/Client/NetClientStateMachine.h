@@ -4,10 +4,14 @@
 #include "NetClientStateEnums.h"
 #include "UDPLibrary.h"
 
+//---------------------|
+// Forward Declaration |
+//=====================|
+class BaseNetState_Client;
 
-//Forward Declaration
-class BaseNetClientState;
-
+//---------------|
+// State Machine |
+//===============|
 class NetClientStateMachine {
 
 public:
@@ -17,6 +21,6 @@ public:
 	void SetState(ENetClientStates NextState);
 
 private:
-	BaseNetClientState* CurrentState;
-	std::array<BaseNetClientState*, 3> StateArray;
+	BaseNetState_Client* CurrentState;
+	std::array<BaseNetState_Client*, 3> StateArray;
 };

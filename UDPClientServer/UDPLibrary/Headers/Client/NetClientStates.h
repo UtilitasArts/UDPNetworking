@@ -4,14 +4,17 @@
 #include "NetClientStateEnums.h"
 #include "UDPLibrary.h"
 
-
-//Forward Declaration
+//--------------------|
+//Forward Declaration |
+//====================|
 class NetClientStateMachine;
 
-class BaseNetClientState {
+//-----------|
+//Base Class |
+//===========|
+class BaseNetState_Client {
 public:
-
-	BaseNetClientState(NetClientStateMachine* sm);
+	BaseNetState_Client(NetClientStateMachine* sm);
 	virtual void InitState();
 	virtual void OnEnter();
 	virtual void OnExit();
@@ -21,10 +24,12 @@ protected:
 	NetClientStateMachine* StateMachine;
 	ENetClientStates StateEnum;
 };
-
-class Unconnected_NetClientState : public BaseNetClientState {
+//-------------------|
+// Unconnected_class |
+//===================|
+class Unconnected_Client : public BaseNetState_Client {
 public:
-	using BaseNetClientState::BaseNetClientState;
+	using BaseNetState_Client::BaseNetState_Client;
 	virtual void InitState() override;
 	virtual void OnEnter() override;
 	virtual void OnExit()  override;
@@ -41,11 +46,12 @@ public:
 	bool SendReqCreateSession(std::string Response, std::regex& Pattern);
 	bool SendReqJoinSession(std::string Response, std::regex& Pattern, uint8_t& AmountOfSessions);
 };
-
-
-class ConnectedToSession_NetClientState : public BaseNetClientState {
+//----------------------------|
+// Connected To Session class |
+//============================|
+class ConnectedToSession_NetClientState : public BaseNetState_Client {
 public:
-	using BaseNetClientState::BaseNetClientState;
+	using BaseNetState_Client::BaseNetState_Client;
 	virtual void InitState() override;
 	virtual void OnEnter() override;
 	virtual void OnExit()  override;
@@ -57,10 +63,12 @@ public:
 
 	bool bSessionStarted;
 };
-
-class ConnectedToPlayers_NetClientState : public BaseNetClientState {
+//----------------------------|
+// Connected To Players class |
+//============================|
+class ConnectedToPlayers_NetClientState : public BaseNetState_Client {
 public:
-	using BaseNetClientState::BaseNetClientState;
+	using BaseNetState_Client::BaseNetState_Client;
 	virtual void InitState() override;
 	virtual void OnEnter() override;
 	virtual void OnExit()  override;

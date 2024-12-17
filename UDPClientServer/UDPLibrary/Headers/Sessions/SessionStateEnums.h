@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 enum class ESessionStates : uint8_t {
 	InitializeSession,

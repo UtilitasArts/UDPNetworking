@@ -99,6 +99,7 @@ public:
 			return false;
 		}
 	}
+
 	bool operator !=(const AddrCtr& obj) {
 		if (IP != obj.IP || Port != obj.Port) {
 			return true;
@@ -107,5 +108,11 @@ public:
 			return false;
 		}
 	}
+
+	bool operator =(const AddrCtr& obj) {
+		SetAdress(obj.IP,obj.Port,obj.AdressName);
+	}
+
+
 };
 

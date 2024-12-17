@@ -197,7 +197,6 @@ private:
 	}
  public:
 
-
 	 inline static void CreateCRCTable() {
 
 		 if (CRCTable[0] > 0) { printf("Already Defined"); return; }
@@ -248,8 +247,8 @@ private:
 		 } printf("- Total ByteCount = %zd - \n\n", MaxIndex);
 	 }
 
-	 inline const uint8_t* GetByteArray() { ByteArray.shrink_to_fit(); return ByteArray.data(); }
-	 inline const size_t   GetArraySize() { return ByteArray.size(); }
+	 inline const uint8_t*  GetByteArray() { ByteArray.shrink_to_fit(); return ByteArray.data(); }
+	 inline const size_t    GetArraySize() { return ByteArray.size(); }
 	 inline const size_t	GetElementCount()  { return ElementCount;}
 
 	 inline void SetByteArray(const uint8_t* OtherByteArray, const size_t Size, bool bPrint = false) {
@@ -264,7 +263,8 @@ private:
 		}
  	 }
 	 inline void SetByteArray(const char* OtherByteArrayAsChar, const size_t Size, bool bPrint = false) {
-		SetByteArray(reinterpret_cast<const uint8_t*>(ByteArray.data()), Size, bPrint);	 }
+		SetByteArray(reinterpret_cast<const uint8_t*>(ByteArray.data()), Size, bPrint);
+	 }
 
 	 inline const char* GetByteArrayAsChar() { ByteArray.shrink_to_fit(); return reinterpret_cast<const char*>(ByteArray.data()); }
 
@@ -439,6 +439,12 @@ private:
 	std::vector<uint8_t> ByteSizesArray;
 
 	bool   bCRCisValid;
+
+public:
+
+	BytePack operator=(BytePack& obj) {
+		SetByteArray(obj.GetByteArray(), obj.GetArraySize());
+	}
 };
 
 inline uint32_t BytePack::CRCTable[256];
