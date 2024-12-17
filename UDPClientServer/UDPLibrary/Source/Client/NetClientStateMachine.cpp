@@ -12,6 +12,7 @@ NetClientStateMachine::NetClientStateMachine() :
 		}
 	)
 {
+	SetState(ENetClientStates::Unconnected);
 }
 
 NetClientStateMachine::~NetClientStateMachine() {

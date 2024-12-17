@@ -1,8 +1,9 @@
 #pragma once
 #include <filesystem>
-#include "NetClientStateMachine.h"
-#include "NetClientStates.h"
+#include "CMDCommands.h"
 #include "SessionStateEnums.h"
+#include "NetClientStates.h"
+#include "NetClientStateMachine.h"
 
 namespace fs = std::filesystem;
 
@@ -308,7 +309,7 @@ void ConnectedToSession_NetClientState::ReturnAddresses(MessageType message_type
 		UDPPacks::RecvBytePack.ReturnBytes(PublicPort, 4 + count);
 		UDPPacks::RecvBytePack.ReturnBytes(PublicName, 5 + count);
 
-		AdressCtr CurSessionAddress(PublicIP, PublicPort, PublicName);
+		AddrCtr CurSessionAddress(PublicIP, PublicPort, PublicName);
 		CurSessionAddress.PrintAdress();
 
 		if (message_type == MessageType::SessionStart) {

@@ -1,7 +1,9 @@
 #pragma once
 #include <iostream>
+#include <filesystem>
 #include "SessionStateMachine.h"
 
+#include "CMDCommands.h"
 namespace fs = std::filesystem;
 
 std::vector<SessionStateMachine*> Sessions;
