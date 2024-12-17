@@ -323,6 +323,7 @@ void ConnectedToSession_NetClientState::SessionStart() {
 	std::cout <<"- Session is being started -\n";
 
 	bSessionStarted = true;
+
 	Sleep(3000);
 
 	UDPPacks::SendBytePack.Clear(20, 3);
@@ -338,6 +339,7 @@ void ConnectedToSession_NetClientState::RecvPlayerConnectRequest() {
 	std::string PublicName;
 	UDPPacks::RecvBytePack.ReturnBytes(PublicName,1);
 	std::cout << "- " << PublicName << " says hi! \n";
+
 }
 
 //ConnectedToPlayers

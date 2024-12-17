@@ -7,24 +7,14 @@ enum class ESessionStates : uint8_t {
 	DestroyingSession,
 };
 
-inline std::string ESessionStateString(ESessionStates ENetStateEnum)
-{
+inline std::string ESessionStateString(ESessionStates ENetStateEnum) {
 	switch (ENetStateEnum)
 	{
-	case ESessionStates::InitializeSession:
-		return "InitializeSession";
-		break;
-	case ESessionStates::WaitingForPlayers:
-		return "WaitingForPlayers";
-		break;
-	case ESessionStates::SessionInProgress:
-		return "SessionInProgress";
-		break;
-	case ESessionStates::DestroyingSession:
-		return "DestroyingSession";
-		break;
-	default:
-		return "None";
+		case ESessionStates::InitializeSession:	return "InitializeSession";
+		case ESessionStates::WaitingForPlayers:	return "WaitingForPlayers";
+		case ESessionStates::SessionInProgress:	return "SessionInProgress";
+		case ESessionStates::DestroyingSession:	return "DestroyingSession";
+		default:								return "None";
 	}
 }
 

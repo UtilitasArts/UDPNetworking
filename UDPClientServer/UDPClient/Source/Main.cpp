@@ -19,6 +19,7 @@ namespace fs = std::filesystem;
 
 int main() {
 
+	
 	NetClientStateMachine NetStateMachine;
 	NetStateMachine.SetState(ENetClientStates::Unconnected);
 }

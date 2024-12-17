@@ -8,12 +8,12 @@
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #include <filesystem>
-#include "BytePacker.h"
 #pragma comment( lib, "wsock32.lib" )
 #pragma comment( lib, "Ws2_32.lib" )
 
-namespace fs = std::filesystem;
+#include "BytePacker.h"
 
+namespace fs = std::filesystem;
 
 enum class MessageType : uint8_t {
 	None,
@@ -32,75 +32,43 @@ enum class MessageType : uint8_t {
 
 inline std::string MessageTypeToString(MessageType& MesType) {
 	switch (MesType) {
-		case MessageType::ConnectRequest:
-			return "ConnectRequest";
-			break;
-		case MessageType::ConnectApproval:
-			return "ConnectApproval";
-			break;
-		case MessageType::CreateRequest:
-			return "CreateRequest";
-			break;
-		case MessageType::CreateApproval:
-			return "CreateApproval";
-			break;
-		case MessageType::JoinRequest:
-			return "ConnectRequest";
-			break;
-		case MessageType::JoinApproval:
-			return "JoinApproval";
-			break;
-		case MessageType::JoinNotify:
-			return "JoinNotify";
-			break;
-		case MessageType::SessionStart:
-			return "SessionStart";
-			break;
-		case MessageType::UpdateRequest:
-			return "UpdateRequest";
-			break;
-		case MessageType::UpdateApproval:
-			return "UpdateApproval";
-			break;
-		case MessageType::ProfilePackage:
-			return "ProfilePackage";
-			break;
-		default:
-			return "None";
+		case MessageType::ConnectRequest:	return "ConnectRequest";
+		case MessageType::ConnectApproval:	return "ConnectApproval";
+		case MessageType::CreateRequest:	return "CreateRequest";
+		case MessageType::CreateApproval:	return "CreateApproval";
+		case MessageType::JoinRequest:		return "ConnectRequest";
+		case MessageType::JoinApproval:		return "JoinApproval";
+		case MessageType::JoinNotify:		return "JoinNotify";
+		case MessageType::SessionStart:		return "SessionStart";
+		case MessageType::UpdateRequest:	return "UpdateRequest";
+		case MessageType::UpdateApproval:	return "UpdateApproval";
+		case MessageType::ProfilePackage:	return "ProfilePackage";
+		default:							return "UnknownMessage";
 	}
 }
 
 namespace CMD {
-
 	template <typename T, typename... Args>
-	inline std::string MultiCMD(T first, Args&... rest)
-	{
+	inline std::string MultiCMD(T first, Args&... rest)	{
 		std::string CombinedCMD = first;
 		((CombinedCMD += " && " + rest), ...);
-
 		return CombinedCMD;
 	}
-
-	inline std::string Command(std::string command, std::string vars = "")
-	{
+	inline std::string Command(std::string command, std::string vars = "")	{
 		return command + vars;
 	}
-
-	inline std::string Terminal(std::string command, std::string vars = "/K")
-	{
+	inline std::string Terminal(std::string command, std::string vars = "/K") {
 		return "start cmd " + vars +  "\"" + command + "\"";
 	}
-
 	inline std::string SetPath(std::filesystem::path path) {
 		return "cd \"" + path.string() + "\"";
 	}
-
 	inline std::string SetString(std::string string) {
 		return "\"" + string + "\"";
 	}
 }
 
- namespace UDPSetup {
+namespace UDPSetup {
 
 	inline std::string     MyName;
 	inline WSADATA        WSAData;
@@ -163,7 +131,6 @@ namespace CMD {
 		else {
 			std::cout << " - The UDP Socket has been sucessfully set to NON-blocking!\n";
 		}
-
 	}
 
 	inline void BindSocket(uint16_t port = 0)
