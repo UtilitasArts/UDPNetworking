@@ -107,6 +107,9 @@ void UDPSetup::UDPInit(uint16_t port, std::string name) {
 //-----------|
 // UDP Packs |
 //===========|
+//--------------------|
+// Receiving messages |
+//====================|
 MessageType UDPPacks::RecvBytes(bool bPrint) {
 	ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
 	RecvMT = MessageType::None;
@@ -131,10 +134,11 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
  			RecvEchoResponse(bPrint);
 		}
 	}
-
 	return RecvMT;
 }
-
+//-------------|
+// Send Echoes |
+//=============|
 void UDPPacks::RecvEchoResponse(bool bPrint)
 {
 	if (EchoArray.size() > 0)
@@ -169,6 +173,25 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 	}
 }
 
+void UDPPacks::SendEchoes(bool bPrint) {
+	if (EchoArray.size() > 0)
+	{
+		for (size_t i = 0; i < EchoArray.size(); i++) {
+			int bytesSent = sendto(UDPSetup::UDPSocket, EchoArray[i].ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(EchoArray[i].ResendBytePack.GetArraySize()), 0, EchoArray[i].AdressContainer.GetSockAddr(), *EchoArray[i].AdressContainer.GetAddrSize());
+			if (bytesSent == SOCKET_ERROR) {
+				std::cerr << "Failed to send echo." << "\n";
+			}
+			else {
+				MessageType MType = static_cast<MessageType>(EchoArray[i].ResendBytePack.GetByteArrayAsChar()[1]);
+				std::cout << "\n- A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";
+				if (bPrint) { EchoArray[i].ResendBytePack.PrintBytes(); }
+			}
+		}
+	}
+}
+//----------------|
+// Send Functions |
+//================|
 void UDPPacks::SendBytes(AddrCtr& adress_ctr, bool bNewEcho, bool bPrint) {
 
 	SendBytePack.AddCRC();
@@ -190,22 +213,6 @@ void UDPPacks::SendBytes(AddrCtr& adress_ctr, bool bNewEcho, bool bPrint) {
 	}
 }
 
-void UDPPacks::SendEchoes(bool bPrint) {
-	if (EchoArray.size() > 0)
-	{
-		for (size_t i = 0; i < EchoArray.size(); i++) {
-			int bytesSent = sendto(UDPSetup::UDPSocket, EchoArray[i].ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(EchoArray[i].ResendBytePack.GetArraySize()), 0, EchoArray[i].AdressContainer.GetSockAddr(), *EchoArray[i].AdressContainer.GetAddrSize());
-			if (bytesSent == SOCKET_ERROR) {
-				std::cerr << "Failed to send echo." << "\n";
-			}
-			else {
-				MessageType MType = static_cast<MessageType>(EchoArray[i].ResendBytePack.GetByteArrayAsChar()[1]);
-				std::cout << "\n- A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";
-				if (bPrint) { EchoArray[i].ResendBytePack.PrintBytes(); }
-			}
-		}
-	}
-}
 
 bool UDPPacks::RecvValidSessionAddress() {
 	bool bValidAddress = false;

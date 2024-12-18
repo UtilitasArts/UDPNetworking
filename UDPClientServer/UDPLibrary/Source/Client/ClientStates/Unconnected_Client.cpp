@@ -34,8 +34,7 @@ void Unconnected_Client::ReceiveConnectionApproval() {
 
 		UDPPacks::SendEchoes(true);	
 		UDPSetup::CheckSocketRecvBufferSize();
-
-		//UDPPacks::RecvBytes(true);
+		UDPPacks::RecvBytes(true);
 
 		if (UDPPacks::ReceiveAdress == UDPPacks::ServerAdress) {
 			switch (UDPPacks::RecvMT) {

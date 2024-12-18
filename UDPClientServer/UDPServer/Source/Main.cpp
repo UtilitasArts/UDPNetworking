@@ -102,6 +102,8 @@ int main(){
 
 		while (true) {
 
+			UDPPacks::SendEchoes(true);
+			UDPSetup::CheckSocketRecvBufferSize();
 			UDPPacks::RecvBytes(true);
 
 			switch (UDPPacks::RecvMT) {
@@ -109,13 +111,13 @@ int main(){
 				ConnectRequest();
 				break;
 			case MessageType::CreateRequest:
-				CreateSession();
+/*				CreateSession();*/
 				break;
 			case MessageType::JoinRequest:
-				JoinSession();
+	/*			JoinSession();*/
 				break;
 			case MessageType::UpdateRequest:
-				UpdateServer();
+		/*		UpdateServer();*/
 				break;
 			}
 		}
