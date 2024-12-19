@@ -123,19 +123,24 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 
 		if (RecvBytePack.GetCRCValid()) {
 
-			RecvBytePack.ReturnBytes(RecvID,   2);
-  			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
-  				if(bPrint){std::cout << "- Echo Message Blocked\n";}
-  				return RecvMT;
-  			}
-
 			RecvBytePack.ReturnBytes(RecvMT,   0);
 			RecvBytePack.ReturnBytes(RecvEcho, 1);
-			std::cout << "- A " << MessageTypeToString(RecvMT) << " Received! \n";
-			std::cout << "- "   << MessageTypeToString(RecvEcho)   << "\n";
-			std::cout << "- ID" << (int)RecvID << "\n";
-
+			RecvBytePack.ReturnBytes(RecvID,   2);
+			//------------------------|
+			// Block certain messages |
+			//========================| 
+			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
+				if (bPrint) { std::cout << "- Echo Message Blocked\n"; }
+				ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
+				RecvMT   = MessageType::None;
+				RecvEcho = MessageType::None;
+				return RecvMT;
+			}	
+	
 			if (bPrint)	{
+				std::cout << "- A " << MessageTypeToString(RecvMT) << " Received! \n";
+				std::cout << "- " << MessageTypeToString(RecvEcho) << "\n";
+				std::cout << "- ID" << (int)RecvID << "\n";
 				RecvBytePack.PrintBytes();
 			}
 
@@ -148,7 +153,7 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 }
 //----------------------|
 // Receive Echo Request |
-//======================| // We know there will come many more
+//======================| 
 void UDPPacks::RecvEchoRequest(bool bPrint) {
 	if (RecvEcho == MessageType::EchoRequest) {
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
@@ -158,7 +163,7 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 
 //-----------------------|
 // Receive Echo Response |
-//=======================| // We tell the other computer to stop sending
+//=======================|
 void UDPPacks::RecvEchoResponse(bool bPrint)
 {
 	std::cout << "Checking here! \n ECHOSIZE =" << EchoMap.size() << "\n";

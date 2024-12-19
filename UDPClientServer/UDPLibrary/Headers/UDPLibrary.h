@@ -171,10 +171,10 @@ namespace UDPPacks {
 		}
 
 		if (echo_type == MessageType::EchoRequest)	{
-			EchoMap.emplace(MessageID(ReceiveAdress, send_id),EchoChamber(address_ctr, SendBytePack));
-		}
-		SendBytes(address_ctr, true);
+			EchoMap.emplace(MessageID(address_ctr, send_id),EchoChamber(address_ctr, SendBytePack));
+		}		
 
+		SendBytes(address_ctr, true);
 		send_id++;
 	}
 
