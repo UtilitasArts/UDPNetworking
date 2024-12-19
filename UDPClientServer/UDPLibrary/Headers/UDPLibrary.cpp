@@ -94,7 +94,7 @@ bool UDPSetup::SocketHasNewBytes()
 
 		PrevRecvBufferBytes = RecvBufferBytes;
 
-		if (RecvBufferBytes > 0) {
+		if (RecvBufferBytes >= 1) {
 			return true;
 		}
 	}
