@@ -99,7 +99,7 @@ int main(){
 		while (true) {
 
 			UDPPacks::SendEchoes(true);
-				UDPPacks::RecvBytes(true);
+			UDPPacks::RecvBytes(true);
 
 				switch (UDPPacks::RecvMT) {
 				case MessageType::ConnectRequest:

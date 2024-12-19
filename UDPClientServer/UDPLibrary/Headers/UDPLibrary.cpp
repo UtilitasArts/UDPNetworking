@@ -124,7 +124,6 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 		RecvBytePack.SetByteArray(RecvBuffer, BytesReceived);
 
 		if (RecvBytePack.GetCRCValid()) {
-
 			RecvBytePack.ReturnBytes(RecvMT,   0);
 			RecvBytePack.ReturnBytes(RecvEcho, 1);
 			RecvBytePack.ReturnBytes(RecvID,   2);
@@ -138,7 +137,7 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 // 				RecvEcho = MessageType::None;
 // 				return RecvMT;
 			}
-	
+			
 			if (bPrint)	{
 				std::cout << "* << Receive [" << MessageTypeToString(RecvMT) << "] [";
 				std::cout << MessageTypeToString(RecvEcho);
