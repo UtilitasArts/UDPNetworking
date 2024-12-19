@@ -174,8 +174,8 @@ namespace UDPPacks {
 		}
 
 		EchoMap.emplace(MessageID(ReceiveAdress, SendID),EchoChamber(address_ctr, SendBytePack));
-
 		SendBytes(address_ctr, true);
+		SendID++;
 	}
 
 	template<typename... Types>

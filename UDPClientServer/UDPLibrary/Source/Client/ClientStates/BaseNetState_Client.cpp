@@ -19,8 +19,8 @@ void BaseNetState_Client::OnEnter() {
 void BaseNetState_Client::OnActive() {
 	while (bActive) {
 	
-		UDPPacks::SendEchoes(true);
-		UDPSetup::CheckSocketRecvBufferSize();
+		//UDPPacks::SendEchoes(true);
+		//UDPSetup::CheckSocketRecvBufferSize();
 		UDPPacks::RecvBytes(true);
 		bActive = WhileActive();
 	}	

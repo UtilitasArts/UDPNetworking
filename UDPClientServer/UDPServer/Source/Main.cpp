@@ -17,8 +17,10 @@ void ConnectRequest(){
 
 	uint8_t  SessionCount = static_cast<uint8_t>(Sessions.size());
 
+	
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectApproval);
 	UDPPacks::SendBytePack.AddBytes(MessageType::EchoRequest);
+	UDPPacks::SendBytePack.AddBytes(UDPPacks::SendID);
 	UDPPacks::SendBytePack.AddBytes(true);
 	UDPPacks::SendBytePack.AddBytes(UDPPacks::ReceiveAdress.HostIP());
 	UDPPacks::SendBytePack.AddBytes(UDPPacks::ReceiveAdress.HostPort());
@@ -33,6 +35,7 @@ void ConnectRequest(){
 			std::cout << "SessionState = " << ESessionStateString(Sessions[i]->CurrentStateEnum);
 		}
 	}
+	UDPPacks::SendID++;
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress,true);
 }
 
