@@ -98,7 +98,7 @@ int main(){
 		while (true) {
 
 			while (UDPSetup::SocketHasNewBytes()) {
-				UDPPacks::RecvBytes(true);						
+				UDPPacks::RecvBytes(true);		
 
 				switch (UDPPacks::RecvMT) {
 				case MessageType::ConnectRequest:

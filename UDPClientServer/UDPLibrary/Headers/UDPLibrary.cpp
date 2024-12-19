@@ -88,7 +88,7 @@ bool UDPSetup::SocketHasNewBytes()
 
 	if(err != SOCKET_ERROR)	{
 		if (PrevRecvBufferBytes != RecvBufferBytes && RecvBufferBytes > 0) {
-			printf("- Bytes in the buffer: %d / %d \n", RecvBufferBytes, optVal);
+			//printf("- Bytes in the buffer: %d / %d \n", RecvBufferBytes, optVal);
 		}
 
 		PrevRecvBufferBytes = RecvBufferBytes;
