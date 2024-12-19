@@ -184,9 +184,8 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 		std::cout << "- Received Echo Request, attempt to add to blocklist\n";
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
 
-// 		CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
-// 		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
-// 		UDPPacks::SendID++;
+ 		CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
+ 		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true); 
 	}
 }
 //-----------------------|
