@@ -137,10 +137,10 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			}	
 	
 			if (bPrint)	{
-				std::cout << "- A " << MessageTypeToString(RecvMT) << " Received! \n";
-				std::cout << "- " << MessageTypeToString(RecvEcho) << "\n";
-				std::cout << "- ID" << (int)RecvID << "\n";
-				RecvBytePack.PrintBytes();
+				std::cout << "* << Receive A " << MessageTypeToString(RecvMT) << " ";
+				std::cout << MessageTypeToString(RecvEcho);
+				std::cout << " MessageID :" << (int)RecvID << "\n";
+				//RecvBytePack.PrintBytes();
 			}
 
  			RecvEchoRequest(bPrint);
@@ -156,7 +156,6 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 	if (RecvEcho == MessageType::EchoRequest) {
 
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
-
 		CreateEchoMessage(ReceiveAdress,MessageType::EchoResponse,RecvMT, RecvID);
 		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 		UDPPacks::SendID++;
@@ -170,7 +169,7 @@ void UDPPacks::RecvEchoResponse(bool bPrint) {
 	{	
 		if (RecvMT == MessageType::EchoResponse) {		
 			if (EchoMap.erase(MessageID(ReceiveAdress, RecvID))){
-				std::cout << "Removing message from echomap! \n ECHOSIZE =" << EchoMap.size() << "\n";
+				std::cout << "- Removing echo_message from EchoMap! ECHOSIZE =" << EchoMap.size() << "\n";
 			}
 		}
 	}
@@ -213,9 +212,9 @@ void UDPPacks::SendBytes(AddrCtr& adress_ctr, bool bPrint) {
 		std::cerr << "Failed to send message." << "\n";
 	}
 	else {
-		std::cout << "\n- A " << MessageTypeToString(MType) << " Sent! ";
+		std::cout << "\n* >> Sending A " << MessageTypeToString(MType) << " ";
 		std::cout << MessageTypeToString(MEcho);
-		std::cout << " With MessageID :" << Mid << "\n";
+		std::cout << " MessageID :" << Mid << "\n";
 
 		//if (bPrint) { SendBytePack.PrintBytes(); }
 	}
