@@ -1,7 +1,7 @@
-//-------------|
-// My Includes |
-//=============|
+#include <thread>
+#include <chrono>
 #include "UDPLibrary.h"
+
 namespace fs = std::filesystem;
 
 //-----------|
@@ -82,21 +82,24 @@ bool UDPSetup::SocketHasNewBytes()
 	int optVal;
 	int optLen = sizeof(int);
 	int err;
-	bool bNewBytes = false;
 
 	err = getsockopt(UDPSocket, SOL_SOCKET, SO_RCVBUF, (char*)&optVal, &optLen);
 	err = ioctlsocket(UDPSocket, FIONREAD, (u_long*)&RecvBufferBytes);	
 
 	if(err != SOCKET_ERROR)	{
 		if (PrevRecvBufferBytes != RecvBufferBytes)
-		{
-			bNewBytes = true;	
+		{			
 			printf("- Bytes in the buffer: %d / %d \n", RecvBufferBytes, optVal);
 		}
 	}
 
 	PrevRecvBufferBytes = RecvBufferBytes;
-	return bNewBytes;
+
+	if (RecvBufferBytes > 0) {
+		return true;
+	}
+
+	return false;
 }
 void UDPSetup::UDPInit(uint16_t port, std::string name) {
 	InstallFolders();
@@ -110,7 +113,23 @@ void UDPSetup::UDPInit(uint16_t port, std::string name) {
 //-----------|
 // UDP Packs |
 //===========|
-//--------------------|
+
+
+void printWSAError() {
+	int errorCode = WSAGetLastError(); // Retrieve the last error code
+
+	std::cout << "WSAGetLastError returned: " << errorCode << std::endl;
+
+	wchar_t* s = NULL;
+	FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, WSAGetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPWSTR)&s, 0, NULL);
+	fprintf(stderr, "%S\n", s);
+	LocalFree(s);	
+}
+
+// -------------------|
 // Receiving messages |
 //====================|
 MessageType UDPPacks::RecvBytes(bool bPrint) {
@@ -122,7 +141,7 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 	if (BytesReceived != SOCKET_ERROR) {
 		ReceiveAdress.FillFromSockAddr();
 		RecvBytePack.SetByteArray(RecvBuffer, BytesReceived);
-
+		std::cout << "Received Something";
 		if (RecvBytePack.GetCRCValid()) {
 			RecvBytePack.ReturnBytes(RecvMT,   0);
 			RecvBytePack.ReturnBytes(RecvEcho, 1);
@@ -149,6 +168,10 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
  			RecvEchoResponse(bPrint);
 		}
 	}
+	else {
+		std::cout << "Some Recv Message Error occured \n";
+		printWSAError();
+	}
 	return RecvMT;
 }
 //----------------------|
@@ -159,7 +182,7 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 		std::cout << "- Received Echo Request, attempt to add to blocklist\n";
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
 
-		CreateEchoMessage(ReceiveAdress,MessageType::EchoResponse,RecvMT, RecvID);
+		CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
 		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 		UDPPacks::SendID++;
 	}
@@ -182,6 +205,7 @@ void UDPPacks::RecvEchoResponse(bool bPrint) {
 //===============| // we assume no one hears us.
 void UDPPacks::SendEchoes(bool bPrint) {
 	if (EchoMap.size() > 0)	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 		for (auto Chamber : EchoMap) {
 			int bytesSent = sendto(UDPSetup::UDPSocket, Chamber.second.ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(Chamber.second.ResendBytePack.GetArraySize()), 0, Chamber.second.AdressContainer.GetSockAddr(), *Chamber.second.AdressContainer.GetAddrSize());
 			if (bytesSent == SOCKET_ERROR) {
