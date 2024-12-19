@@ -168,16 +168,10 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 void UDPPacks::RecvEchoResponse(bool bPrint) {
 	if (EchoMap.size() > 0)
 	{	
-		if (RecvMT == MessageType::EchoResponse) {
-			if (EchoMap.count(MessageID(ReceiveAdress, RecvID))) {
-				std::cout << "is in map!";
+		if (RecvMT == MessageType::EchoResponse) {		
+			if (EchoMap.erase(MessageID(ReceiveAdress, RecvID))){
+				std::cout << "Removing message from echomap! \n ECHOSIZE =" << EchoMap.size() << "\n";
 			}
-			else{
-				std::cout << "is Not in map!";
-			}
-			EchoMap.erase(MessageID(ReceiveAdress, RecvID));
-			std::cout << "Removing message from echomap! \n ECHOSIZE =" << EchoMap.size() << "\n";
-
 		}
 	}
 }
