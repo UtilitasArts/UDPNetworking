@@ -1,6 +1,3 @@
-
-#include <thread>
-#include <chrono>
 #include "SessionStateEnums.h"
 #include "NetClientStates.h"
 #include "NetClientStateMachine.h"
@@ -19,13 +16,15 @@ void BaseNetState_Client::OnEnter() {
 }
 
 void BaseNetState_Client::OnActive() {
+
 	while (bActive) {	
 
-		while (UDPSetup::SocketHasNewBytes()) {			
-			UDPPacks::RecvBytes(true);
-			bActive = OnRecv();
-		}
-		UDPPacks::SendEchoes();
+ 		while (UDPSetup::SocketHasNewBytes()) {			
+ 			UDPPacks::RecvBytes(true);
+ 			bActive = OnRecv();
+ 		}
+ 		UDPPacks::SendEchoes(true);
+
 	}	
 }
 

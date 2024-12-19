@@ -112,7 +112,6 @@ void UDPSetup::UDPInit(uint16_t port, std::string name) {
 //-----------|
 // UDP Packs |
 //===========|
-
 void printWSAError() {
 	int errorCode = WSAGetLastError(); // Retrieve the last error code
 
@@ -202,16 +201,19 @@ void UDPPacks::RecvEchoResponse(bool bPrint) {
 // Resend Echoes |
 //===============| // we assume no one hears us.
 void UDPPacks::SendEchoes(bool bPrint) {
-	if (EchoMap.size() > 0)	{		
-		for (auto Chamber : EchoMap) {			
-			int bytesSent = sendto(UDPSetup::UDPSocket, Chamber.second.ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(Chamber.second.ResendBytePack.GetArraySize()), 0, Chamber.second.AdressContainer.GetSockAddr(), *Chamber.second.AdressContainer.GetAddrSize());
-			if (bytesSent != SOCKET_ERROR) {	
-				if (bPrint) {
-					MessageType MType = static_cast<MessageType>(Chamber.second.ResendBytePack.GetByteArrayAsChar()[1]);
-					std::cout << "- >> A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";
-					//if (bPrint) { Chamber.second.ResendBytePack.PrintBytes(); }
-				}
-			}			
+	if (EchoTimer.TimePassed(1000))
+	{
+		if (EchoMap.size() > 0)	{		
+			for (auto Chamber : EchoMap) {			
+				int bytesSent = sendto(UDPSetup::UDPSocket, Chamber.second.ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(Chamber.second.ResendBytePack.GetArraySize()), 0, Chamber.second.AdressContainer.GetSockAddr(), *Chamber.second.AdressContainer.GetAddrSize());
+				if (bytesSent != SOCKET_ERROR) {	
+					if (bPrint) {
+						MessageType MType = static_cast<MessageType>(Chamber.second.ResendBytePack.GetByteArrayAsChar()[1]);
+						std::cout << "- >> A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";
+						//if (bPrint) { Chamber.second.ResendBytePack.PrintBytes(); }
+					}
+				}			
+			}
 		}
 	}
 }

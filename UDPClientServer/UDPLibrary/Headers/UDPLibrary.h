@@ -19,6 +19,14 @@
 #include "BytePacker.h"
 #include "AddressCtr.h"
 #include "UDPMessageEnums.h"
+#include "Timer.h"
+
+
+//--------------|
+// Global Timer |
+//==============|
+	
+
 
 //--------------|
 // Echo Chamber |
@@ -56,6 +64,7 @@ struct MessageID {
 		return IP == other.IP && Port == other.Port && RecvID == other.RecvID;
 	}
 };
+
 
 inline size_t hash_combine(size_t lhs, size_t rhs) {
 	if constexpr (sizeof(size_t) >= 8) {
@@ -142,6 +151,8 @@ namespace UDPPacks {
 	void RecvEchoResponse(bool bPrint);
 	void RecvEchoRequest(bool bPrint);
 	void SendBytes(AddrCtr& adress_ctr, bool bPrint = false);
+
+	inline Timer EchoTimer;
 	void SendEchoes(bool bPrint = false);
 	bool RecvValidSessionAddress();
 

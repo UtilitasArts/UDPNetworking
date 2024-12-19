@@ -18,7 +18,7 @@ namespace fs = std::filesystem;
 #define Message(x,y,z)  x.AddBytes(y); z x.AddCRC();
 
 int main() {
-	
+
 	NetClientStateMachine NetStateMachine;
 }
 
