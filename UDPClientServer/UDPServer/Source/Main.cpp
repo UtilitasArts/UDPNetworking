@@ -29,6 +29,7 @@ void ConnectRequest(){
  			std::cout << "SessionState = " << ESessionStateString(Sessions[i]->CurrentStateEnum);
  		}
  	}
+
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress,true);
 	UDPPacks::SendID++;
 }
@@ -95,7 +96,6 @@ void ConnectRequest(){
 int main(){
 
     	UDPSetup::UDPInit(8000,"Server"); 
-
 		std::cout << "\n - Waiting for clients \n";
 
 		while (true) {
@@ -106,7 +106,7 @@ int main(){
 
 			switch (UDPPacks::RecvMT) {
 			case MessageType::ConnectRequest:
-				//ConnectRequest();
+				ConnectRequest();
 				break;
 			case MessageType::CreateRequest:
 /*				CreateSession();*/

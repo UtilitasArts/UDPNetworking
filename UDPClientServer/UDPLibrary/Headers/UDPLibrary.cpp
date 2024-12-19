@@ -111,7 +111,6 @@ void UDPSetup::UDPInit(uint16_t port, std::string name) {
 // Receiving messages |
 //====================|
 MessageType UDPPacks::RecvBytes(bool bPrint) {
-
 	ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
 	RecvMT	   = MessageType::None;
 	RecvEcho   = MessageType::None;
