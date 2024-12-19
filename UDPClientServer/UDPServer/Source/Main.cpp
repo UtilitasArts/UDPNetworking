@@ -116,7 +116,7 @@ int main(){
 				}
 			}
 
-			UDPPacks::SendEchoes();
+			UDPPacks::SendEchoes(true);
 		}
 
 	return 0;
