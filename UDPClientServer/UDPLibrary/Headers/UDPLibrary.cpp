@@ -167,6 +167,10 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
  			RecvEchoRequest(bPrint);
  			RecvEchoResponse(bPrint);
 		}
+		else
+		{
+			std::cout << "CRC Not Valid";
+		}
 	}
 	else {
 // 		std::cout << "Some Recv Message Error occured \n";
