@@ -25,7 +25,7 @@ void BaseNetState_Client::OnActive() {
 			UDPPacks::RecvBytes(true);
 			bActive = OnRecv();
 		}
-		UDPPacks::SendEchoes(true);
+		UDPPacks::SendEchoes();
 	}	
 }
 

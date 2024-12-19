@@ -148,7 +148,6 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			// Block certain messages |
 			//========================| 
  			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
- 				//std::cout << "- Echo Message Blocked\n";
   				ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
   				RecvMT   = MessageType::None;
   				RecvEcho = MessageType::None;
@@ -210,8 +209,11 @@ void UDPPacks::SendEchoes(bool bPrint) {
 			}
 			else {
 				MessageType MType = static_cast<MessageType>(Chamber.second.ResendBytePack.GetByteArrayAsChar()[1]);
-				std::cout << "- >> A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";
-				//if (bPrint) { Chamber.second.ResendBytePack.PrintBytes(); }
+				
+				if (bPrint) { 
+					std::cout << "- >> A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";				
+					Chamber.second.ResendBytePack.PrintBytes(); 
+				}
 			}			
 		}
 	}

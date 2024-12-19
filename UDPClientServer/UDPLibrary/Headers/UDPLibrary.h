@@ -146,7 +146,7 @@ namespace UDPPacks {
 	void RecvEchoResponse(bool bPrint);
 	void RecvEchoRequest(bool bPrint);
 	void SendBytes(AddrCtr& adress_ctr, bool bPrint = false);
-	void SendEchoes(bool bPrint);
+	void SendEchoes(bool bPrint = false);
 	bool RecvValidSessionAddress();
 
 	//----------------|
