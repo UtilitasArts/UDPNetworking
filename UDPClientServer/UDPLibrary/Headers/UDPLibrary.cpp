@@ -113,7 +113,6 @@ void UDPSetup::UDPInit(uint16_t port, std::string name) {
 // UDP Packs |
 //===========|
 
-
 void printWSAError() {
 	int errorCode = WSAGetLastError(); // Retrieve the last error code
 
@@ -151,7 +150,6 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			//========================| 
 
  			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
- 			/*	std::cout << "- Echo Message Blocked\n";*/
   				ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
   				RecvMT   = MessageType::None;
   				RecvEcho = MessageType::None;
@@ -183,7 +181,6 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 	if (RecvEcho == MessageType::EchoRequest) {
 		std::cout << "- Received Echo Request, attempt to add to blocklist\n";
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
-
  		CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
  		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true); 
 	}

@@ -130,14 +130,10 @@ namespace UDPPacks {
 	inline MessageType	 RecvMT;
 	inline MessageType	 RecvEcho;
 	inline uint32_t		 RecvID;
-
 	inline uint32_t		 SendID;
 
  	inline std::unordered_set<MessageID, MessageIDHash>				 BlockMap;
  	inline std::unordered_map<MessageID, EchoChamber, MessageIDHash> EchoMap;
-
-	inline std::vector<EchoChamber>  EchoArray;
-	inline std::vector<MessageID>	 BlockArray;
 
 	//------------------|
 	// Public Functions |

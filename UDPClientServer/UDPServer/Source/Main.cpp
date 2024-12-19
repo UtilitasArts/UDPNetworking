@@ -115,11 +115,8 @@ int main(){
 					break;
 				}
 			}
-			UDPPacks::SendEchoes();
 
-// 			if (UDPSetup::SocketHasNewBytes()) {
-// 
-// 			}
+			UDPPacks::SendEchoes();
 		}
 
 	return 0;
