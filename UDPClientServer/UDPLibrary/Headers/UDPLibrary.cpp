@@ -140,7 +140,7 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 	int BytesReceived = recvfrom(UDPSetup::UDPSocket, (char*)RecvBuffer, sizeof(RecvBuffer), 0, ReceiveAdress.GetSockAddr(), ReceiveAdress.GetAddrSize());
 	if (BytesReceived != SOCKET_ERROR) {
 		ReceiveAdress.FillFromSockAddr();
-		RecvBytePack.SetByteArray(RecvBuffer, BytesReceived,true);
+		RecvBytePack.SetByteArray(RecvBuffer, BytesReceived);
 	
 		if (RecvBytePack.GetCRCValid()) {
 			RecvBytePack.ReturnBytes(RecvMT,   0);
@@ -232,9 +232,9 @@ void UDPPacks::SendBytes(AddrCtr& address_ctr, bool bPrint) {
 	MessageType SendEcho;
 	uint32_t	MsgSendID;
 	
-	RecvBytePack.ReturnBytes(SendMT, 0);
-	RecvBytePack.ReturnBytes(SendEcho, 1);
-	RecvBytePack.ReturnBytes(MsgSendID, 2);
+	SendBytePack.ReturnBytes(SendMT, 0);
+	SendBytePack.ReturnBytes(SendEcho, 1);
+	SendBytePack.ReturnBytes(MsgSendID, 2);
 	
 	if (SendEcho == MessageType::EchoRequest) {
 		EchoMap.emplace(MessageID(address_ctr, MsgSendID), EchoChamber(address_ctr, SendBytePack));
