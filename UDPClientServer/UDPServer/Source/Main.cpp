@@ -99,8 +99,6 @@ int main(){
 		while (true) {
 
 			UDPPacks::SendEchoes(true);
-
-			if (UDPSetup::SocketHasNewBytes()) {
 				UDPPacks::RecvBytes(true);
 
 				switch (UDPPacks::RecvMT) {
@@ -117,7 +115,9 @@ int main(){
 			/*		UpdateServer();*/
 					break;
 				}
-			}
+// 			if (UDPSetup::SocketHasNewBytes()) {
+// 
+// 			}
 		}
 
 	return 0;

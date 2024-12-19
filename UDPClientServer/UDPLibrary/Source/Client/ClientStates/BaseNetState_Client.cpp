@@ -18,12 +18,12 @@ void BaseNetState_Client::OnEnter() {
 
 void BaseNetState_Client::OnActive() {
 	while (bActive) {	
-
 		UDPPacks::SendEchoes(true);
-		if (UDPSetup::SocketHasNewBytes()){
-			UDPPacks::RecvBytes(true);
-			bActive = OnRecv();
-		}
+		UDPPacks::RecvBytes(true);
+
+// 		if (UDPSetup::SocketHasNewBytes()){
+// 			bActive = OnRecv();
+// 		}
 	}	
 }
 
