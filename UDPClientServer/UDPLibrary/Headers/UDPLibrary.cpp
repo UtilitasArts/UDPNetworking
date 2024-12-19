@@ -141,7 +141,7 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 	if (BytesReceived != SOCKET_ERROR) {
 		ReceiveAdress.FillFromSockAddr();
 		RecvBytePack.SetByteArray(RecvBuffer, BytesReceived);
-		std::cout << "Received Something";
+
 		if (RecvBytePack.GetCRCValid()) {
 			RecvBytePack.ReturnBytes(RecvMT,   0);
 			RecvBytePack.ReturnBytes(RecvEcho, 1);
@@ -204,9 +204,9 @@ void UDPPacks::RecvEchoResponse(bool bPrint) {
 // Resend Echoes |
 //===============| // we assume no one hears us.
 void UDPPacks::SendEchoes(bool bPrint) {
-	if (EchoMap.size() > 0)	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+	if (EchoMap.size() > 0)	{		
 		for (auto Chamber : EchoMap) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			int bytesSent = sendto(UDPSetup::UDPSocket, Chamber.second.ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(Chamber.second.ResendBytePack.GetArraySize()), 0, Chamber.second.AdressContainer.GetSockAddr(), *Chamber.second.AdressContainer.GetAddrSize());
 			if (bytesSent == SOCKET_ERROR) {
 				std::cerr << "Failed to send echo." << "\n";
