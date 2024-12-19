@@ -18,7 +18,7 @@ public:
 	virtual void InitState();
 	virtual void OnEnter();
 	virtual void OnActive();
-	virtual bool WhileActive();
+	virtual bool OnRecv();
 	virtual void OnExit();
 
 protected:
@@ -34,7 +34,7 @@ public:
 	using BaseNetState_Client::BaseNetState_Client;
 	virtual void InitState()   override;
 	virtual void OnEnter()     override;
-	virtual bool WhileActive() override;
+	virtual bool OnRecv() override;
 	virtual void OnExit()      override;
 
 	void ReceiveConnectionApproval();

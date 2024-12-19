@@ -77,11 +77,12 @@ void UDPSetup::BindSocket(uint16_t port) {
 		std::cout << "- The UDP Socket was succesfully bound to the local-adress\n";
 	}
 }
-void UDPSetup::CheckSocketRecvBufferSize()
+bool UDPSetup::SocketHasNewBytes()
 {
 	int optVal;
 	int optLen = sizeof(int);
 	int err;
+	bool bNewBytes = false;
 
 	err = getsockopt(UDPSocket, SOL_SOCKET, SO_RCVBUF, (char*)&optVal, &optLen);
 	err = ioctlsocket(UDPSocket, FIONREAD, (u_long*)&RecvBufferBytes);	
@@ -89,11 +90,13 @@ void UDPSetup::CheckSocketRecvBufferSize()
 	if(err != SOCKET_ERROR)	{
 		if (PrevRecvBufferBytes != RecvBufferBytes)
 		{
-			printf("- SockOpt BufferSize = %ld\n", optVal);
-			printf("- Bytes available in the receive buffer: %d\n", RecvBufferBytes);
+			bNewBytes = true;	
+			printf("- Bytes in the buffer: %d / %d \n", RecvBufferBytes, optVal);
 		}
 	}
+
 	PrevRecvBufferBytes = RecvBufferBytes;
+	return bNewBytes;
 }
 void UDPSetup::UDPInit(uint16_t port, std::string name) {
 	InstallFolders();
@@ -101,7 +104,7 @@ void UDPSetup::UDPInit(uint16_t port, std::string name) {
 	InitWinsock();
 	OpenUDPSocket();
 	BindSocket(port);
-	CheckSocketRecvBufferSize();
+	SocketHasNewBytes();
 }
 
 //-----------|
@@ -137,9 +140,10 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			}	
 	
 			if (bPrint)	{
-				std::cout << "* << Receive A " << MessageTypeToString(RecvMT) << " ";
+				std::cout << "* << Receive [" << MessageTypeToString(RecvMT) << "] [";
 				std::cout << MessageTypeToString(RecvEcho);
-				std::cout << " MessageID :" << (int)RecvID << "\n";
+				std::cout << "] [MsgID:" << (int)RecvID << "] from ";
+				ReceiveAdress.PrintAdress();
 				//RecvBytePack.PrintBytes();
 			}
 
@@ -186,8 +190,8 @@ void UDPPacks::SendEchoes(bool bPrint) {
 			}
 			else {
 				MessageType MType = static_cast<MessageType>(Chamber.second.ResendBytePack.GetByteArrayAsChar()[1]);
-				std::cout << "\n- A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";
-				if (bPrint) { Chamber.second.ResendBytePack.PrintBytes(); }
+				std::cout << "- >> A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";
+				//if (bPrint) { Chamber.second.ResendBytePack.PrintBytes(); }
 			}			
 		}
 	}
@@ -212,10 +216,10 @@ void UDPPacks::SendBytes(AddrCtr& adress_ctr, bool bPrint) {
 		std::cerr << "Failed to send message." << "\n";
 	}
 	else {
-		std::cout << "\n* >> Sending A " << MessageTypeToString(MType) << " ";
+		std::cout << "* >> Sending [" << MessageTypeToString(MType) << "] [";
 		std::cout << MessageTypeToString(MEcho);
-		std::cout << " MessageID :" << Mid << "\n";
-
+		std::cout << "] [MsgID:" << Mid << "] To ";
+		adress_ctr.PrintAdress();
 		//if (bPrint) { SendBytePack.PrintBytes(); }
 	}
 }

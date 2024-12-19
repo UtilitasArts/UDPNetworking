@@ -10,8 +10,6 @@ std::vector<SessionStateMachine*> Sessions;
 
 void ConnectRequest(){
 
-	UDPPacks::ReceiveAdress.PrintAdress();
-	
 	uint8_t  SessionCount = static_cast<uint8_t>(Sessions.size());	
 	UDPPacks::CreateEchoMessage(UDPPacks::ReceiveAdress, MessageType::ConnectApproval, MessageType::EchoRequest, UDPPacks::SendID,
 								true,
@@ -100,28 +98,27 @@ int main(){
 
 		while (true) {
 
-	/*		UDPPacks::SendEchoes(true);*/
-	/*		UDPSetup::CheckSocketRecvBufferSize();*/
-			UDPPacks::RecvBytes(true);
+			UDPPacks::SendEchoes(true);
 
-			switch (UDPPacks::RecvMT) {
-			case MessageType::ConnectRequest:
-				ConnectRequest();
-				break;
-			case MessageType::CreateRequest:
-/*				CreateSession();*/
-				break;
-			case MessageType::JoinRequest:
-	/*			JoinSession();*/
-				break;
-			case MessageType::UpdateRequest:
-		/*		UpdateServer();*/
-				break;
+			if (UDPSetup::SocketHasNewBytes()) {
+				UDPPacks::RecvBytes(true);
+
+				switch (UDPPacks::RecvMT) {
+				case MessageType::ConnectRequest:
+					ConnectRequest();
+					break;
+				case MessageType::CreateRequest:
+	/*				CreateSession();*/
+					break;
+				case MessageType::JoinRequest:
+		/*			JoinSession();*/
+					break;
+				case MessageType::UpdateRequest:
+			/*		UpdateServer();*/
+					break;
+				}
 			}
 		}
-
-	Sleep(30000);
-
 
 	return 0;
 

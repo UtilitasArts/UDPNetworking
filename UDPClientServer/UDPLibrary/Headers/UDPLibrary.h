@@ -91,8 +91,10 @@ namespace UDPSetup {
 	inline std::string	MyName;
 	inline WSADATA      WSAData;
 	inline SOCKET       UDPSocket;
+
 	inline uint32_t		RecvBufferBytes;
 	inline uint32_t		PrevRecvBufferBytes;
+
 	inline std::filesystem::path RestartFolder;
 	inline std::filesystem::path ReposFolder;
 	//------------------|
@@ -104,7 +106,8 @@ namespace UDPSetup {
 	void OpenUDPSocket();
 	void BindSocket(uint16_t port = 0);
 	void UDPInit(uint16_t port = 0, std::string name = "");
-	void CheckSocketRecvBufferSize();
+
+	bool SocketHasNewBytes();
 }
 
 //--------------|

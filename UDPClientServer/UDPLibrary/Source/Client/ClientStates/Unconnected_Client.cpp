@@ -17,8 +17,8 @@ void Unconnected_Client::OnEnter() {
 	SendConnectionRequest();
 }
 
-bool Unconnected_Client::WhileActive() {	
-	UDPPacks::RecvBytes(true);
+bool Unconnected_Client::OnRecv() {	
+	//UDPPacks::RecvBytes(true);
 	//std::cout << printf("GG");
 	//UDPPacks::SendEchoes(true);
 	return true;

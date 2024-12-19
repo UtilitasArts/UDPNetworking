@@ -63,7 +63,7 @@ struct AddrCtr
 		AdressName = name;
 	}
 
- 	void PrintAdress() {printf("- %-10s address = %d.%d.%d.%d:%d\n",AdressName.c_str(),Octets[0], Octets[1], Octets[2], Octets[3], Port); }
+ 	void PrintAdress() {printf("%-10s address = %d.%d.%d.%d:%d\n",AdressName.c_str(),Octets[0], Octets[1], Octets[2], Octets[3], Port); }
 
 	inline uint32_t&	HostIP()		 { return IP;}
 	inline uint16_t&	HostPort()		 { return Port; }

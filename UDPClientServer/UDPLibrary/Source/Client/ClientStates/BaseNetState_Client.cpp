@@ -17,16 +17,17 @@ void BaseNetState_Client::OnEnter() {
 }
 
 void BaseNetState_Client::OnActive() {
-	while (bActive) {
-	
-		//UDPPacks::SendEchoes(true);
-		//UDPSetup::CheckSocketRecvBufferSize();
-		UDPPacks::RecvBytes(true);
-		bActive = WhileActive();
+	while (bActive) {	
+
+		UDPPacks::SendEchoes(true);
+		if (UDPSetup::SocketHasNewBytes()){
+			UDPPacks::RecvBytes(true);
+			bActive = OnRecv();
+		}
 	}	
 }
 
-bool BaseNetState_Client::WhileActive() {
+bool BaseNetState_Client::OnRecv() {
 	return true;
 }
 
