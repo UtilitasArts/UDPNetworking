@@ -9,93 +9,88 @@ namespace fs = std::filesystem;
 std::vector<SessionStateMachine*> Sessions;
 
 void ConnectRequest(){
+
 	UDPPacks::ReceiveAdress.PrintAdress();
-	std::string Name;
-
-	UDPPacks::RecvBytePack.ReturnBytes(Name, 2);
-	UDPPacks::SendBytePack.Clear(20,3);
-
-	uint8_t  SessionCount = static_cast<uint8_t>(Sessions.size());
 	
-	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectApproval);
-	UDPPacks::SendBytePack.AddBytes(MessageType::EchoRequest);
-	UDPPacks::SendBytePack.AddBytes(UDPPacks::SendID);
-	UDPPacks::SendBytePack.AddBytes(true);
-	UDPPacks::SendBytePack.AddBytes(UDPPacks::ReceiveAdress.HostIP());
-	UDPPacks::SendBytePack.AddBytes(UDPPacks::ReceiveAdress.HostPort());
-	UDPPacks::SendBytePack.AddBytes(SessionCount);
+	uint8_t  SessionCount = static_cast<uint8_t>(Sessions.size());	
+	UDPPacks::CreateEchoMessage(UDPPacks::ReceiveAdress, MessageType::ConnectApproval, MessageType::EchoRequest, UDPPacks::SendID,
+								true,
+								UDPPacks::ReceiveAdress.HostIP(),
+								UDPPacks::ReceiveAdress.HostPort(),
+								SessionCount);
 
-	if (SessionCount > 0) {
-		for (size_t i = 0; i < Sessions.size(); i++) {			
-			UDPPacks::SendBytePack.AddBytes(Sessions[i]->SessionName);
-			UDPPacks::SendBytePack.AddBytes(Sessions[i]->SessionSize);
-			UDPPacks::SendBytePack.AddBytes(Sessions[i]->JoinedCount);
-			UDPPacks::SendBytePack.AddBytes(Sessions[i]->CurrentStateEnum);
-			std::cout << "SessionState = " << ESessionStateString(Sessions[i]->CurrentStateEnum);
-		}
-	}
-	UDPPacks::SendID++;
+ 	if (SessionCount > 0) {
+ 		for (size_t i = 0; i < Sessions.size(); i++) {				
+ 			UDPPacks::AddMessageData(Sessions[i]->SessionName,
+ 									 Sessions[i]->SessionSize,
+ 									 Sessions[i]->JoinedCount,
+ 									 Sessions[i]->CurrentStateEnum);
+ 
+ 			std::cout << "SessionState = " << ESessionStateString(Sessions[i]->CurrentStateEnum);
+ 		}
+ 	}
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress,true);
+	UDPPacks::SendID++;
 }
-
-void CreateSession() {
-	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
-	std::string Name;
- 	std::string RoomID;
-	uint8_t AmountOfPlayers;
-
-	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
- 	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 2);
-	UDPPacks::RecvBytePack.ReturnBytes(AmountOfPlayers, 3);
-
-	SessionStateMachine* NewSession = new SessionStateMachine(RoomID, AmountOfPlayers);
-	std::cout << "- " << Name << " Created a room with ID:" << RoomID << " for " << (int)AmountOfPlayers << " players.\n";
-
-	Sessions.push_back(NewSession);
-	UDPPacks::ReceiveAdress.SetName(Name);
-
-	UDPPacks::SendBytePack.Clear(20, 3);
-	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
-	UDPPacks::SendBytePack.AddBytes(true);
-	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
-
-	NewSession->JoinSession();
-}
-
-void JoinSession() {
-	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
-	std::string Name;
-	uint8_t RoomNr;
-
-	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
-	UDPPacks::RecvBytePack.ReturnBytes(RoomNr, 2);
-
-	std::cout << Name << " = Joining RoomNr " << (int)RoomNr << "\n";
-	UDPPacks::ReceiveAdress.SetName(Name);
-	Sessions[RoomNr]->JoinSession();
-}
-
-void UpdateServer() {
-	std::cout << "- Request to update server: \n";	
-	UDPPacks::SendBytePack.Clear(20, 3);
-	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
-	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
-
-	//todo vertel iedereen te updaten.
-
-	closesocket(UDPSetup::UDPSocket);
-	WSACleanup();
-
-	std::string RestartPath		= CMD::SetPath(UDPSetup::RestartFolder);
-	std::string BatchFile		= CMD::Command("Update.bat " ,CMD::SetString("UDPServer.exe"));
-	std::string FinalCommand	= CMD::MultiCMD(RestartPath, BatchFile);
-
-	std::cout << "- Update of server was approved, Restarting now";
-
-	system(FinalCommand.c_str());
-	exit(0);
-
-}
+//
+//void CreateSession() {
+//	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
+//	std::string Name;
+// 	std::string RoomID;
+//	uint8_t AmountOfPlayers;
+//
+//	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
+// 	UDPPacks::RecvBytePack.ReturnBytes(RoomID, 2);
+//	UDPPacks::RecvBytePack.ReturnBytes(AmountOfPlayers, 3);
+//
+//	SessionStateMachine* NewSession = new SessionStateMachine(RoomID, AmountOfPlayers);
+//	std::cout << "- " << Name << " Created a room with ID:" << RoomID << " for " << (int)AmountOfPlayers << " players.\n";
+//
+//	Sessions.push_back(NewSession);
+//	UDPPacks::ReceiveAdress.SetName(Name);
+//
+//	UDPPacks::SendBytePack.Clear(20, 3);
+//	UDPPacks::SendBytePack.AddBytes(MessageType::CreateApproval);
+//	UDPPacks::SendBytePack.AddBytes(true);
+//	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+//
+//	NewSession->JoinSession();
+//}
+//
+//void JoinSession() {
+//	std::cout << "Received: \n"; UDPPacks::ReceiveAdress.PrintAdress();
+//	std::string Name;
+//	uint8_t RoomNr;
+//
+//	UDPPacks::RecvBytePack.ReturnBytes(Name, 1);
+//	UDPPacks::RecvBytePack.ReturnBytes(RoomNr, 2);
+//
+//	std::cout << Name << " = Joining RoomNr " << (int)RoomNr << "\n";
+//	UDPPacks::ReceiveAdress.SetName(Name);
+//	Sessions[RoomNr]->JoinSession();
+//}
+//
+//void UpdateServer() {
+//	std::cout << "- Request to update server: \n";	
+//	UDPPacks::SendBytePack.Clear(20, 3);
+//	UDPPacks::SendBytePack.AddBytes(MessageType::UpdateApproval);
+//	UDPPacks::SendBytes(UDPPacks::ReceiveAdress);
+//
+//	//todo vertel iedereen te updaten.
+//
+//	closesocket(UDPSetup::UDPSocket);
+//	WSACleanup();
+//
+//	std::string RestartPath		= CMD::SetPath(UDPSetup::RestartFolder);
+//	std::string BatchFile		= CMD::Command("Update.bat " ,CMD::SetString("UDPServer.exe"));
+//	std::string FinalCommand	= CMD::MultiCMD(RestartPath, BatchFile);
+//
+//	std::cout << "- Update of server was approved, Restarting now";
+//
+//	system(FinalCommand.c_str());
+//	exit(0);
+//
+//}
 
 int main(){
 
@@ -111,7 +106,7 @@ int main(){
 
 			switch (UDPPacks::RecvMT) {
 			case MessageType::ConnectRequest:
-				ConnectRequest();
+				//ConnectRequest();
 				break;
 			case MessageType::CreateRequest:
 /*				CreateSession();*/

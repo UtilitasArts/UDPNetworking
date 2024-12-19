@@ -130,7 +130,7 @@ namespace UDPPacks {
 
 	inline uint32_t		 SendID;
 
- 	inline std::unordered_set<MessageID, MessageIDHash> BlockMap;
+ 	inline std::unordered_set<MessageID, MessageIDHash>				 BlockMap;
  	inline std::unordered_map<MessageID, EchoChamber, MessageIDHash> EchoMap;
 
 	inline std::vector<EchoChamber>  EchoArray;
@@ -151,16 +151,13 @@ namespace UDPPacks {
 	//================|
 	template<typename T, typename... Types>
 	void AddMessageData(T CurrentType, Types... args) {
-
 		SendBytePack.AddBytes(CurrentType);
-		if constexpr (sizeof...(args) > 0)
-		{
+		if constexpr (sizeof...(args) > 0) {
 			AddMessageData(args...);
 		}
 	}
-
 	template<typename... Types>
-	void SendEchoMessage(AddrCtr& address_ctr, MessageType message_type, MessageType echo_type, uint32_t& send_id, Types... args) {
+	void CreateEchoMessage(AddrCtr& address_ctr, MessageType message_type, MessageType echo_type, uint32_t& send_id, Types... args) {
 		SendBytePack.Clear();
 		SendBytePack.AddBytes(message_type);
 		SendBytePack.AddBytes(echo_type);
@@ -169,17 +166,13 @@ namespace UDPPacks {
 		if constexpr (sizeof...(args) > 0) {
 			AddMessageData(args...);
 		}
-
 		if (echo_type == MessageType::EchoRequest)	{
 			EchoMap.emplace(MessageID(address_ctr, send_id),EchoChamber(address_ctr, SendBytePack));
-		}		
-
-		SendBytes(address_ctr, true);
-		send_id++;
+		}
 	}
 
 	template<typename... Types>
-	void SendMessage(AddrCtr& address_ctr, MessageType message_type, Types... args) {
+	void CreateMessage(AddrCtr& address_ctr, MessageType message_type, Types... args) {
 		SendBytePack.Clear();
 		SendBytePack.AddBytes(message_type);
 		SendBytePack.AddBytes(MessageType::None);
@@ -188,11 +181,8 @@ namespace UDPPacks {
 		if constexpr (sizeof...(args) > 0) {
 			AddMessageData(args...);
 		}
-
-		SendBytes(address_ctr, true);
-
-		SendID++;
 	}
 }
+
 
 

@@ -148,7 +148,6 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
  			RecvEchoResponse(bPrint);
 		}
 	}
-
 	return RecvMT;
 }
 //----------------------|
@@ -156,49 +155,30 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 //======================| 
 void UDPPacks::RecvEchoRequest(bool bPrint) {
 	if (RecvEcho == MessageType::EchoRequest) {
+
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
-		SendEchoMessage(ReceiveAdress,MessageType::EchoResponse,RecvMT, RecvID);
+		CreateEchoMessage(ReceiveAdress,MessageType::EchoResponse,RecvMT, RecvID);
+
+		UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+		UDPPacks::SendID++;
 	}
 }
-
 //-----------------------|
 // Receive Echo Response |
 //=======================|
-void UDPPacks::RecvEchoResponse(bool bPrint)
-{
-	std::cout << "Checking here! \n ECHOSIZE =" << EchoMap.size() << "\n";
-
+void UDPPacks::RecvEchoResponse(bool bPrint) {
 	if (EchoMap.size() > 0)
 	{	
 		if (RecvMT == MessageType::EchoResponse) {
-
 			if (EchoMap.count(MessageID(ReceiveAdress, RecvID))) {
 				std::cout << "is in map!";
 			}
 			else{
 				std::cout << "is Not in map!";
 			}
-
 			EchoMap.erase(MessageID(ReceiveAdress, RecvID));
+			std::cout << "Removing message from echomap! \n ECHOSIZE =" << EchoMap.size() << "\n";
 
-			std::cout << "Removing  here! \n ECHOSIZE =" << EchoMap.size() << "\n";
-
-// 			for (int i = 0; i < EchoArray.size(); i++) {
-// 				if (EchoArray[i].AdressContainer == ReceiveAdress) {
-// 					MessageType MType = static_cast<MessageType>(EchoArray[i].ResendBytePack.GetByteArrayAsChar()[1]);
-// 
-// 					if (MType == RecvEcho) {
-// 						if (bPrint) {
-// 							std::cout << "- Echo From ";
-// 							EchoArray[i].AdressContainer.PrintAdress();
-// 							std::cout << " " << MessageTypeToString(RecvEcho) << " Removed from array\n";
-// 						}
-// 
-// 						EchoArray.erase(EchoArray.begin() + i);
-// 						return;
-// 					}
-// 				}
-// 			}
 		}
 	}
 }
@@ -237,7 +217,6 @@ void UDPPacks::SendBytes(AddrCtr& adress_ctr, bool bPrint) {
 		if (bPrint) { SendBytePack.PrintBytes(); }
 	}
 }
-
 bool UDPPacks::RecvValidSessionAddress() {
 	bool bValidAddress = false;
 
