@@ -151,7 +151,7 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			//========================| 
 
  			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
- 				std::cout << "- Echo Message Blocked\n";
+ 			/*	std::cout << "- Echo Message Blocked\n";*/
   				ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
   				RecvMT   = MessageType::None;
   				RecvEcho = MessageType::None;
