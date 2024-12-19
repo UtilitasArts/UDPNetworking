@@ -206,7 +206,7 @@ void UDPPacks::RecvEchoResponse(bool bPrint) {
 void UDPPacks::SendEchoes(bool bPrint) {
 	if (EchoMap.size() > 0)	{		
 		for (auto Chamber : EchoMap) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			int bytesSent = sendto(UDPSetup::UDPSocket, Chamber.second.ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(Chamber.second.ResendBytePack.GetArraySize()), 0, Chamber.second.AdressContainer.GetSockAddr(), *Chamber.second.AdressContainer.GetAddrSize());
 			if (bytesSent == SOCKET_ERROR) {
 				std::cerr << "Failed to send echo." << "\n";
