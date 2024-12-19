@@ -125,7 +125,6 @@ void printWSAError() {
 	fprintf(stderr, "%S\n", s);
 	LocalFree(s);	
 }
-
 // -------------------|
 // Receiving messages |
 //====================|
@@ -144,10 +143,12 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			RecvBytePack.ReturnBytes(RecvEcho, 1);
 			RecvBytePack.ReturnBytes(RecvID,   2);
 
+ 			RecvEchoRequest(bPrint);
+ 			RecvEchoResponse(bPrint);
+
 			//------------------------|
 			// Block certain messages |
 			//========================| 
-
  			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
   				ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
   				RecvMT   = MessageType::None;
@@ -162,9 +163,6 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 				ReceiveAdress.PrintAdress();
 				//RecvBytePack.PrintBytes();
 			}
-
- 			RecvEchoResponse(bPrint);
- 			RecvEchoRequest(bPrint);
 		}	
 	}
 	else {
@@ -178,7 +176,7 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 //======================| 
 void UDPPacks::RecvEchoRequest(bool bPrint) {
 	if (RecvEcho == MessageType::EchoRequest) {
-		std::cout << "- Received Echo Request, attempt to add to blocklist\n";
+		std::cout << "- Received Echo Request, added to blocklist\n";
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
  		CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
  		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true); 

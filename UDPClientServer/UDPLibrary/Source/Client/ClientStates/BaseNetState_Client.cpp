@@ -16,7 +16,6 @@ void BaseNetState_Client::OnEnter() {
 }
 
 void BaseNetState_Client::OnActive() {
-
 	while (bActive) {	
 
  		while (UDPSetup::SocketHasNewBytes()) {			
@@ -24,7 +23,6 @@ void BaseNetState_Client::OnActive() {
  			bActive = OnRecv();
  		}
  		UDPPacks::SendEchoes(true);
-
 	}	
 }
 
