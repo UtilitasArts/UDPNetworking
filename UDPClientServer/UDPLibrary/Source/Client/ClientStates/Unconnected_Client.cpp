@@ -30,7 +30,7 @@ void Unconnected_Client::OnExit(){
 
 void Unconnected_Client::SendConnectionRequest() {
 
-	UDPPacks::SendEchoMessage(UDPPacks::ServerAdress, MessageType::ConnectRequest, MessageType::EchoRequest,
+	UDPPacks::SendEchoMessage(UDPPacks::ServerAdress, MessageType::ConnectRequest, MessageType::EchoRequest, UDPPacks::SendID,
 							  UDPSetup::MyName);
 
 // 	UDPPacks::SendBytePack.Clear(20, 3);

@@ -81,11 +81,9 @@ struct MessageIDHash {
  	}
 };
 
-
 //-----------|
 // UDP Setup |
 //===========|
-
 namespace UDPSetup {
 	//------------------|
 	// Public Variables |
@@ -112,7 +110,6 @@ namespace UDPSetup {
 //--------------|
 // UDP Packages |
 //==============|
-
 namespace UDPPacks {
 	//------------------|
 	// Public Variables |
@@ -145,7 +142,6 @@ namespace UDPPacks {
 	MessageType RecvBytes(bool bPrint);
 	void RecvEchoResponse(bool bPrint);
 	void RecvEchoRequest(bool bPrint);
-	void RecvEchoBouncer(bool bPrint);
 	void SendBytes(AddrCtr& adress_ctr, bool bPrint = false);
 	void SendEchoes(bool bPrint);
 	bool RecvValidSessionAddress();
@@ -162,12 +158,13 @@ namespace UDPPacks {
 			AddMessageData(args...);
 		}
 	}
+
 	template<typename... Types>
-	void SendEchoMessage(AddrCtr& address_ctr, MessageType message_type, MessageType echo_type, Types... args) {
+	void SendEchoMessage(AddrCtr& address_ctr, MessageType message_type, MessageType echo_type, uint32_t& send_id, Types... args) {
 		SendBytePack.Clear();
 		SendBytePack.AddBytes(message_type);
 		SendBytePack.AddBytes(echo_type);
-		SendBytePack.AddBytes(SendID);
+		SendBytePack.AddBytes(send_id);
 
 		if constexpr (sizeof...(args) > 0) {
 			AddMessageData(args...);
@@ -176,9 +173,9 @@ namespace UDPPacks {
 		if (echo_type == MessageType::EchoRequest)	{
 			EchoMap.emplace(MessageID(ReceiveAdress, SendID),EchoChamber(address_ctr, SendBytePack));
 		}
-
 		SendBytes(address_ctr, true);
-		SendID++;
+
+		send_id++;
 	}
 
 	template<typename... Types>
@@ -193,9 +190,9 @@ namespace UDPPacks {
 		}
 
 		SendBytes(address_ctr, true);
+
 		SendID++;
 	}
-
 }
 
 

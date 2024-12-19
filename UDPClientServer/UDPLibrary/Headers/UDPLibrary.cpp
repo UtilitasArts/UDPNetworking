@@ -151,26 +151,9 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 //======================| // We know there will come many more
 void UDPPacks::RecvEchoRequest(bool bPrint) {
 	if (RecvEcho == MessageType::EchoRequest) {
-
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
-
-// 		SendBytePack.Clear(2, 2);
-// 		SendBytePack.AddBytes(MessageType::EchoResponse);
-// 		SendBytePack.AddBytes(RecvMT);
-// 		SendBytes(UDPPacks::ReceiveAdress, bPrint);
-
-		SendEchoMessage(ReceiveAdress,MessageType::EchoResponse,RecvMT);
-
+		SendEchoMessage(ReceiveAdress,MessageType::EchoResponse,RecvMT, RecvID);
 	}
-}
-
-//----------------------|
-// Receive Echo Bouncer |
-//======================| // Blocks all messages that we already received.
-void UDPPacks::RecvEchoBouncer(bool bPrint)
-{
-
-
 }
 
 //-----------------------|
@@ -178,11 +161,22 @@ void UDPPacks::RecvEchoBouncer(bool bPrint)
 //=======================| // We tell the other computer to stop sending
 void UDPPacks::RecvEchoResponse(bool bPrint)
 {
-	if (EchoArray.size() > 0)
+	std::cout << "Checking here! \n ECHOSIZE =" << EchoMap.size() << "\n";
+
+	if (EchoMap.size() > 0)
 	{	
 		if (RecvMT == MessageType::EchoResponse) {
 
+			if (EchoMap.count(MessageID(ReceiveAdress, RecvID))) {
+				std::cout << "is in map!";
+			}
+			else{
+				std::cout << "is Not in map!";
+			}
+
 			EchoMap.erase(MessageID(ReceiveAdress, RecvID));
+
+			std::cout << "Removing  here! \n ECHOSIZE =" << EchoMap.size() << "\n";
 
 // 			for (int i = 0; i < EchoArray.size(); i++) {
 // 				if (EchoArray[i].AdressContainer == ReceiveAdress) {

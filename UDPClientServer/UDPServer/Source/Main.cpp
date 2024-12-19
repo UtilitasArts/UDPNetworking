@@ -16,7 +16,6 @@ void ConnectRequest(){
 	UDPPacks::SendBytePack.Clear(20,3);
 
 	uint8_t  SessionCount = static_cast<uint8_t>(Sessions.size());
-
 	
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectApproval);
 	UDPPacks::SendBytePack.AddBytes(MessageType::EchoRequest);
