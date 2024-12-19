@@ -140,22 +140,23 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 	int BytesReceived = recvfrom(UDPSetup::UDPSocket, (char*)RecvBuffer, sizeof(RecvBuffer), 0, ReceiveAdress.GetSockAddr(), ReceiveAdress.GetAddrSize());
 	if (BytesReceived != SOCKET_ERROR) {
 		ReceiveAdress.FillFromSockAddr();
-		RecvBytePack.SetByteArray(RecvBuffer, BytesReceived);
-
+		RecvBytePack.SetByteArray(RecvBuffer, BytesReceived,true);
+	
 		if (RecvBytePack.GetCRCValid()) {
 			RecvBytePack.ReturnBytes(RecvMT,   0);
 			RecvBytePack.ReturnBytes(RecvEcho, 1);
 			RecvBytePack.ReturnBytes(RecvID,   2);
+
 			//------------------------|
 			// Block certain messages |
 			//========================| 
-			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
-				std::cout << "- Echo Message Blocked\n";
-// 				ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
-// 				RecvMT   = MessageType::None;
-// 				RecvEcho = MessageType::None;
-// 				return RecvMT;
-			}
+// 			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
+// 				std::cout << "- Echo Message Blocked\n";
+// // 				ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
+// // 				RecvMT   = MessageType::None;
+// // 				RecvEcho = MessageType::None;
+// // 				return RecvMT;
+// 			}
 			
 			if (bPrint)	{
 				std::cout << "* << Receive [" << MessageTypeToString(RecvMT) << "] [";
@@ -164,13 +165,10 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 				ReceiveAdress.PrintAdress();
 				//RecvBytePack.PrintBytes();
 			}
+
  			RecvEchoRequest(bPrint);
  			RecvEchoResponse(bPrint);
-		}
-		else
-		{
-			std::cout << "CRC Not Valid";
-		}
+		}	
 	}
 	else {
 // 		std::cout << "Some Recv Message Error occured \n";
@@ -186,9 +184,9 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 		std::cout << "- Received Echo Request, attempt to add to blocklist\n";
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
 
-		CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
-		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
-		UDPPacks::SendID++;
+// 		CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
+// 		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+// 		UDPPacks::SendID++;
 	}
 }
 //-----------------------|
@@ -209,8 +207,7 @@ void UDPPacks::RecvEchoResponse(bool bPrint) {
 //===============| // we assume no one hears us.
 void UDPPacks::SendEchoes(bool bPrint) {
 	if (EchoMap.size() > 0)	{		
-		for (auto Chamber : EchoMap) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		for (auto Chamber : EchoMap) {			
 			int bytesSent = sendto(UDPSetup::UDPSocket, Chamber.second.ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(Chamber.second.ResendBytePack.GetArraySize()), 0, Chamber.second.AdressContainer.GetSockAddr(), *Chamber.second.AdressContainer.GetAddrSize());
 			if (bytesSent == SOCKET_ERROR) {
 				std::cerr << "Failed to send echo." << "\n";
@@ -227,29 +224,37 @@ void UDPPacks::SendEchoes(bool bPrint) {
 //----------------|
 // Send Functions |
 //================|
-void UDPPacks::SendBytes(AddrCtr& adress_ctr, bool bPrint) {
+void UDPPacks::SendBytes(AddrCtr& address_ctr, bool bPrint) {
+
 	SendBytePack.AddCRC();
 
-	int bytesSent = sendto(UDPSetup::UDPSocket, SendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(SendBytePack.GetArraySize()), 0, adress_ctr.GetSockAddr(), *adress_ctr.GetAddrSize());
-	MessageType MType;
-	MessageType MEcho; 
-	uint32_t    Mid;
-
-	SendBytePack.ReturnBytes(MType,0);
-	SendBytePack.ReturnBytes(MEcho,1);
-	SendBytePack.ReturnBytes(Mid,  2);
+	MessageType SendMT;
+	MessageType SendEcho;
+	uint32_t	MsgSendID;
+	
+	RecvBytePack.ReturnBytes(SendMT, 0);
+	RecvBytePack.ReturnBytes(SendEcho, 1);
+	RecvBytePack.ReturnBytes(MsgSendID, 2);
+	
+	if (SendEcho == MessageType::EchoRequest) {
+		EchoMap.emplace(MessageID(address_ctr, MsgSendID), EchoChamber(address_ctr, SendBytePack));
+	}
+	int bytesSent = sendto(UDPSetup::UDPSocket, SendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(SendBytePack.GetArraySize()), 0, address_ctr.GetSockAddr(), *address_ctr.GetAddrSize());
 
 	if (bytesSent == SOCKET_ERROR) {
 		std::cerr << "Failed to send message." << "\n";
 	}
 	else {
-		std::cout << "* >> Sending [" << MessageTypeToString(MType) << "] [";
-		std::cout << MessageTypeToString(MEcho);
-		std::cout << "] [MsgID:" << Mid << "] To ";
-		adress_ctr.PrintAdress();
+		std::cout << "* >> Sending [" << MessageTypeToString(SendMT) << "] [";
+		std::cout << MessageTypeToString(SendEcho);
+		std::cout << "] [MsgID:" << MsgSendID << "] To ";
+		address_ctr.PrintAdress();
 		//if (bPrint) { SendBytePack.PrintBytes(); }
 	}
+
+	SendID++;
 }
+
 bool UDPPacks::RecvValidSessionAddress() {
 	bool bValidAddress = false;
 

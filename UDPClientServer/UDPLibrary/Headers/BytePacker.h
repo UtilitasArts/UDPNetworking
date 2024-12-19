@@ -442,7 +442,7 @@ private:
 
 public:
 
-	BytePack operator=(BytePack& obj) {
+	void operator=(BytePack& obj) {
 		SetByteArray(obj.GetByteArray(), obj.GetArraySize());
 	}
 };

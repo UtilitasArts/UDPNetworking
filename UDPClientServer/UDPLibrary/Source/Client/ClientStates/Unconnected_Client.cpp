@@ -33,7 +33,6 @@ void Unconnected_Client::SendConnectionRequest() {
 	UDPPacks::CreateEchoMessage(UDPPacks::ServerAdress, MessageType::ConnectRequest, MessageType::EchoRequest, UDPPacks::SendID,
 							    UDPSetup::MyName);
 	UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
-	UDPPacks::SendID ++;
 }
 
 //void Unconnected_Client::ReceiveConnectionApproval() {

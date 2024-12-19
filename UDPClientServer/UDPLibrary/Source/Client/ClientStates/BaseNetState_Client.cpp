@@ -20,11 +20,12 @@ void BaseNetState_Client::OnEnter() {
 
 void BaseNetState_Client::OnActive() {
 	while (bActive) {	
-		UDPPacks::SendEchoes(true);
+
 		while (UDPSetup::SocketHasNewBytes()) {			
 			UDPPacks::RecvBytes(true);
 			bActive = OnRecv();
 		}
+		UDPPacks::SendEchoes(true);
 	}	
 }
 

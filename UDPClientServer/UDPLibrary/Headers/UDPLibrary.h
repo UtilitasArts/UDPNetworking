@@ -24,7 +24,7 @@
 // Echo Chamber |
 //==============|
 struct EchoChamber {
-	EchoChamber(AddrCtr addr_ctr, BytePack resend_pack) : AdressContainer(addr_ctr), ResendBytePack(resend_pack) {}
+	EchoChamber(AddrCtr& addr_ctr, BytePack& resend_pack) : AdressContainer(addr_ctr), ResendBytePack(resend_pack) {}
 	AddrCtr  AdressContainer;
 	BytePack ResendBytePack;
 
@@ -168,9 +168,6 @@ namespace UDPPacks {
 
 		if constexpr (sizeof...(args) > 0) {
 			AddMessageData(args...);
-		}
-		if (echo_type == MessageType::EchoRequest)	{
-			EchoMap.emplace(MessageID(address_ctr, send_id),EchoChamber(address_ctr, SendBytePack));
 		}
 	}
 

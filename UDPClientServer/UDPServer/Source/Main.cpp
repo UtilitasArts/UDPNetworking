@@ -29,7 +29,6 @@ void ConnectRequest(){
  	}
 
 	UDPPacks::SendBytes(UDPPacks::ReceiveAdress,true);
-	UDPPacks::SendID++;
 }
 //
 //void CreateSession() {
@@ -98,8 +97,8 @@ int main(){
 
 		while (true) {
 
-			UDPPacks::SendEchoes(true);
-			UDPPacks::RecvBytes(true);
+			while (UDPSetup::SocketHasNewBytes()) {
+				UDPPacks::RecvBytes(true);						
 
 				switch (UDPPacks::RecvMT) {
 				case MessageType::ConnectRequest:
@@ -115,6 +114,9 @@ int main(){
 			/*		UpdateServer();*/
 					break;
 				}
+			}
+			UDPPacks::SendEchoes(true);
+
 // 			if (UDPSetup::SocketHasNewBytes()) {
 // 
 // 			}
