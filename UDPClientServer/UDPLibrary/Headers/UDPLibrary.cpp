@@ -87,8 +87,7 @@ bool UDPSetup::SocketHasNewBytes()
 	err = ioctlsocket(UDPSocket, FIONREAD, (u_long*)&RecvBufferBytes);	
 
 	if(err != SOCKET_ERROR)	{
-		if (PrevRecvBufferBytes != RecvBufferBytes)
-		{			
+		if (PrevRecvBufferBytes != RecvBufferBytes && RecvBufferBytes > 0) {
 			printf("- Bytes in the buffer: %d / %d \n", RecvBufferBytes, optVal);
 		}
 
@@ -113,8 +112,6 @@ void UDPSetup::UDPInit(uint16_t port, std::string name) {
 //-----------|
 // UDP Packs |
 //===========|
-
-
 void printWSAError() {
 	int errorCode = WSAGetLastError(); // Retrieve the last error code
 
@@ -151,7 +148,7 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			// Block certain messages |
 			//========================| 
  			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
- 				std::cout << "- Echo Message Blocked\n";
+ 				//std::cout << "- Echo Message Blocked\n";
   				ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
   				RecvMT   = MessageType::None;
   				RecvEcho = MessageType::None;
