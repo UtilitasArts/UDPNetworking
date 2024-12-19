@@ -100,8 +100,8 @@ int main(){
 
 		while (true) {
 
-			UDPPacks::SendEchoes(true);
-			UDPSetup::CheckSocketRecvBufferSize();
+	/*		UDPPacks::SendEchoes(true);*/
+	/*		UDPSetup::CheckSocketRecvBufferSize();*/
 			UDPPacks::RecvBytes(true);
 
 			switch (UDPPacks::RecvMT) {
