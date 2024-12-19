@@ -169,8 +169,8 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 		}
 	}
 	else {
-		std::cout << "Some Recv Message Error occured \n";
-		printWSAError();
+// 		std::cout << "Some Recv Message Error occured \n";
+// 		printWSAError();
 	}
 	return RecvMT;
 }
