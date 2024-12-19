@@ -106,7 +106,7 @@ void UDPSetup::UDPInit(uint16_t port, std::string name) {
 	InitWinsock();
 	OpenUDPSocket();
 	BindSocket(port);
-	SocketHasNewBytes();
+	std::cout << "\n";
 }
 
 //-----------|
@@ -215,7 +215,6 @@ void UDPPacks::SendEchoes(bool bPrint) {
 		}
 	}
 }
-
 //----------------|
 // Send Functions |
 //================|
