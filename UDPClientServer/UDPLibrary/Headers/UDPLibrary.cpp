@@ -86,7 +86,7 @@ bool UDPSetup::SocketHasNewBytes()
 	err = getsockopt(UDPSocket, SOL_SOCKET, SO_RCVBUF, (char*)&optVal, &optLen);
 	err = ioctlsocket(UDPSocket, FIONREAD, (u_long*)&RecvBufferBytes);	
 
-	if(err != SOCKET_ERROR)	{
+	if (err != SOCKET_ERROR) {
 		if (PrevRecvBufferBytes != RecvBufferBytes && RecvBufferBytes > 0) {
 			//printf("- Bytes in the buffer: %d / %d \n", RecvBufferBytes, optVal);
 		}
@@ -112,6 +112,8 @@ void UDPSetup::UDPInit(uint16_t port, std::string name) {
 //-----------|
 // UDP Packs |
 //===========|
+
+
 void printWSAError() {
 	int errorCode = WSAGetLastError(); // Retrieve the last error code
 
@@ -148,6 +150,7 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			// Block certain messages |
 			//========================| 
  			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
+ 				std::cout << "- Echo Message Blocked\n";
   				ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
   				RecvMT   = MessageType::None;
   				RecvEcho = MessageType::None;
@@ -204,15 +207,11 @@ void UDPPacks::SendEchoes(bool bPrint) {
 	if (EchoMap.size() > 0)	{		
 		for (auto Chamber : EchoMap) {			
 			int bytesSent = sendto(UDPSetup::UDPSocket, Chamber.second.ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(Chamber.second.ResendBytePack.GetArraySize()), 0, Chamber.second.AdressContainer.GetSockAddr(), *Chamber.second.AdressContainer.GetAddrSize());
-			if (bytesSent == SOCKET_ERROR) {
-				std::cerr << "Failed to send echo." << "\n";
-			}
-			else {
-				MessageType MType = static_cast<MessageType>(Chamber.second.ResendBytePack.GetByteArrayAsChar()[1]);
-				
-				if (bPrint) { 
-					std::cout << "- >> A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";				
-					Chamber.second.ResendBytePack.PrintBytes(); 
+			if (bytesSent != SOCKET_ERROR) {	
+				if (bPrint) {
+					MessageType MType = static_cast<MessageType>(Chamber.second.ResendBytePack.GetByteArrayAsChar()[1]);
+					std::cout << "- >> A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";
+					//if (bPrint) { Chamber.second.ResendBytePack.PrintBytes(); }
 				}
 			}			
 		}
