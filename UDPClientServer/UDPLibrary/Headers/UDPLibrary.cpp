@@ -91,12 +91,12 @@ bool UDPSetup::SocketHasNewBytes()
 		{			
 			printf("- Bytes in the buffer: %d / %d \n", RecvBufferBytes, optVal);
 		}
-	}
 
-	PrevRecvBufferBytes = RecvBufferBytes;
+		PrevRecvBufferBytes = RecvBufferBytes;
 
-	if (RecvBufferBytes > 0) {
-		return true;
+		if (RecvBufferBytes > 0) {
+			return true;
+		}
 	}
 
 	return false;
