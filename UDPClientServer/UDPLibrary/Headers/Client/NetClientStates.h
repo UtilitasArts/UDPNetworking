@@ -17,6 +17,8 @@ public:
 	BaseNetState_Client(NetClientStateMachine* sm);
 	virtual void InitState();
 	virtual void OnEnter();
+	virtual void OnActive();
+	virtual bool WhileActive();
 	virtual void OnExit();
 
 protected:
@@ -30,9 +32,10 @@ protected:
 class Unconnected_Client : public BaseNetState_Client {
 public:
 	using BaseNetState_Client::BaseNetState_Client;
-	virtual void InitState() override;
-	virtual void OnEnter() override;
-	virtual void OnExit()  override;
+	virtual void InitState()   override;
+	virtual void OnEnter()     override;
+	virtual bool WhileActive() override;
+	virtual void OnExit()      override;
 
 	void ReceiveConnectionApproval();
 	void RecvJoinSessionApproval();

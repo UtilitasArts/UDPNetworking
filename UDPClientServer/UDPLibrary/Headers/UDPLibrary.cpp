@@ -111,9 +111,10 @@ void UDPSetup::UDPInit(uint16_t port, std::string name) {
 // Receiving messages |
 //====================|
 MessageType UDPPacks::RecvBytes(bool bPrint) {
+
 	ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
-	RecvMT = MessageType::None;
-	Echo   = MessageType::None;
+	RecvMT	   = MessageType::None;
+	RecvEcho   = MessageType::None;
 
 	int BytesReceived = recvfrom(UDPSetup::UDPSocket, (char*)RecvBuffer, sizeof(RecvBuffer), 0, ReceiveAdress.GetSockAddr(), ReceiveAdress.GetAddrSize());
 	if (BytesReceived != SOCKET_ERROR) {
@@ -121,10 +122,18 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 		RecvBytePack.SetByteArray(RecvBuffer, BytesReceived);
 
 		if (RecvBytePack.GetCRCValid()) {
-			RecvBytePack.ReturnBytes(RecvMT, 0);
-			RecvBytePack.ReturnBytes(Echo,   1);
+
+			RecvBytePack.ReturnBytes(RecvID,   2);
+  			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
+  				if(bPrint){std::cout << "- Echo Message Blocked\n";}
+  				return RecvMT;
+  			}
+
+			RecvBytePack.ReturnBytes(RecvMT,   0);
+			RecvBytePack.ReturnBytes(RecvEcho, 1);
 			std::cout << "- A " << MessageTypeToString(RecvMT) << " Received! \n";
-			std::cout << "- "   << MessageTypeToString(Echo)   << "\n";
+			std::cout << "- "   << MessageTypeToString(RecvEcho)   << "\n";
+			std::cout << "- ID" << (int)RecvID << "\n";
 
 			if (bPrint)	{
 				RecvBytePack.PrintBytes();
@@ -134,38 +143,17 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
  			RecvEchoResponse(bPrint);
 		}
 	}
+
 	return RecvMT;
 }
-//-------------|
-// Send Echoes |
-//=============|
-void UDPPacks::RecvEchoResponse(bool bPrint)
-{
-	if (EchoArray.size() > 0)
-	{	
-		if (RecvMT == MessageType::EchoResponse) {
-			for (int i = 0; i < EchoArray.size(); i++) {
-				if (EchoArray[i].AdressContainer == ReceiveAdress) {
-					MessageType MType = static_cast<MessageType>(EchoArray[i].ResendBytePack.GetByteArrayAsChar()[1]);
-
-					if (MType == Echo) {
-						if (bPrint) {
-							std::cout << "- Echo From ";
-							EchoArray[i].AdressContainer.PrintAdress();
-							std::cout << " " << MessageTypeToString(Echo) << " Removed from array\n";
-						}
-
-						EchoArray.erase(EchoArray.begin() + i);
-						return;
-					}
-				}
-			}
-		}
-	}
-}
-
+//----------------------|
+// Receive Echo Request |
+//======================| // We know there will come many more
 void UDPPacks::RecvEchoRequest(bool bPrint) {
-	if (Echo == MessageType::EchoRequest) {
+	if (RecvEcho == MessageType::EchoRequest) {
+
+		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
+
 		SendBytePack.Clear(2, 2);
 		SendBytePack.AddBytes(MessageType::EchoResponse);
 		SendBytePack.AddBytes(RecvMT);
@@ -173,34 +161,69 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 	}
 }
 
-void UDPPacks::SendEchoes(bool bPrint) {
+//----------------------|
+// Receive Echo Bouncer |
+//======================| // Blocks all messages that we already received.
+void UDPPacks::RecvEchoBouncer(bool bPrint)
+{
+
+
+}
+
+//-----------------------|
+// Receive Echo Response |
+//=======================| // We tell the other computer to stop sending
+void UDPPacks::RecvEchoResponse(bool bPrint)
+{
 	if (EchoArray.size() > 0)
-	{
-		for (size_t i = 0; i < EchoArray.size(); i++) {
-			int bytesSent = sendto(UDPSetup::UDPSocket, EchoArray[i].ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(EchoArray[i].ResendBytePack.GetArraySize()), 0, EchoArray[i].AdressContainer.GetSockAddr(), *EchoArray[i].AdressContainer.GetAddrSize());
+	{	
+		if (RecvMT == MessageType::EchoResponse) {
+
+			EchoMap.erase(MessageID(ReceiveAdress, RecvID));
+
+// 			for (int i = 0; i < EchoArray.size(); i++) {
+// 				if (EchoArray[i].AdressContainer == ReceiveAdress) {
+// 					MessageType MType = static_cast<MessageType>(EchoArray[i].ResendBytePack.GetByteArrayAsChar()[1]);
+// 
+// 					if (MType == RecvEcho) {
+// 						if (bPrint) {
+// 							std::cout << "- Echo From ";
+// 							EchoArray[i].AdressContainer.PrintAdress();
+// 							std::cout << " " << MessageTypeToString(RecvEcho) << " Removed from array\n";
+// 						}
+// 
+// 						EchoArray.erase(EchoArray.begin() + i);
+// 						return;
+// 					}
+// 				}
+// 			}
+		}
+	}
+}
+//---------------|
+// Resend Echoes |
+//===============| // we assume no one hears us.
+void UDPPacks::SendEchoes(bool bPrint) {
+	if (EchoMap.size() > 0)	{
+		for (auto Chamber : EchoMap) {
+			int bytesSent = sendto(UDPSetup::UDPSocket, Chamber.second.ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(Chamber.second.ResendBytePack.GetArraySize()), 0, Chamber.second.AdressContainer.GetSockAddr(), *Chamber.second.AdressContainer.GetAddrSize());
 			if (bytesSent == SOCKET_ERROR) {
 				std::cerr << "Failed to send echo." << "\n";
 			}
 			else {
-				MessageType MType = static_cast<MessageType>(EchoArray[i].ResendBytePack.GetByteArrayAsChar()[1]);
+				MessageType MType = static_cast<MessageType>(Chamber.second.ResendBytePack.GetByteArrayAsChar()[1]);
 				std::cout << "\n- A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";
-				if (bPrint) { EchoArray[i].ResendBytePack.PrintBytes(); }
-			}
+				if (bPrint) { Chamber.second.ResendBytePack.PrintBytes(); }
+			}			
 		}
 	}
 }
+
 //----------------|
 // Send Functions |
 //================|
-void UDPPacks::SendBytes(AddrCtr& adress_ctr, bool bNewEcho, bool bPrint) {
-
+void UDPPacks::SendBytes(AddrCtr& adress_ctr, bool bPrint) {
 	SendBytePack.AddCRC();
-
-	if (bNewEcho){
-		EchoChamber NewEcho(adress_ctr,SendBytePack);
-		EchoArray.push_back(NewEcho);
-		if(bPrint) {std::cout << "-Echoing!"; }		
-	}
 
 	int bytesSent = sendto(UDPSetup::UDPSocket, SendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(SendBytePack.GetArraySize()), 0, adress_ctr.GetSockAddr(), *adress_ctr.GetAddrSize());
 	MessageType MType = static_cast<MessageType>(SendBytePack.GetByteArrayAsChar()[1]);
@@ -213,7 +236,6 @@ void UDPPacks::SendBytes(AddrCtr& adress_ctr, bool bNewEcho, bool bPrint) {
 	}
 }
 
-
 bool UDPPacks::RecvValidSessionAddress() {
 	bool bValidAddress = false;
 
@@ -224,4 +246,7 @@ bool UDPPacks::RecvValidSessionAddress() {
 	}
 	return bValidAddress;
 }
+
+
+
 

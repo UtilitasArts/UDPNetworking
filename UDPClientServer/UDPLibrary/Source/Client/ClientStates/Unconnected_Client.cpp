@@ -15,18 +15,29 @@ void Unconnected_Client::OnEnter() {
 
     UDPSetup::UDPInit();
 	SendConnectionRequest();
-	ReceiveConnectionApproval();
 }
+
+bool Unconnected_Client::WhileActive() {	
+
+	//std::cout << printf("GG");
+	//UDPPacks::SendEchoes(true);
+	return true;
+}
+
 void Unconnected_Client::OnExit(){
 	BaseNetState_Client::OnExit();
 }
 
 void Unconnected_Client::SendConnectionRequest() {
-	UDPPacks::SendBytePack.Clear(20, 3);
-	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
-	UDPPacks::SendBytePack.AddBytes(MessageType::EchoRequest);
-	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
-	UDPPacks::SendBytes(UDPPacks::ServerAdress, true, true);
+
+	UDPPacks::SendEchoMessage(UDPPacks::ServerAdress, MessageType::ConnectRequest, MessageType::EchoRequest,
+							  UDPSetup::MyName);
+
+// 	UDPPacks::SendBytePack.Clear(20, 3);
+// 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectRequest);
+// 	UDPPacks::SendBytePack.AddBytes(MessageType::EchoRequest);
+// 	UDPPacks::SendBytePack.AddBytes(UDPSetup::MyName);
+// 	UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 }
 
 void Unconnected_Client::ReceiveConnectionApproval() {
@@ -223,7 +234,6 @@ void Unconnected_Client::RecvCreateSessionApproval() {
 
 void Unconnected_Client::RecvUpdateApproval() {
 	std::cout << "- Update of server was approved, Restarting now";
-
 	std::string RestartPath = CMD::SetPath(UDPSetup::RestartFolder);
 	std::string BatchFile = CMD::Command("Restart.bat ", CMD::SetString("UDPClient.exe"));
 	std::string FinalCommand = CMD::MultiCMD(RestartPath, BatchFile);

@@ -22,10 +22,14 @@ NetClientStateMachine::~NetClientStateMachine() {
 }
 
 void NetClientStateMachine::SetState(ENetClientStates NextState) {
+
 	if (CurrentState) { CurrentState->OnExit(); }
 
 	CurrentState = StateArray.at((size_t)NextState);
 
-	if (CurrentState) { CurrentState->OnEnter(); }
+	if (CurrentState) { 
+		CurrentState->OnEnter();
+		CurrentState->OnActive();		
+	}
 }
 

@@ -11,20 +11,21 @@ std::vector<SessionStateMachine*> Sessions;
 void ConnectRequest(){
 	UDPPacks::ReceiveAdress.PrintAdress();
 	std::string Name;
+
 	UDPPacks::RecvBytePack.ReturnBytes(Name, 2);
 	UDPPacks::SendBytePack.Clear(20,3);
 
 	uint8_t  SessionCount = static_cast<uint8_t>(Sessions.size());
 
 	UDPPacks::SendBytePack.AddBytes(MessageType::ConnectApproval);
+	UDPPacks::SendBytePack.AddBytes(MessageType::EchoRequest);
 	UDPPacks::SendBytePack.AddBytes(true);
 	UDPPacks::SendBytePack.AddBytes(UDPPacks::ReceiveAdress.HostIP());
 	UDPPacks::SendBytePack.AddBytes(UDPPacks::ReceiveAdress.HostPort());
 	UDPPacks::SendBytePack.AddBytes(SessionCount);
 
 	if (SessionCount > 0) {
-		for (size_t i = 0; i < Sessions.size(); i++) {	
-		
+		for (size_t i = 0; i < Sessions.size(); i++) {			
 			UDPPacks::SendBytePack.AddBytes(Sessions[i]->SessionName);
 			UDPPacks::SendBytePack.AddBytes(Sessions[i]->SessionSize);
 			UDPPacks::SendBytePack.AddBytes(Sessions[i]->JoinedCount);
@@ -32,7 +33,7 @@ void ConnectRequest(){
 			std::cout << "SessionState = " << ESessionStateString(Sessions[i]->CurrentStateEnum);
 		}
 	}
-	UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+	UDPPacks::SendBytes(UDPPacks::ReceiveAdress,true);
 }
 
 void CreateSession() {
