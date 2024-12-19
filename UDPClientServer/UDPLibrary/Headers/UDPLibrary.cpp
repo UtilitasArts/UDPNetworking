@@ -154,10 +154,13 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
 
-		SendBytePack.Clear(2, 2);
-		SendBytePack.AddBytes(MessageType::EchoResponse);
-		SendBytePack.AddBytes(RecvMT);
-		SendBytes(UDPPacks::ReceiveAdress, bPrint);
+// 		SendBytePack.Clear(2, 2);
+// 		SendBytePack.AddBytes(MessageType::EchoResponse);
+// 		SendBytePack.AddBytes(RecvMT);
+// 		SendBytes(UDPPacks::ReceiveAdress, bPrint);
+
+		SendEchoMessage(ReceiveAdress,MessageType::EchoResponse,RecvMT);
+
 	}
 }
 
