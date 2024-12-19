@@ -156,9 +156,9 @@ void UDPPacks::RecvEchoRequest(bool bPrint) {
 	if (RecvEcho == MessageType::EchoRequest) {
 
 		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
-		CreateEchoMessage(ReceiveAdress,MessageType::EchoResponse,RecvMT, RecvID);
 
-		UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
+		CreateEchoMessage(ReceiveAdress,MessageType::EchoResponse,RecvMT, RecvID);
+		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
 		UDPPacks::SendID++;
 	}
 }
@@ -201,13 +201,23 @@ void UDPPacks::SendBytes(AddrCtr& adress_ctr, bool bPrint) {
 	SendBytePack.AddCRC();
 
 	int bytesSent = sendto(UDPSetup::UDPSocket, SendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(SendBytePack.GetArraySize()), 0, adress_ctr.GetSockAddr(), *adress_ctr.GetAddrSize());
-	MessageType MType = static_cast<MessageType>(SendBytePack.GetByteArrayAsChar()[1]);
+	MessageType MType;
+	MessageType MEcho; 
+	uint32_t    Mid;
+
+	SendBytePack.ReturnBytes(MType,0);
+	SendBytePack.ReturnBytes(MEcho,1);
+	SendBytePack.ReturnBytes(Mid,  2);
+
 	if (bytesSent == SOCKET_ERROR) {
 		std::cerr << "Failed to send message." << "\n";
 	}
 	else {
-		std::cout << "\n- A " << MessageTypeToString(MType) << " Sent! " << "\n";
-		if (bPrint) { SendBytePack.PrintBytes(); }
+		std::cout << "\n- A " << MessageTypeToString(MType) << " Sent! ";
+		std::cout << MessageTypeToString(MEcho);
+		std::cout << " With MessageID :" << Mid << "\n";
+
+		//if (bPrint) { SendBytePack.PrintBytes(); }
 	}
 }
 bool UDPPacks::RecvValidSessionAddress() {
