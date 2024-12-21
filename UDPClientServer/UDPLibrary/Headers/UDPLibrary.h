@@ -142,7 +142,7 @@ namespace UDPPacks {
 	//==================|
 	MessageType RecvBytes(bool bPrint);
 	void RecvEchoResponse(bool bPrint);
-	void RecvEchoRequest(bool bPrint);
+	//bool RecvEchoRequest(bool bPrint);
 	void SendBytes(AddrCtr& adress_ctr, bool bPrint = false);
 
 	inline Timer EchoTimer;

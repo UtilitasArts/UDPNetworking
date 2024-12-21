@@ -142,18 +142,25 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			RecvBytePack.ReturnBytes(RecvEcho, 1);
 			RecvBytePack.ReturnBytes(RecvID,   2);
 
- 			RecvEchoRequest(bPrint);
  			RecvEchoResponse(bPrint);
-
 			//------------------------|
 			// Block certain messages |
 			//========================| 
- 			if (BlockMap.count(MessageID(ReceiveAdress, RecvID))) {
-  				ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
-  				RecvMT   = MessageType::None;
-  				RecvEcho = MessageType::None;
-  				return RecvMT;
- 			}
+			if (RecvEcho == MessageType::EchoRequest) {
+				CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
+				UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+
+				if (!BlockMap.emplace(MessageID(ReceiveAdress, RecvID)).second) {
+					ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
+					RecvMT = MessageType::None;
+					RecvEcho = MessageType::None;
+					return RecvMT;
+				}
+				else
+				{
+					std::cout << "- Received Echo Request, added to blocklist\n";
+				}
+			}
 			
 			if (bPrint)	{
 				std::cout << "* << Receive [" << MessageTypeToString(RecvMT) << "] [";
@@ -173,14 +180,15 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 //----------------------|
 // Receive Echo Request |
 //======================| 
-void UDPPacks::RecvEchoRequest(bool bPrint) {
-	if (RecvEcho == MessageType::EchoRequest) {
-		std::cout << "- Received Echo Request, added to blocklist\n";
-		BlockMap.emplace(MessageID(ReceiveAdress, RecvID));
- 		CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
- 		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true); 
-	}
-}
+// void UDPPacks::RecvEchoRequest(bool bPrint) {
+// 	if (RecvEcho == MessageType::EchoRequest) {
+// 		std::cout << "- Received Echo Request, added to blocklist\n";
+// 
+// 		if(BlockMap.emplace(MessageID(ReceiveAdress, RecvID)).second);
+//  		CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
+//  		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true); 
+// 	}
+// }
 //-----------------------|
 // Receive Echo Response |
 //=======================|

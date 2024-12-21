@@ -27,7 +27,7 @@ int main() {
 	const int64_t FixedTimeStep = 16666667;
 	const uint64_t NanoSecond = 1000000000;
 
-	while (Time < NanoSecond * 10) {	
+	while (true) {	
 		Accumulator += GlobalTimer.GetDeltaTimeNS();		
 		while (Accumulator >= FixedTimeStep) {	
 			FrameCount++;Time += FixedTimeStep;	Accumulator -= FixedTimeStep;	
