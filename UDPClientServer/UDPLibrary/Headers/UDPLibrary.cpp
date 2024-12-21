@@ -116,7 +116,6 @@ void printWSAError() {
 	int errorCode = WSAGetLastError(); // Retrieve the last error code
 
 	std::cout << "WSAGetLastError returned: " << errorCode << std::endl;
-
 	wchar_t* s = NULL;
 	FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL, WSAGetLastError(),

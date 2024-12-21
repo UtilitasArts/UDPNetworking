@@ -16,6 +16,9 @@ void ConnectedToPlayers_NetClientState::InitState(){
 void ConnectedToPlayers_NetClientState::OnEnter(){
 	BaseNetState_Client::OnEnter();
 }
+void ConnectedToPlayers_NetClientState::OnRecv()
+{
+}
 void ConnectedToPlayers_NetClientState::OnExit(){
 	BaseNetState_Client::OnExit();
 }

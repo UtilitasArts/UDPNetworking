@@ -19,6 +19,7 @@ public:
 	~NetClientStateMachine();
 
 	void SetState(ENetClientStates NextState);
+	void OnTick();
 
 private:
 	BaseNetState_Client* CurrentState;

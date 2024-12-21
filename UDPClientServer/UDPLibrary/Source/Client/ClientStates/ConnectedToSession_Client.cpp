@@ -18,6 +18,9 @@ void ConnectedToSession_NetClientState::OnEnter() {
 	WaitingForPlayers();
 
 }
+void ConnectedToSession_NetClientState::OnRecv()
+{
+}
 void ConnectedToSession_NetClientState::OnExit() {
 	BaseNetState_Client::OnExit();
 }

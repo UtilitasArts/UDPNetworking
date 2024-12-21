@@ -20,6 +20,24 @@ namespace fs = std::filesystem;
 int main() {
 
 	NetClientStateMachine NetStateMachine;
+	Timer GlobalTimer;
+	uint64_t Time = 0;
+	uint64_t Accumulator = 0;
+	uint64_t FrameCount = 0;
+	const int64_t FixedTimeStep = 16666667;
+	const uint64_t NanoSecond = 1000000000;
+
+	while (Time < NanoSecond * 10) {	
+		Accumulator += GlobalTimer.GetDeltaTimeNS();		
+		while (Accumulator >= FixedTimeStep) {	
+			FrameCount++;Time += FixedTimeStep;	Accumulator -= FixedTimeStep;	
+
+			//--------------|
+			// Frame Update |
+			//==============|
+			NetStateMachine.OnTick();
+		}	
+	}
 }
 
  

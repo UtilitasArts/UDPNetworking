@@ -21,7 +21,6 @@
 #include "UDPMessageEnums.h"
 #include "Timer.h"
 
-
 //--------------|
 // Echo Chamber |
 //==============|

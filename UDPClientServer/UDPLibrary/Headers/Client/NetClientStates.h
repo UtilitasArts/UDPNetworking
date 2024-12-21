@@ -17,8 +17,8 @@ public:
 	BaseNetState_Client(NetClientStateMachine* sm);
 	virtual void InitState();
 	virtual void OnEnter();
-	virtual void OnActive();
-	virtual bool OnRecv();
+	virtual void OnTick();
+	virtual void OnRecv();
 	virtual void OnExit();
 
 protected:
@@ -32,22 +32,22 @@ protected:
 class Unconnected_Client : public BaseNetState_Client {
 public:
 	using BaseNetState_Client::BaseNetState_Client;
-	virtual void InitState()   override;
-	virtual void OnEnter()     override;
-	virtual bool OnRecv() override;
-	virtual void OnExit()      override;
+	virtual void InitState() override;
+	virtual void OnEnter()   override;
+	virtual void OnRecv()	 override;
+	virtual void OnExit()    override;
 
-	void ReceiveConnectionApproval();
-	void RecvJoinSessionApproval();
-	void RecvCreateSessionApproval();
-	void RecvUpdateApproval();
+// 	void ReceiveConnectionApproval();
+// 	void RecvJoinSessionApproval();
+// 	void RecvCreateSessionApproval();
+// 	void RecvUpdateApproval();
 	void RecvCnctApproval();
 
 	void SendConnectionRequest();
-	void SendCnctApprovalResp(uint8_t& AmountOfSessions);
-	bool SendReqUpdate(std::string Response, std::regex& Pattern);
-	bool SendReqCreateSession(std::string Response, std::regex& Pattern);
-	bool SendReqJoinSession(std::string Response, std::regex& Pattern, uint8_t& AmountOfSessions);
+// 	void SendCnctApprovalResp(uint8_t& AmountOfSessions);
+// 	bool SendReqUpdate(std::string Response, std::regex& Pattern);
+// 	bool SendReqCreateSession(std::string Response, std::regex& Pattern);
+// 	bool SendReqJoinSession(std::string Response, std::regex& Pattern, uint8_t& AmountOfSessions);
 };
 //----------------------------|
 // Connected To Session class |
@@ -56,8 +56,9 @@ class ConnectedToSession_NetClientState : public BaseNetState_Client {
 public:
 	using BaseNetState_Client::BaseNetState_Client;
 	virtual void InitState() override;
-	virtual void OnEnter() override;
-	virtual void OnExit()  override;
+	virtual void OnEnter()   override;
+	virtual void OnRecv()	 override;
+	virtual void OnExit()    override;
 
 	void WaitingForPlayers();
 	void ReturnAddresses(MessageType message_type);
@@ -73,7 +74,8 @@ class ConnectedToPlayers_NetClientState : public BaseNetState_Client {
 public:
 	using BaseNetState_Client::BaseNetState_Client;
 	virtual void InitState() override;
-	virtual void OnEnter() override;
-	virtual void OnExit()  override;
+	virtual void OnEnter()   override;
+	virtual void OnRecv()	 override;
+	virtual void OnExit()    override;
 };
 

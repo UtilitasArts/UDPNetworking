@@ -15,19 +15,19 @@ void BaseNetState_Client::OnEnter() {
 	bActive = true;
 }
 
-void BaseNetState_Client::OnActive() {
-	while (bActive) {	
-
+void BaseNetState_Client::OnTick() {
+	if (bActive)
+	{
  		while (UDPSetup::SocketHasNewBytes()) {			
  			UDPPacks::RecvBytes(true);
- 			bActive = OnRecv();
+ 			OnRecv();
  		}
  		UDPPacks::SendEchoes(true);
-	}	
+	}
 }
 
-bool BaseNetState_Client::OnRecv() {
-	return true;
+void BaseNetState_Client::OnRecv() {
+	
 }
 
 void BaseNetState_Client::OnExit(){
