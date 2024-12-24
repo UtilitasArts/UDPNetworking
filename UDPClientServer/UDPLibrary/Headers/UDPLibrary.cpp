@@ -142,26 +142,11 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			RecvBytePack.ReturnBytes(RecvEcho, 1);
 			RecvBytePack.ReturnBytes(RecvID,   2);
 
- 			RecvEchoResponse(bPrint);
 			//------------------------|
 			// Block certain messages |
 			//========================| 
-			if (RecvEcho == MessageType::EchoRequest) {
-				CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
-				UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+			if(RecvEchoRequest(bPrint)){ return RecvMT; };
 
-				if (!BlockMap.emplace(MessageID(ReceiveAdress, RecvID)).second) {
-					ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
-					RecvMT = MessageType::None;
-					RecvEcho = MessageType::None;
-					return RecvMT;
-				}
-				else
-				{
-					std::cout << "- Received Echo Request, added to blocklist\n";
-				}
-			}
-			
 			if (bPrint)	{
 				std::cout << "* << Receive [" << MessageTypeToString(RecvMT) << "] [";
 				std::cout << MessageTypeToString(RecvEcho);
@@ -169,6 +154,7 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 				ReceiveAdress.PrintAdress();
 				//RecvBytePack.PrintBytes();
 			}
+			RecvEchoResponse(bPrint);
 		}	
 	}
 	else {
@@ -180,15 +166,20 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 //----------------------|
 // Receive Echo Request |
 //======================| 
-// void UDPPacks::RecvEchoRequest(bool bPrint) {
-// 	if (RecvEcho == MessageType::EchoRequest) {
-// 		std::cout << "- Received Echo Request, added to blocklist\n";
-// 
-// 		if(BlockMap.emplace(MessageID(ReceiveAdress, RecvID)).second);
-//  		CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
-//  		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true); 
-// 	}
-// }
+bool UDPPacks::RecvEchoRequest(bool bPrint = false) {
+	 if (RecvEcho == MessageType::EchoRequest) {
+		 CreateEchoMessage(ReceiveAdress, MessageType::EchoResponse, RecvMT, RecvID);
+		 UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
+
+		 if (!BlockMap.emplace(MessageID(ReceiveAdress, RecvID)).second) {
+			 ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
+			 RecvMT = MessageType::None;
+			 RecvEcho = MessageType::None;
+			 return true;
+		 }
+	 }
+	 return false;
+ }
 //-----------------------|
 // Receive Echo Response |
 //=======================|
@@ -196,7 +187,8 @@ void UDPPacks::RecvEchoResponse(bool bPrint) {
 	if (EchoMap.size() > 0)
 	{	
 		if (RecvMT == MessageType::EchoResponse) {		
-			if (EchoMap.erase(MessageID(ReceiveAdress, RecvID))){
+			if (EchoMap.size() > 0){
+				EchoMap.erase(MessageID(ReceiveAdress, RecvID));
 				std::cout << "- Removing echo_message from EchoMap! ECHOSIZE =" << EchoMap.size() << "\n";
 			}
 		}

@@ -16,8 +16,7 @@ void BaseNetState_Client::OnEnter() {
 }
 
 void BaseNetState_Client::OnTick() {
-	if (bActive)
-	{
+	if (bActive){
  		while (UDPSetup::SocketHasNewBytes()) {			
  			UDPPacks::RecvBytes(true);
  			OnRecv();

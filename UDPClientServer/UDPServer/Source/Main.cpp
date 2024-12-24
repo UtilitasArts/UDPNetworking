@@ -95,28 +95,45 @@ int main(){
     	UDPSetup::UDPInit(8000,"Server"); 
 		std::cout << "\n - Waiting for clients \n";
 
+		Timer	 GlobalTimer;
+		uint64_t Time = 0;
+		uint64_t Accumulator = 0;
+		uint64_t FrameCount = 0;
+		const int64_t FixedTimeStep = 16666667;
+		const uint64_t NanoSecond = 1000000000;
+
+		//---------------------|
+		// Fixed 60 FPS update |
+		//=====================|
 		while (true) {
+			Accumulator += GlobalTimer.GetDeltaTimeNS();
+			while (Accumulator >= FixedTimeStep) {
+				FrameCount++; Time += FixedTimeStep;	Accumulator -= FixedTimeStep;
 
-			while (UDPSetup::SocketHasNewBytes()) {
-				UDPPacks::RecvBytes(true);		
+				//--------------|
+				// Frame Update |
+				//==============|
+				while (UDPSetup::SocketHasNewBytes()) {
+					UDPPacks::RecvBytes(true);
 
-				switch (UDPPacks::RecvMT) {
-				case MessageType::ConnectRequest:
-					ConnectRequest();
-					break;
-				case MessageType::CreateRequest:
-	/*				CreateSession();*/
-					break;
-				case MessageType::JoinRequest:
-		/*			JoinSession();*/
-					break;
-				case MessageType::UpdateRequest:
-			/*		UpdateServer();*/
-					break;
+					switch (UDPPacks::RecvMT) {
+					case MessageType::ConnectRequest:
+						ConnectRequest();
+						break;
+					case MessageType::CreateRequest:
+						/*				CreateSession();*/
+						break;
+					case MessageType::JoinRequest:
+						/*			JoinSession();*/
+						break;
+					case MessageType::UpdateRequest:
+						/*		UpdateServer();*/
+						break;
+					}
 				}
-			}
 
-			UDPPacks::SendEchoes(true);
+				UDPPacks::SendEchoes(true);
+			}
 		}
 
 	return 0;
