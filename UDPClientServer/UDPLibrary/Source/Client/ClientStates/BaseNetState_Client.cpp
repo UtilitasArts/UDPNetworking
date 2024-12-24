@@ -21,6 +21,7 @@ void BaseNetState_Client::OnTick() {
  			UDPPacks::RecvBytes(true);
  			OnRecv();
  		}
+
  		UDPPacks::SendEchoes(true);
 	}
 }

@@ -198,7 +198,7 @@ void UDPPacks::RecvEchoResponse(bool bPrint) {
 // Resend Echoes |
 //===============| // we assume no one hears us.
 void UDPPacks::SendEchoes(bool bPrint) {
-	if (EchoTimer.TimePassed(1000))
+	if (EchoTimer.TimePassed(3000))
 	{
 		if (EchoMap.size() > 0)	{		
 			for (auto Chamber : EchoMap) {			
