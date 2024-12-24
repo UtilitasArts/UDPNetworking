@@ -147,12 +147,15 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			//========================| 
 			if(RecvEchoRequest(bPrint)){ return RecvMT; };
 
-			if (bPrint)	{
-				std::cout << "* << Receive [" << MessageTypeToString(RecvMT) << "] [";
-				std::cout << MessageTypeToString(RecvEcho);
-				std::cout << "] [MsgID:" << (int)RecvID << "] from ";
-				ReceiveAdress.PrintAdress();
-				//RecvBytePack.PrintBytes();
+			if (bPrint)	{	
+				printf("* << Receive [ ");
+				printf("%-*s", 15, MessageTypeToString(RecvMT).c_str());
+				printf(" ] [ ");
+				printf("%-*s", 15, MessageTypeToString(RecvEcho).c_str());
+				printf(" ] [MsgID:");
+				printf("#%04d", (int)RecvID);
+				printf(" ] fr ");
+				ReceiveAdress.PrintAdress();	
 			}
 			RecvEchoResponse(bPrint);
 		}	
@@ -238,10 +241,22 @@ void UDPPacks::SendBytes(AddrCtr& address_ctr, bool bPrint) {
 		std::cerr << "Failed to send message." << "\n";
 	}
 	else {
-		std::cout << "* >> Sending [" << MessageTypeToString(SendMT) << "] [";
-		std::cout << MessageTypeToString(SendEcho);
-		std::cout << "] [MsgID:" << MsgSendID << "] To ";
+
+		printf("* << Sending [ ");
+		printf("%-*s", 15, MessageTypeToString(SendMT).c_str());
+		printf(" ] [ ");
+		printf("%-*s", 15, MessageTypeToString(SendEcho).c_str());
+		printf(" ] [MsgID:");
+		printf("#%04d", (int)MsgSendID);
+		printf(" ] to ");
 		address_ctr.PrintAdress();
+
+
+
+// 		std::cout << "* >> Sending [" << MessageTypeToString(SendMT) << "] [";
+// 		std::cout << MessageTypeToString(SendEcho);
+// 		std::cout << "] [MsgID:" << MsgSendID << "] To ";
+// 		address_ctr.PrintAdress();
 		//if (bPrint) { SendBytePack.PrintBytes(); }
 	}
 
