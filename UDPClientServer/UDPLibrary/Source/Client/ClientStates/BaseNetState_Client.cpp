@@ -16,12 +16,14 @@ void BaseNetState_Client::OnEnter() {
 }
 
 void BaseNetState_Client::OnTick() {
+
+ 	UDPPacks::SendEchoes(true);
+
 	if (bActive){
  		while (UDPSetup::SocketHasNewBytes()) {			
  			UDPPacks::RecvBytes(true);
  			OnRecv();
  		}
- 		UDPPacks::SendEchoes(true);
 	}
 }
 

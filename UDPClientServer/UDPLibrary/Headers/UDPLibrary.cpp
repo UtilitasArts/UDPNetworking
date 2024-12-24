@@ -225,9 +225,9 @@ void UDPPacks::SendBytes(AddrCtr& address_ctr, bool bPrint) {
 	MessageType SendEcho;
 	uint32_t	MsgSendID;
 	
-	SendBytePack.ReturnBytes(SendMT, 0);
+	SendBytePack.ReturnBytes(SendMT,   0);
 	SendBytePack.ReturnBytes(SendEcho, 1);
-	SendBytePack.ReturnBytes(MsgSendID, 2);
+	SendBytePack.ReturnBytes(MsgSendID,2);
 	
 	if (SendEcho == MessageType::EchoRequest) {
 		EchoMap.emplace(MessageID(address_ctr, MsgSendID), EchoChamber(address_ctr, SendBytePack));

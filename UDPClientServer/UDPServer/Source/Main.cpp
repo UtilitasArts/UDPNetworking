@@ -113,6 +113,8 @@ int main(){
 				//--------------|
 				// Frame Update |
 				//==============|
+				UDPPacks::SendEchoes(true);
+
 				while (UDPSetup::SocketHasNewBytes()) {
 					UDPPacks::RecvBytes(true);
 
@@ -132,7 +134,6 @@ int main(){
 					}
 				}
 
-				UDPPacks::SendEchoes(true);
 			}
 		}
 
