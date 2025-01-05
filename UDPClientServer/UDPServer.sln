@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UDPServer", "UDPServer\UDPServer.vcxproj", "{3BCF4CEB-9658-4665-AF4A-5FFFAE937123}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3EF5149A-B604-4903-BE0E-DADCD914E377} = {3EF5149A-B604-4903-BE0E-DADCD914E377}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UDPClient", "UDPClient\UDPClient.vcxproj", "{3EF5149A-B604-4903-BE0E-DADCD914E377}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32} = {B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UDPLibrary", "UDPLibrary\UDPLibrary.vcxproj", "{B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BCF4CEB-9658-4665-AF4A-5FFFAE937123}.Debug|x64.ActiveCfg = Debug|x64
+		{3BCF4CEB-9658-4665-AF4A-5FFFAE937123}.Debug|x64.Build.0 = Debug|x64
+		{3BCF4CEB-9658-4665-AF4A-5FFFAE937123}.Debug|x86.ActiveCfg = Debug|Win32
+		{3BCF4CEB-9658-4665-AF4A-5FFFAE937123}.Debug|x86.Build.0 = Debug|Win32
+		{3BCF4CEB-9658-4665-AF4A-5FFFAE937123}.Release|x64.ActiveCfg = Release|x64
+		{3BCF4CEB-9658-4665-AF4A-5FFFAE937123}.Release|x64.Build.0 = Release|x64
+		{3BCF4CEB-9658-4665-AF4A-5FFFAE937123}.Release|x86.ActiveCfg = Release|Win32
+		{3BCF4CEB-9658-4665-AF4A-5FFFAE937123}.Release|x86.Build.0 = Release|Win32
+		{3EF5149A-B604-4903-BE0E-DADCD914E377}.Debug|x64.ActiveCfg = Debug|x64
+		{3EF5149A-B604-4903-BE0E-DADCD914E377}.Debug|x64.Build.0 = Debug|x64
+		{3EF5149A-B604-4903-BE0E-DADCD914E377}.Debug|x86.ActiveCfg = Debug|Win32
+		{3EF5149A-B604-4903-BE0E-DADCD914E377}.Debug|x86.Build.0 = Debug|Win32
+		{3EF5149A-B604-4903-BE0E-DADCD914E377}.Release|x64.ActiveCfg = Release|x64
+		{3EF5149A-B604-4903-BE0E-DADCD914E377}.Release|x64.Build.0 = Release|x64
+		{3EF5149A-B604-4903-BE0E-DADCD914E377}.Release|x86.ActiveCfg = Release|Win32
+		{3EF5149A-B604-4903-BE0E-DADCD914E377}.Release|x86.Build.0 = Release|Win32
+		{B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32}.Debug|x64.ActiveCfg = Debug|x64
+		{B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32}.Debug|x64.Build.0 = Debug|x64
+		{B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32}.Debug|x86.ActiveCfg = Debug|Win32
+		{B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32}.Debug|x86.Build.0 = Debug|Win32
+		{B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32}.Release|x64.ActiveCfg = Release|x64
+		{B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32}.Release|x64.Build.0 = Release|x64
+		{B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32}.Release|x86.ActiveCfg = Release|Win32
+		{B79C9CFF-28DB-4F4F-B2A0-DAB3B2193F32}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C17536A-E880-4EDF-B15B-C62B4B04489F}
+	EndGlobalSection
+EndGlobal
