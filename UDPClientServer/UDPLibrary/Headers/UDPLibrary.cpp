@@ -187,8 +187,7 @@ bool UDPPacks::RecvEchoRequest(bool bPrint = false) {
 //=======================|
 bool UDPPacks::RecvEchoResponse(bool bPrint) {
 	if (RecvMT == MessageType::EchoResponse) {		
-		if (EchoMap.size() > 0){
-			
+		if (EchoMap.size() > 0){			
 			if (EchoMap.count(MessageID(ReceiveAdress, RecvID))) {
 				if (bPrint) {
 					printf("* << Receive [ ");
@@ -205,6 +204,13 @@ bool UDPPacks::RecvEchoResponse(bool bPrint) {
 				std::cout << " Removing echo_message from EchoMap! ECHOSIZE =" << EchoMap.size() << "\n";
 				return true;
 			}
+			else
+			{
+				std::cout << "* -- Received an echo response that was considered lost or never requested from ";
+				ReceiveAdress.PrintAdress();
+
+				return true;
+			}
 		}	
 	}
 	return false;
@@ -213,42 +219,56 @@ bool UDPPacks::RecvEchoResponse(bool bPrint) {
 // Resend Echoes |
 //===============| // we assume no one hears us.
 void UDPPacks::SendEchoes(bool bPrint) {
-	if (EchoTimer.TimePassed(3000)) {
-		if (EchoMap.size() > 0)	{		
-			for (auto Chamber : EchoMap) {
-				Chamber.second.SendTime = MessageTimer.CurrentTime();
-				int bytesSent = sendto(UDPSetup::UDPSocket, Chamber.second.ResendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(Chamber.second.ResendBytePack.GetArraySize()), 0, Chamber.second.AdressContainer.GetSockAddr(), *Chamber.second.AdressContainer.GetAddrSize());
-				if (bytesSent != SOCKET_ERROR) {	
-					if (bPrint) {
-						MessageType MType = static_cast<MessageType>(Chamber.second.ResendBytePack.GetByteArrayAsChar()[1]);
-						std::cout << "- >> A " << MessageTypeToString(MType) << " Echo Sent! " << "\n";
-						//if (bPrint) { Chamber.second.ResendBytePack.PrintBytes(); }
-					}
-				}			
+
+	if (EchoMap.size() > 0)	{
+		for (auto Chamber : EchoMap) {
+			//--------------------------------|
+			// Add new SendID to the packages |
+			//================================|
+
+			if (MessageTimer.CalcDuration(Chamber.second.SendTime) > 3000){
+				uint32_t NetSendID = SendID;
+				if (isLittleEndian()) {
+					uint_convert<uint32_t>::HostToNet(NetSendID);
+					memcpy(Chamber.second.ResendBytePack.GetByteArray() + 5, &NetSendID, sizeof(SendID));
+				}
+				else{
+					memcpy(Chamber.second.ResendBytePack.GetByteArray() + 5, &NetSendID, sizeof(SendID));
+				}
+
+				//----------------|
+				// Resend Message |
+				//================|
+				printf("-- [New Echo] --\n");
+				SendBytes(Chamber.second.AdressContainer,true,Chamber.second.ResendBytePack);	
+				
+				EchoMap.erase(Chamber.first);		
 			}
 		}
 	}
+
+	EchoMap.merge(TempEchoMap);
 }
 
 //----------------|
 // Send Functions |
 //================|
-void UDPPacks::SendBytes(AddrCtr& address_ctr, bool bPrint) {
-
-	SendBytePack.AddCRC();
+void UDPPacks::SendBytes(AddrCtr& address_ctr, bool bPrint, BytePack send_pack) {
 
 	MessageType SendMT;
 	MessageType SendEcho;
-	uint32_t	MsgSendID;
-	
-	SendBytePack.ReturnBytes(SendMT,   0);
-	SendBytePack.ReturnBytes(SendEcho, 1);
-	SendBytePack.ReturnBytes(MsgSendID,2);
+	uint32_t	MsgSendID;	
+	send_pack.ReturnBytes(SendMT,   0);
+	send_pack.ReturnBytes(SendEcho, 1);
+	send_pack.ReturnBytes(MsgSendID,2);	
 	
 	if (SendEcho == MessageType::EchoRequest) {
-		EchoMap.emplace(MessageID(address_ctr, MsgSendID), EchoChamber(address_ctr, SendBytePack, MessageTimer.CurrentTime()));
+		TempEchoMap.emplace(MessageID(address_ctr, MsgSendID), EchoChamber(address_ctr, send_pack, MessageTimer.CurrentTime()));
 	}
-	int bytesSent = sendto(UDPSetup::UDPSocket, SendBytePack.GetByteArrayAsChar(), static_cast<uint32_t>(SendBytePack.GetArraySize()), 0, address_ctr.GetSockAddr(), *address_ctr.GetAddrSize());
+
+	send_pack.AddCRC();
+
+	int bytesSent = sendto(UDPSetup::UDPSocket, send_pack.GetByteArrayAsChar(), static_cast<uint32_t>(send_pack.GetArraySize()), 0, address_ctr.GetSockAddr(), *address_ctr.GetAddrSize());
 
 	if (bytesSent == SOCKET_ERROR) {
 		std::cerr << "Failed to send message." << "\n";
@@ -264,6 +284,8 @@ void UDPPacks::SendBytes(AddrCtr& address_ctr, bool bPrint) {
 		address_ctr.PrintAdress();
 	}
 	SendID++;
+
+	//std::cout << SendID;
 }
 
 bool UDPPacks::RecvValidSessionAddress() {

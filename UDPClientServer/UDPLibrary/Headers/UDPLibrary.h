@@ -135,7 +135,8 @@ namespace UDPPacks {
 	inline uint32_t		 SendID;	
 
  	inline std::unordered_set<MessageID, MessageIDHash>				 BlockMap;
- 	inline std::unordered_map<MessageID, EchoChamber, MessageIDHash> EchoMap;
+	inline std::unordered_map<MessageID, EchoChamber, MessageIDHash> EchoMap;
+	inline std::unordered_map<MessageID, EchoChamber, MessageIDHash> TempEchoMap;
 
 	//------------------|
 	// Public Functions |
@@ -143,7 +144,7 @@ namespace UDPPacks {
 	MessageType RecvBytes(bool bPrint);
 	bool RecvEchoResponse(bool bPrint);
 	bool RecvEchoRequest(bool bPrint);
-	void SendBytes(AddrCtr& adress_ctr, bool bPrint = false);
+	void SendBytes(AddrCtr& adress_ctr, bool bPrint = false, BytePack send_bytes = UDPPacks::SendBytePack);
 
 	inline Timer MessageTimer;
 	inline Timer EchoTimer;

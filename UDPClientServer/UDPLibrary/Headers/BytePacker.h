@@ -247,7 +247,7 @@ private:
 		 } printf("- Total ByteCount = %zd - \n\n", MaxIndex);
 	 }
 
-	 inline const uint8_t*  GetByteArray() { ByteArray.shrink_to_fit(); return ByteArray.data(); }
+	 inline		  uint8_t*  GetByteArray() { ByteArray.shrink_to_fit(); return ByteArray.data(); }
 	 inline const size_t    GetArraySize() { return ByteArray.size(); }
 	 inline const size_t	GetElementCount()  { return ElementCount;}
 
@@ -318,7 +318,6 @@ private:
 	 template <typename T>
 	 std::enable_if_t<std::is_enum_v<T>, void>
 		 ReturnBytes(T& Element, size_t ElementIndex, bool bPrint = false) {
-		 if (!bCRCisValid) { std::cout << "CRC invalid, can't return anything";  return; }
 		 uint8_t ByteIndex = ByteIndexArray.data()[ElementIndex];
 		 Element = *reinterpret_cast<T*>(ByteArray.data() + ByteIndex);		
 
@@ -328,7 +327,6 @@ private:
  	template <typename T>
  	std::enable_if_t<is_regular_v<T>, void>
  		ReturnBytes(T& Element, size_t ElementIndex, bool bPrint = false) {
- 		if (!bCRCisValid) { std::cout << "CRC invalid, can't return anything";  return; }
  		uint8_t ByteIndex = ByteIndexArray.data()[ElementIndex];
  		uint8_t ByteSize  = ByteSizesArray.data()[ElementIndex];
  		size_t ElemCount  = ByteSize / sizeof(T);
@@ -351,7 +349,6 @@ private:
  	std::enable_if_t<std::is_pointer_v<T>, void>
  		ReturnBytes(T& Element, size_t ElementIndex, bool bPrint = false) {
  		using type = std::remove_pointer_t<T>;
- 		if(!bCRCisValid) { std::cout << "CRC invalid, can't return anything";  return; }
  		uint8_t ByteIndex = ByteIndexArray.data()[ElementIndex];
  		uint8_t ByteSize  = ByteSizesArray.data()[ElementIndex];
  		size_t ElemCount  = ByteSize / sizeof(type);
@@ -364,7 +361,6 @@ private:
  	template <typename T>
  	std::enable_if_t<std::is_array_v<T>, void>
  		ReturnBytes(T& Element, size_t ElementIndex = 0, bool bPrint = false) {
- 		if (!bCRCisValid) { std::cout << "CRC invalid, can't return anything";  return; }
  		using type = typename std::remove_all_extents_t<T>;
  		uint8_t ByteIndex = ByteIndexArray.data()[ElementIndex];
  		uint8_t ByteSize  = ByteSizesArray.data()[ElementIndex];
@@ -375,7 +371,6 @@ private:
   	template <typename T>
   	std::enable_if_t<is_std_vector_v<T>, void>
   		ReturnBytes(T& Element, size_t ElementIndex = 0, bool bPrint = false) {
- 		if (!bCRCisValid) { std::cout << "CRC invalid, can't return anything";  return; }
   		using type = vector_type<T>;
  		uint8_t ByteIndex = ByteIndexArray.data()[ElementIndex];
  		uint8_t ByteSize  = ByteSizesArray.data()[ElementIndex];
@@ -388,7 +383,6 @@ private:
  	template <typename T>
  	std::enable_if_t<is_std_string_v<T>, void>
  		ReturnBytes(T& Element, size_t ElementIndex = 0, bool bPrint = false) {
- 		if (!bCRCisValid) { std::cout << "CRC invalid, can't return anything";  return; }
  		using type = char;
  		uint8_t ByteIndex = ByteIndexArray.data()[ElementIndex];
  		uint8_t ByteSize  = ByteSizesArray.data()[ElementIndex];
