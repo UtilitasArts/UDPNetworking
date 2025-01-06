@@ -221,33 +221,44 @@ bool UDPPacks::RecvEchoResponse(bool bPrint) {
 void UDPPacks::SendEchoes(bool bPrint) {
 
 	if (EchoMap.size() > 0)	{
-		for (auto Chamber : EchoMap) {
-			//--------------------------------|
+
+		for (auto Chamber = EchoMap.begin(); Chamber != EchoMap.end(); ) {
+			
+			//--------------------------------| 
 			// Add new SendID to the packages |
 			//================================|
 
-			if (MessageTimer.CalcDuration(Chamber.second.SendTime) > 3000){
+			if (MessageTimer.CalcDuration(Chamber->second.SendTime) > 3000){
 				uint32_t NetSendID = SendID;
 				if (isLittleEndian()) {
 					uint_convert<uint32_t>::HostToNet(NetSendID);
-					memcpy(Chamber.second.ResendBytePack.GetByteArray() + 5, &NetSendID, sizeof(SendID));
+					memcpy(Chamber->second.ResendBytePack.GetByteArray() + 5, &NetSendID, sizeof(SendID));
 				}
 				else{
-					memcpy(Chamber.second.ResendBytePack.GetByteArray() + 5, &NetSendID, sizeof(SendID));
+					memcpy(Chamber->second.ResendBytePack.GetByteArray() + 5, &NetSendID, sizeof(SendID));
 				}
 
 				//----------------|
 				// Resend Message |
 				//================|
 				printf("-- [New Echo] --\n");
-				SendBytes(Chamber.second.AdressContainer,true,Chamber.second.ResendBytePack);	
-				
-				EchoMap.erase(Chamber.first);		
+				SendBytes(Chamber->second.AdressContainer,true,Chamber->second.ResendBytePack);
+
+				Chamber = EchoMap.erase(Chamber);			
 			}
+			else
+			{
+				Chamber++;
+			}
+	
 		}
 	}
 
-	EchoMap.merge(TempEchoMap);
+	if (TempEchoMap.size() > 0)
+	{
+		EchoMap.merge(TempEchoMap);
+		TempEchoMap.clear();
+	}
 }
 
 //----------------|

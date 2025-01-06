@@ -125,6 +125,7 @@ bool Unconnected_Client::SendReqUpdate(std::string Response, std::regex& Pattern
 		
 		return true;
 	}	
+
 	return false;	
 }
 

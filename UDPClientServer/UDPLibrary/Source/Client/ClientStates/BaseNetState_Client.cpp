@@ -24,6 +24,7 @@ void BaseNetState_Client::OnTick() {
 
 			if (!bActive){break;}
  		}
+
  		UDPPacks::SendEchoes(true);
 	}
 }
