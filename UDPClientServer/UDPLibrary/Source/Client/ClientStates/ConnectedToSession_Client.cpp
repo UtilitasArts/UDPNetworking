@@ -22,17 +22,16 @@ void ConnectedToSession_NetClientState::OnRecv()
  		if (UDPPacks::ReceiveAdress == UDPPacks::ServerAdress && !bSessionStarted) {
  			switch (UDPPacks::RecvMT) {
  			case MessageType::JoinNotify:
- 				ReturnAddresses(UDPPacks::RecvMT);
+ 				ReturnAddresses();
  				break;
  			case MessageType::SessionStart:
- 				std::cout << "STARTED!!!";
- 				ReturnAddresses(UDPPacks::RecvMT);
+ 				ReturnAddresses();
  				SessionStart();
  				break;
  			}
  		}
  	}
- 	else if (UDPPacks::RecvValidSessionAddress()) {
+ 	else {
  		switch (UDPPacks::RecvMT) {
  		case MessageType::ConnectRequest:
  			RecvPlayerConnectRequest();
@@ -41,7 +40,7 @@ void ConnectedToSession_NetClientState::OnRecv()
  	}
 }
 
-void ConnectedToSession_NetClientState::ReturnAddresses(MessageType message_type) {
+void ConnectedToSession_NetClientState::ReturnAddresses() {
 	uint8_t JoinedCount; uint8_t SessionSize;
 
 	UDPPacks::RecvBytePack.ReturnBytes(JoinedCount,3);
@@ -50,44 +49,55 @@ void ConnectedToSession_NetClientState::ReturnAddresses(MessageType message_type
 	std::cout << "\n- Players in session count = " << (int)JoinedCount << " out of " << (int)SessionSize << "\n";
 
 	for (size_t i = 0; i < JoinedCount; i++) {
+		uint32_t	LocalIP;
 		uint32_t	PublicIP;
 		uint16_t	PublicPort;
 		std::string PublicName;
 
-		size_t count = i * 3;
-		UDPPacks::RecvBytePack.ReturnBytes(PublicIP,   5 + count);
-		UDPPacks::RecvBytePack.ReturnBytes(PublicPort, 6 + count);
-		UDPPacks::RecvBytePack.ReturnBytes(PublicName, 7 + count);
+		size_t count = i * 4;
+		UDPPacks::RecvBytePack.ReturnBytes(LocalIP,    5 + count);
+		UDPPacks::RecvBytePack.ReturnBytes(PublicIP,   6 + count);
+		UDPPacks::RecvBytePack.ReturnBytes(PublicPort, 7 + count);
+		UDPPacks::RecvBytePack.ReturnBytes(PublicName, 8 + count);
 
-		AddrCtr CurSessionAddress(PublicIP, PublicPort, PublicName);
-		CurSessionAddress.PrintAdress();
+		AddrCtr CurPublicSessionAddress(PublicIP, PublicPort, PublicName);
+		AddrCtr CurLocalSessionAddress(LocalIP  , PublicPort, PublicName);
 
-		if (message_type == MessageType::SessionStart) {
-			if (CurSessionAddress != UDPPacks::MyPublicAdress){
-				UDPPacks::ConnectedAddresses.push_back(CurSessionAddress);
+		if (CurPublicSessionAddress != UDPPacks::MyPublicAdress) {
+			if (PublicIP == UDPSetup::LocalAddress.HostIP()) {
+				UDPPacks::AddrMap.emplace(CurLocalSessionAddress, AddrChamber(CurLocalSessionAddress, CurLocalSessionAddress));
+			}
+			else
+			{
+				UDPPacks::AddrMap.emplace(CurPublicSessionAddress, AddrChamber(CurPublicSessionAddress, CurLocalSessionAddress));
 			}
 		}
 	}
 }
 
+
 void ConnectedToSession_NetClientState::SessionStart() {
 	std::cout <<"- Session is being started -\n";
 
 	bSessionStarted = true;
+	UDPPacks::CreateEchoMessage(MessageType::ConnectRequest, MessageType::EchoRequest, UDPPacks::SendID);
 
-	UDPPacks::CreateEchoMessage(MessageType::ConnectRequest, MessageType::EchoRequest, UDPPacks::SendID,
-		UDPSetup::MyName);
+	for (auto Chamber = UDPPacks::AddrMap.begin(); Chamber != UDPPacks::AddrMap.end(); Chamber++) {
 
-	
-	for (size_t i = 0; i < UDPPacks::ConnectedAddresses.size(); i++) {
+		std::cout << "Attempt to send to ";
+		Chamber->second.PublicAddress.PrintAdress();
 
-		UDPPacks::SendBytes(UDPPacks::ConnectedAddresses[i], true);		
+		if (Chamber->second.PublicAddress.HostIP() == UDPPacks::MyPublicAdress.HostIP()) {
+			std::cout << "- Local Connection Detected \n";
+			UDPPacks::SendBytes(Chamber->second.LocalAddress, true);
+		}
+		else{
+			UDPPacks::SendBytes(Chamber->second.PublicAddress, true);
+		}
 	}
 }
 
 void ConnectedToSession_NetClientState::RecvPlayerConnectRequest() {
-	std::string PublicName;
-	UDPPacks::RecvBytePack.ReturnBytes(PublicName,3);
-	std::cout << "- " << PublicName << " says hi! \n";
+	std::cout << "- " << UDPPacks::ReceiveAdress.GetAddrName() << " says hi! \n";
 }
 

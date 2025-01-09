@@ -25,6 +25,7 @@ protected:
 	bool bActive; 
 	NetClientStateMachine* StateMachine;
 	ENetClientStates StateEnum;
+	Timer StateTimer;
 };
 //-------------------|
 // Unconnected_class |
@@ -58,7 +59,7 @@ public:
 	virtual void OnEnter()   override;
 	virtual void OnRecv() override;
 
-	void ReturnAddresses(MessageType message_type);
+	void ReturnAddresses();
 	void SessionStart();
 	void RecvPlayerConnectRequest();
 

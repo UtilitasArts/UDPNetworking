@@ -10,6 +10,17 @@ std::vector<SessionStateMachine*> Sessions;
 
 void ConnectRequest(){
 
+	std::string Name;
+	uint32_t    LocalIP;
+
+	UDPPacks::RecvBytePack.ReturnBytes(Name,    3);
+	UDPPacks::RecvBytePack.ReturnBytes(LocalIP, 4);
+
+ 	uint16_t RecvLocalPort = UDPPacks::ReceiveAdress.HostPort();
+ 	AddrCtr  RecvLocalAddress(LocalIP, RecvLocalPort, Name);
+
+ 	UDPPacks::AddrMap.emplace(UDPPacks::ReceiveAdress, AddrChamber(UDPPacks::ReceiveAdress, RecvLocalAddress));
+
 	uint8_t  SessionCount = static_cast<uint8_t>(Sessions.size());	
 	UDPPacks::CreateEchoMessage(MessageType::ConnectApproval, MessageType::EchoRequest, UDPPacks::SendID,
 								true,
@@ -90,7 +101,7 @@ void UpdateServer() {
 
 int main(){
 
-    	UDPSetup::UDPInit(8000,"Server"); 
+    	UDPSetup::UDPInit(8000); 
 		std::cout << "\n - Waiting for clients \n";
 
 		Timer	 GlobalTimer;
@@ -113,7 +124,7 @@ int main(){
 				//==============|
 
 				while (UDPSetup::SocketHasNewBytes()) {
-					UDPPacks::RecvBytes(true);
+					UDPPacks::RecvBytes(true, true);
 
 					switch (UDPPacks::RecvMT) {
 					case MessageType::ConnectRequest:

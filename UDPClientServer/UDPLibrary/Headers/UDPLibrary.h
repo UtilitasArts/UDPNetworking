@@ -21,6 +21,14 @@
 #include "UDPMessageEnums.h"
 #include "Timer.h"
 
+struct AddrChamber {
+	AddrChamber(AddrCtr& public_address) : PublicAddress(public_address) {}
+	AddrChamber(AddrCtr& public_address, AddrCtr& local_address) : PublicAddress(public_address), LocalAddress(local_address) {}
+
+	AddrCtr PublicAddress;
+	AddrCtr LocalAddress;
+};
+
 //--------------|
 // Echo Chamber |
 //==============|
@@ -83,6 +91,20 @@ struct MessageIDHash {
  	}
 };
 
+struct AddrCtrHash {
+	size_t operator()(const AddrCtr& entry) const {
+		size_t seed = 0;
+
+ 		size_t IPHash     = std::hash<uint32_t>()(entry.HostIP());
+ 		size_t PortHash   = std::hash<uint16_t>()(entry.HostPort());
+  
+  		seed = hash_combine(seed, IPHash);
+  		seed = hash_combine(seed, PortHash);
+ 		return seed;
+	}
+};
+
+
 //-----------|
 // UDP Setup |
 //===========|
@@ -92,7 +114,8 @@ namespace UDPSetup {
 	//==================|
 	inline std::string	MyName;
 	inline WSADATA      WSAData;
-	inline SOCKET       UDPSocket;
+	inline SOCKET       UDPSocket;	
+	inline AddrCtr		LocalAddress;
 
 	inline uint32_t		RecvBufferBytes;
 	inline uint32_t		PrevRecvBufferBytes;
@@ -103,11 +126,11 @@ namespace UDPSetup {
 	// Public Functions |
 	//==================|
 	void InstallFolders();
-	void WelcomeMessage(std::string name = "");
 	void InitWinsock();
 	void OpenUDPSocket();
 	void BindSocket(uint16_t port = 0);
-	void UDPInit(uint16_t port = 0, std::string name = "");
+	void GetLocalAddr(uint16_t port);
+	void UDPInit(uint16_t port = 0);
 
 	bool SocketHasNewBytes();
 }
@@ -137,11 +160,13 @@ namespace UDPPacks {
  	inline std::unordered_set<MessageID, MessageIDHash>				 BlockMap;
 	inline std::unordered_map<MessageID, EchoChamber, MessageIDHash> EchoMap;
 	inline std::unordered_map<MessageID, EchoChamber, MessageIDHash> TempEchoMap;
+	inline std::unordered_map<AddrCtr,   AddrChamber, AddrCtrHash>   AddrMap;
+
 
 	//------------------|
 	// Public Functions |
 	//==================|
-	MessageType RecvBytes(bool bPrint);
+	MessageType RecvBytes(bool bPrint, bool bIsServer = false);
 	bool RecvEchoResponse(bool bPrint);
 	bool RecvEchoRequest(bool bPrint);
 	void SendBytes(AddrCtr& adress_ctr, bool bPrint = false, BytePack send_bytes = UDPPacks::SendBytePack);
@@ -149,7 +174,6 @@ namespace UDPPacks {
 	inline Timer MessageTimer;
 	inline Timer EchoTimer;
 	void SendEchoes(bool bPrint = false);
-	bool RecvValidSessionAddress();
 
 	//----------------|
 	// Create Message |

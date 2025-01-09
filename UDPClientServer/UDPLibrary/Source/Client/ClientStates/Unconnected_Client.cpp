@@ -17,8 +17,7 @@ void Unconnected_Client::OnEnter() {
 	SendConnectionRequest();
 }
 
-void Unconnected_Client::OnRecv()
-{
+void Unconnected_Client::OnRecv() {
 	if (UDPPacks::ReceiveAdress == UDPPacks::ServerAdress) {
 		switch (UDPPacks::RecvMT) {
 		case MessageType::ConnectApproval:
@@ -38,9 +37,9 @@ void Unconnected_Client::OnRecv()
 }
 
 void Unconnected_Client::SendConnectionRequest() {
-
 	UDPPacks::CreateEchoMessage(MessageType::ConnectRequest, MessageType::EchoRequest, UDPPacks::SendID,
-							    UDPSetup::MyName);
+							    UDPSetup::MyName,
+								UDPSetup::LocalAddress.HostIP());
 	UDPPacks::SendBytes(UDPPacks::ServerAdress, true);
 }
 
@@ -67,10 +66,10 @@ void Unconnected_Client::RecvCnctApproval() {
 				ESessionStates SessionState;
 
 				size_t count = i * 4;
-				UDPPacks::RecvBytePack.ReturnBytes(SessionName, 7 + count);
-				UDPPacks::RecvBytePack.ReturnBytes(SessionSize, 8 + count);
-				UDPPacks::RecvBytePack.ReturnBytes(JoinedCount, 9 + count);
-				UDPPacks::RecvBytePack.ReturnBytes(SessionState, 10 + count);
+				UDPPacks::RecvBytePack.ReturnBytes(SessionName, 7  + count);
+				UDPPacks::RecvBytePack.ReturnBytes(SessionSize, 8  + count);
+				UDPPacks::RecvBytePack.ReturnBytes(JoinedCount, 9  + count);
+				UDPPacks::RecvBytePack.ReturnBytes(SessionState,10 + count);
 
 				printf("|Room#%02zd[ID:%-10s][%d/%d][State:%s]\n", i, SessionName.c_str(), JoinedCount, SessionSize, ESessionStateString(SessionState).c_str());
 			}
@@ -87,6 +86,7 @@ void Unconnected_Client::RecvCnctApproval() {
 //
 void Unconnected_Client::SendCnctApprovalResp(uint8_t& AmountOfSessions) {
 	while (true) {
+
 		std::string Response; getline(std::cin, Response);
 		std::regex JoinPattern{   R"(^-J)", std::regex::icase };
 		std::regex CreatePattern{ R"(^-C)", std::regex::icase };

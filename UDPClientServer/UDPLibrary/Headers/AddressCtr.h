@@ -54,7 +54,7 @@ struct AddrCtr
 	}
 
 	inline void FillFromSockAddr(std::string name = "RecvAddr", bool bPrint = false) {
-		uint32_t SockIP = ntohl(SockAddress.sin_addr.s_addr);
+		uint32_t SockIP   = ntohl(SockAddress.sin_addr.s_addr);
 		uint16_t SockPort = ntohs(SockAddress.sin_port);
 		SetAdress(SockIP, SockPort, name, bPrint);
 	}
@@ -65,14 +65,16 @@ struct AddrCtr
 
  	void PrintAdress() {printf("%-10s address = %d.%d.%d.%d:%d\n",AdressName.c_str(),Octets[0], Octets[1], Octets[2], Octets[3], Port); }
 
-	inline uint32_t&	HostIP()		 { return IP;}
-	inline uint16_t&	HostPort()		 { return Port; }
-	inline uint32_t		NetIP()			 { return htonl(IP); }
-	inline uint16_t		NetPort()		 { return htons(Port);}
-	inline sockaddr_in* GetSockAddr_In() { return &SockAddress;}
-	inline sockaddr*	GetSockAddr()	 { return reinterpret_cast<sockaddr*>(&SockAddress); }
-	inline int32_t*		GetAddrSize()	 { return &AddrSize;}
-	inline std::string& GetAddrName()	 { return AdressName; }
+	inline uint32_t		HostIP()      const	{ return IP;}
+	inline uint16_t		HostPort()	  const	{ return Port; }
+	inline uint32_t		NetIP()				{ return htonl(IP); }
+	inline uint16_t		NetPort()			{ return htons(Port); }
+	inline void			SetSockAddr(sockaddr* sock_addres_ipv) { SockAddress = *(sockaddr_in*)sock_addres_ipv;  }
+	inline sockaddr_in* GetSockAddr_In()	{ return &SockAddress;}
+	inline sockaddr*	GetSockAddr()		{ return reinterpret_cast<sockaddr*>(&SockAddress); }
+	inline int32_t*		GetAddrSize()		{ return &AddrSize;}
+	inline std::string  GetAddrName() const	{ return AdressName; }
+	inline uint8_t*     GetOctets() {return &Octets[0];}
 
 private:	
 	inline void InitSockAddr(uint32_t ip = 0, uint16_t port = 0) {
@@ -91,25 +93,15 @@ private:
 
 public:
 
-	bool operator ==(const AddrCtr& obj) {
-		if (IP == obj.IP && Port == obj.Port){
-			return true;
-		}
-		else {
-			return false;
-		}
+	bool operator ==(const AddrCtr& obj) const {
+		return (IP == obj.IP && Port == obj.Port);
 	}
 
-	bool operator !=(const AddrCtr& obj) {
-		if (IP != obj.IP || Port != obj.Port) {
-			return true;
-		}
-		else {
-			return false;
-		}
+	bool operator !=(const AddrCtr& obj) const {
+		return (IP != obj.IP || Port != obj.Port);
 	}
 
-	bool operator =(const AddrCtr& obj) {
+	void operator =(const AddrCtr& obj) {
 		SetAdress(obj.IP,obj.Port,obj.AdressName);
 	}
 

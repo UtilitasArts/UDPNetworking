@@ -15,7 +15,6 @@ StateArray
 	}
 )
 { 
-	SessionAdresses.reserve(SessionSize);
 	SetState(ESessionStates::InitializeSession);
 }
 
@@ -38,8 +37,10 @@ void SessionStateMachine::SetState(ESessionStates NextState) {
 
  	if (SessionSize >= JoinedCount + 1) {
  		JoinedCount++;
- 		SessionAdresses.push_back(UDPPacks::ReceiveAdress);
- 		UDPPacks::ConnectedAddresses.push_back(UDPPacks::ReceiveAdress);
+
+        AddrChamber TempAddrChamber(UDPPacks::ReceiveAdress, UDPPacks::AddrMap.at(UDPPacks::ReceiveAdress).LocalAddress);
+
+        SessionAddrMap.emplace(UDPPacks::ReceiveAdress, TempAddrChamber);
  
         UDPPacks::AddMessageData(true); 	
  		UDPPacks::SendBytes(UDPPacks::ReceiveAdress, true);
@@ -76,19 +77,24 @@ void SessionStateMachine::SetState(ESessionStates NextState) {
 
 	UDPPacks::CreateEchoMessage(message_type, MessageType::EchoRequest, UDPPacks::SendID,                                
                                 JoinedCount,
-                                SessionSize); 
+                                SessionSize);  	
+
+    for (auto Chamber = SessionAddrMap.begin(); Chamber != SessionAddrMap.end(); Chamber++ ) {
+  
+        uint32_t    LocalIP    = Chamber->second.LocalAddress.HostIP();
+ 		uint32_t	PublicIP   = Chamber->second.PublicAddress.HostIP();
+ 		uint16_t	PublicPort = Chamber->second.PublicAddress.HostPort();
+ 		std::string PublicName = Chamber->second.PublicAddress.GetAddrName();
  
- 	for (size_t i = 0; i < JoinedCount; i++) {
- 		uint32_t	PublicIP   = SessionAdresses[i].HostIP();
- 		uint16_t	PublicPort = SessionAdresses[i].HostPort();
- 		std::string PublicName = SessionAdresses[i].GetAddrName();
- 
- 		SessionAdresses[i].PrintAdress(); 
-        UDPPacks::AddMessageData(PublicIP,PublicPort,PublicName);
+        Chamber->second.PublicAddress.PrintAdress();
+        Chamber->second.LocalAddress.PrintAdress();
+        UDPPacks::AddMessageData(LocalIP,PublicIP,PublicPort,PublicName);
  	}
- 
- 	for (size_t i = 0; i < JoinedCount; i++) {
- 		UDPPacks::SendBytes(UDPPacks::ConnectedAddresses[i], true);
- 	}
+
+	for (auto Chamber = SessionAddrMap.begin(); Chamber != SessionAddrMap.end(); Chamber++ ) {
+
+        UDPPacks::SendBytes(Chamber->second.PublicAddress, true);
+	}
+
  }
 

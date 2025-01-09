@@ -19,7 +19,7 @@ public:
 	bool IsNewConnection();
 	void SendSessionAdresses(MessageType message_type);
 
-	std::vector<AddrCtr> SessionAdresses;
+	std::unordered_map<AddrCtr, AddrChamber, AddrCtrHash>   SessionAddrMap;
 	std::string SessionName;
 	uint8_t SessionSize;
 	uint8_t JoinedCount;

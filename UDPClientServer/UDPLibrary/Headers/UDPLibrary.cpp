@@ -2,6 +2,7 @@
 #include <chrono>
 #include "UDPLibrary.h"
 
+
 namespace fs = std::filesystem;
 
 //-----------|
@@ -18,20 +19,6 @@ void UDPSetup::InstallFolders() {
 		}
 	} ReposFolder = RestartFolder.parent_path();
 	RestartFolder = RestartFolder / "x64" / "Release";
-}
-void UDPSetup::WelcomeMessage(std::string name) {
-
-	if (name == "") {
-		std::cout << "Please enter your name with a maximum of 10 characters: ";
-		std::string TempName;
-		getline(std::cin, TempName);
-		MyName = TempName.substr(0, 10);
-		system("cls");
-	}
-	else {
-		MyName = name;
-	}
-	std::cout << "- Thank you " << MyName << "\n";
 }
 void UDPSetup::InitWinsock() {
 	if (WSAStartup(MAKEWORD(2, 2), &WSAData) != NO_ERROR) {
@@ -59,15 +46,24 @@ void UDPSetup::OpenUDPSocket() {
 	}
 }
 void UDPSetup::BindSocket(uint16_t port) {
-	sockaddr_in localAddress;
-	localAddress.sin_family = AF_INET;
+	sockaddr_in SetupSockAddr;
+	SetupSockAddr.sin_family = AF_INET;
 	if (port > 0) {
-		localAddress.sin_port = htons(port);
+		//-------------------|
+		// Ports for Servers |
+		//===================|
+		SetupSockAddr.sin_port = htons(port);
 	}
-	localAddress.sin_addr.s_addr = INADDR_ANY; // Accept messages from any IP
+	else{
+		//-------------------|
+		// Ports for clients |
+		//===================|
+		SetupSockAddr.sin_port = 0;
+	}
+	SetupSockAddr.sin_addr.s_addr = INADDR_ANY; // Accept messages from any IP
 	//localAddress.sin_addr.s_addr = htonl(address);
 
-	if (bind(UDPSocket, (sockaddr*)&localAddress, sizeof(localAddress)) == SOCKET_ERROR) {
+	if (bind(UDPSocket, (sockaddr*)&SetupSockAddr, sizeof(SetupSockAddr)) == SOCKET_ERROR) {
 		std::cerr << "Failed to bind socket." << std::endl;
 		closesocket(UDPSocket);
 		WSACleanup();
@@ -75,8 +71,105 @@ void UDPSetup::BindSocket(uint16_t port) {
 	}
 	else {
 		std::cout << "- The UDP Socket was succesfully bound to the local-adress\n";
+
+		//-------------|
+		// Port Number |
+		//=============|
+		int addrlen = sizeof(SetupSockAddr);
+		if (getsockname(UDPSocket, (struct sockaddr*)&SetupSockAddr, &addrlen) == -1) {
+			exit(0);
+		}
+
+		GetLocalAddr(SetupSockAddr.sin_port);
 	}
 }
+void UDPSetup::GetLocalAddr(uint16_t port) {
+
+	//---------------|
+	// Get Host Name |
+	//===============|
+	char hostname[256];
+	if (gethostname(hostname, sizeof(hostname)) != 0) {
+		exit(0);
+	}
+
+	UDPSetup::MyName = hostname;
+
+	//---------------------------------------|
+	// Prepare emptry data for getaddrinfo() |
+	//=======================================|
+	DWORD dwRetval;
+	struct addrinfo hints;
+	struct addrinfo *result = NULL;
+	struct addrinfo *ptr	= NULL;
+
+	ZeroMemory(&hints, sizeof(hints));
+	//-------------------------------------|
+	// Set search settings for getaddrinfo |
+	//=====================================|
+	hints.ai_family   = AF_UNSPEC;
+	hints.ai_socktype = AF_INET;
+	hints.ai_protocol = IPPROTO_UDP;
+
+	//---------------------|
+	// retrieve local IP's |
+	//=====================|
+	dwRetval = getaddrinfo(hostname, NULL, &hints, &result);
+	if (dwRetval != 0) {
+		printf("getaddrinfo failed with error: %d\n", dwRetval);
+		WSACleanup();
+		exit(0);
+	}
+
+	//----------------------------------|
+	// Get ipv4 address from array|
+	//==================================|
+	struct sockaddr_in* sockaddr_ipv4;
+
+	for (ptr = result; ptr != NULL; ptr = ptr->ai_next) {
+
+		switch (ptr->ai_family) {
+		case AF_INET:
+
+			//------------------------------------------------------------|
+			// Get IP from sockaddr struct and store in our own container |
+			//============================================================|
+			sockaddr_ipv4 = (struct sockaddr_in*)ptr->ai_addr;
+
+			uint32_t IP = sockaddr_ipv4->sin_addr.s_addr;
+ 			uint_convert<uint32_t>::NetToHost(IP);
+			uint_convert<uint16_t>::NetToHost(port);
+
+			uint8_t octet = (IP >> 24 & 0xFF);		
+
+			//---------------------|
+			// Store Local Address |
+			//=====================|
+
+			if (octet == 192) {
+				std::cout << "- Local";
+				LocalAddress.SetAdress(IP, port, hostname, true);
+				return;
+			}		
+
+			break;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+	
+}
+
 bool UDPSetup::SocketHasNewBytes()
 {
 	int optVal;
@@ -100,15 +193,13 @@ bool UDPSetup::SocketHasNewBytes()
 
 	return false;
 }
-void UDPSetup::UDPInit(uint16_t port, std::string name) {
-	InstallFolders();
-	WelcomeMessage(name);
+void UDPSetup::UDPInit(uint16_t port) {
+	InstallFolders();	
 	InitWinsock();
 	OpenUDPSocket();
 	BindSocket(port);
 	std::cout << "\n";
 }
-
 //-----------|
 // UDP Packs |
 //===========|
@@ -127,17 +218,49 @@ void printWSAError() {
 // -------------------|
 // Receiving messages |
 //====================|
-MessageType UDPPacks::RecvBytes(bool bPrint) {
+MessageType UDPPacks::RecvBytes(bool bPrint, bool bIsServer) {
 	ReceiveAdress.SetAdress(0, 0, 0, 0, 0, "None", false);
 	RecvMT	   = MessageType::None;
 	RecvEcho   = MessageType::None;
 
 	int BytesReceived = recvfrom(UDPSetup::UDPSocket, (char*)RecvBuffer, sizeof(RecvBuffer), 0, ReceiveAdress.GetSockAddr(), ReceiveAdress.GetAddrSize());
 	if (BytesReceived != SOCKET_ERROR) {
+
+		// ------------------------|
+		// Get Address and Package |
+		//=========================|
 		ReceiveAdress.FillFromSockAddr();
-		RecvBytePack.SetByteArray(RecvBuffer, BytesReceived);
-	
+		RecvBytePack.SetByteArray(RecvBuffer, BytesReceived);	
+
+		// ---------------------------------------------|
+		// If Package is correct we identify the sender |
+		//==============================================|
 		if (RecvBytePack.GetCRCValid()) {
+			if (ReceiveAdress != UDPPacks::ServerAdress && !bIsServer)	{			
+				if (AddrMap.count(ReceiveAdress)  <= 0)	{
+					if (bPrint) {
+						printf("* << Receive Unauthorised Message fr ");
+						ReceiveAdress.PrintAdress();
+					}
+
+					return RecvMT;
+				}
+				else
+				{
+					ReceiveAdress = AddrMap.at(ReceiveAdress).PublicAddress;
+				}
+			}		
+			else if (ReceiveAdress == UDPPacks::ServerAdress){	
+				ReceiveAdress = UDPPacks::ServerAdress;
+			}
+			else
+			{
+				std::cout << "someone sends";
+			}
+
+			// --------------------------|
+			// Identify the message type |
+			//===========================|
 			RecvBytePack.ReturnBytes(RecvMT,   0);
 			RecvBytePack.ReturnBytes(RecvEcho, 1);
 			RecvBytePack.ReturnBytes(RecvID,   2);
@@ -145,9 +268,9 @@ MessageType UDPPacks::RecvBytes(bool bPrint) {
 			//------------------------|
 			// Block certain messages |
 			//========================| 
-			if(RecvEchoRequest(bPrint) || RecvEchoResponse(bPrint)) { return RecvMT; };		
+			if (RecvEchoRequest(bPrint) || RecvEchoResponse(bPrint)) { return RecvMT; };
 
-			if (bPrint)	{	
+			if (bPrint) {
 				printf("* << Receive [ ");
 				printf("%-*s", 15, MessageTypeToString(RecvMT).c_str());
 				printf(" ] [ ");
@@ -298,18 +421,4 @@ void UDPPacks::SendBytes(AddrCtr& address_ctr, bool bPrint, BytePack send_pack) 
 
 	//std::cout << SendID;
 }
-
-bool UDPPacks::RecvValidSessionAddress() {
-	bool bValidAddress = false;
-
-	for (size_t i = 0; i < ConnectedAddresses.size(); i++) {
-		if (ReceiveAdress == ConnectedAddresses[i]) {
-			bValidAddress = true;
-		}
-	}
-	return bValidAddress;
-}
-
-
-
 

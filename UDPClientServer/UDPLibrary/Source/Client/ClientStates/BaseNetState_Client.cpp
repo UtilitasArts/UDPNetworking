@@ -39,3 +39,5 @@ void BaseNetState_Client::OnExit(){
 	std::cout << "Exit State " << ENetClientStateString(StateEnum) << "\n";
 }
 
+
+
