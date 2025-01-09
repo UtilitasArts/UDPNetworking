@@ -147,27 +147,13 @@ void UDPSetup::GetLocalAddr(uint16_t port) {
 			//=====================|
 
 			if (octet == 192) {
-				std::cout << "- Local";
 				LocalAddress.SetAdress(IP, port, hostname, true);
 				return;
 			}		
 
 			break;
 		}
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-	
+	}	
 }
 
 bool UDPSetup::SocketHasNewBytes()
@@ -242,7 +228,6 @@ MessageType UDPPacks::RecvBytes(bool bPrint, bool bIsServer) {
 						printf("* << Receive Unauthorised Message fr ");
 						ReceiveAdress.PrintAdress();
 					}
-
 					return RecvMT;
 				}
 				else

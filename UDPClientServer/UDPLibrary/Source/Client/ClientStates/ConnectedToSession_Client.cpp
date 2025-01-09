@@ -64,11 +64,10 @@ void ConnectedToSession_NetClientState::ReturnAddresses() {
 		AddrCtr CurLocalSessionAddress(LocalIP  , PublicPort, PublicName);
 
 		if (CurPublicSessionAddress != UDPPacks::MyPublicAdress) {
-			if (PublicIP == UDPSetup::LocalAddress.HostIP()) {
+			if (PublicIP == UDPPacks::MyPublicAdress.HostIP()) {
 				UDPPacks::AddrMap.emplace(CurLocalSessionAddress, AddrChamber(CurLocalSessionAddress, CurLocalSessionAddress));
 			}
-			else
-			{
+			else{				
 				UDPPacks::AddrMap.emplace(CurPublicSessionAddress, AddrChamber(CurPublicSessionAddress, CurLocalSessionAddress));
 			}
 		}
